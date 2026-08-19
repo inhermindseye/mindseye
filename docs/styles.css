@@ -1,0 +1,39 @@
+/* css styles */
+
+.navbar-dark .navbar-brand {
+  background: url('./profile_squ.jpg');
+  background-size: contain;
+  padding-right: 5px !important; 
+  padding-left: 75px !important;
+  background-repeat: no-repeat;
+  color: #AD4343;
+}
+
+h3.listing-title {
+  font-size: 1.2rem;
+}
+
+#quarto-margin-sidebar .quarto-listing-category {
+	font-size: 0.85rem;
+}
+
+.nav-footer {
+	background: #f4eee8;
+}
+
+
+
+.nav-footer {
+
+/*	min-height: 4em; */
+}
+
+
+button.speciallink, button.speciallink:hover {
+  font-size: 1.5rem;
+  padding: 5px;
+  margin: 20px auto;
+	background: #f4eee8;
+	border: 1px solid  #AD4343;
+	text-align: center;
+}

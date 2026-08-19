@@ -1,0 +1,272 @@
+---
+title: "Barcode charts"
+subtitle: "a different way to look at distributions"
+author: "Sharon Howard"
+date: "2025-10-09"
+categories: [methods]
+code-fold: true
+execute: 
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: false
+# code reviewed July 2026 for new site
+```
+
+
+## Introduction
+
+This is one of a series of posts where I focus on visualisations and techniques that I like. I'll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R.
+
+
+## What are barcode charts?
+
+A [barcode chart](https://datavizcatalogue.com/blog/chart-snapshot-barcode-plot/) is a chart that looks like a barcode! When plotted horizontally, which is most common, it consists of short vertical bars, with each one representing a single data point, so it highlights clusters and gaps. 
+
+They're a very compact way of showing quite a lot of data, and might be combined with density (especially if there are overlapping data points) or colour (making them like a kind of hybrid heatmap). 
+
+
+## Prepare the data
+
+This post uses two datasets: 
+
+- [quasi_war](https://docs.ropensci.org/historydata/reference/quasi_war.html) - Naval encounters during the Quasi War between France and the United States of America
+- [sab_hp_injuries](https://skin-and-bone-in-london-1760-1901.github.io/posts/hospitals/) - 18th-19th-century hospital admissions data from the Skin and Bone project
+
+(Show/hide code by clicking on &#x25BC; above `Code` chunks.)
+
+
+```{r includes}
+
+library(scales) 
+library(janitor) 
+library(tidyverse)
+
+library(ggthemes)
+theme_set(theme_minimal())  
+
+library(mindseyedata)
+library(historydata)
+
+
+sab_ghs_admissions_grp <-
+sab_hp_injuries |>
+  filter(description_dataset=="ghs") |>
+  # using injuries data, so need to deduplicate per description
+  distinct(date_admission_std, description_id)  |>
+  filter(between(year(date_admission_std), 1825, 1829)) |>
+  mutate(ad_grp = as.character(year(date_admission_std)))
+
+```
+
+
+
+
+## ggplot 
+
+I'm focusing on using the chart to show chronological patterns, as getting dates into the right format can be a bit of a headache. They tend to be simpler when plotting numerical data.
+
+
+### single chart
+
+This is using geom_vline(); geom_segment() works too but requires a bit more code.
+
+It's quite simple, but does need to explicitly use scales::scale_x_date(), and then play around with labels and date_breaks to get dates formatted nicey.
+
+(Also note you want fig.height and fig.width options in the code chunk as well as aspect.ratio inside ggplot.)
+
+```{r}
+#| fig.height: 2
+#| fig.width: 10
+quasi_war |>
+  count(date) |>
+  ggplot(aes(x=date, y=2)) +
+  geom_vline(aes(xintercept  = date), show.legend = F  ) +
+  scale_x_date(labels = date_format("%b %Y"), date_breaks = "4 month") +
+  theme_minimal() +
+  theme(aspect.ratio = 1/10)
+```
+
+Sometimes there were multiple events on the same date; using opacity can help to further highlight clustering.
+
+```{r}
+#| fig.height: 2
+#| fig.width: 10
+quasi_war |>
+  count(date) |>
+  ggplot(aes(x=date, y=2)) +
+  geom_vline(aes(xintercept  = date, alpha = n), show.legend = F  ) +
+  scale_x_date(labels = date_format("%b %Y"), date_breaks = "4 month") + 
+  scale_alpha_continuous(range = c(0.5,1)) +
+  theme_minimal() +
+  theme(aspect.ratio = 1/10)
+```
+
+
+### faceted
+
+Then you can also use ggplot facets to compare groups, or look for seasonal patterns. 
+
+```{r}
+sab_ghs_admissions_grp |>
+  count(date_admission_std, ad_grp) |>
+  ggplot(aes(x=date_admission_std, y=2)) +
+  geom_vline(aes(xintercept  = date_admission_std),  show.legend = F  ) +
+  # month only on x axis, since year is in the facet label
+  # default shows Jan-Jan idk why!
+  # date_breaks gives Feb-Dec; better tho I'd prefer Jan-Dec
+  scale_x_date(labels = date_format("%b"), date_breaks = "2 month") +
+  # scales=free is necessary here but...
+  facet_wrap(~ad_grp, scales="free", ncol=1, strip.position="left") +
+  theme_minimal()
+```
+
+
+The chart above would be fine for a quick exploratory chart. But using scales=free in the faceting means the month labels are repeated for each facet, whereas I'd prefer them to appear only once at the bottom of the plot. The easiest way to make that happen seems to be to change the dates to use a fake year which is the same for all. 
+
+(NB in this case the fake year needs to be a leap year because there happens to be a 29th February in the data.)
+
+```{r}
+sab_ghs_admissions_grp |>
+  mutate(date2024 = update(date_admission_std, year=2024)) |>
+  count(date2024, ad_grp, sort = T) |>
+  ggplot(aes(x=date2024, y=2)) +
+  geom_vline(aes(xintercept  = date2024),  show.legend = F  ) +
+  scale_x_date(labels = date_format("%b"), date_breaks = "2 month") +
+  facet_wrap(~ad_grp, ncol=1, strip.position="left") +
+  theme_minimal()
+```
+
+
+alpha doesn't really do much in this case, even after playing around with the range.
+
+```{r}
+sab_ghs_admissions_grp |>
+  mutate(date2024 = update(date_admission_std, year=2024)) |>
+  count(date2024, ad_grp, sort = T) |>
+  ggplot(aes(x=date2024, y=2)) +
+  geom_vline(aes(xintercept  = date2024, alpha=n), show.legend = F) +
+  scale_x_date(labels = date_format("%b"), date_breaks = "2 month") +
+  scale_alpha_continuous(range = c(0.7,1)) +
+  facet_wrap(~ad_grp, ncol=1, strip.position="left") +
+  theme_minimal()
+```
+
+
+Colour works better for this one, I think, though I don't know that there are enough days with more than 1 to make any real difference. (This starts to look more like a heatmap, but I've reversed the usual colouring so that lighter=fewer, because that feels more intuitive in this situation.)
+
+```{r}
+sab_ghs_admissions_grp |>
+  mutate(date2024 = update(date_admission_std, year=2024)) |>
+  count(date2024, ad_grp, sort = T) |>
+  ggplot(aes(x=date2024, y=2)) +
+  geom_vline(aes(xintercept  = date2024, colour=n)  ) +
+  scale_x_date(labels = date_format("%b"), date_breaks = "2 month") +
+  scale_colour_viridis_b(direction = -1) +
+  facet_wrap(~ad_grp,  ncol=1, strip.position="left") +
+  theme_minimal()
+```
+
+
+
+
+
+## OJS
+
+A version using [Observable Plot](https://observablehq.com/@observablehq/plot-barcode).
+
+```{r}
+ojs_define(ojs_admissions = sab_ghs_admissions_grp)
+ojs_define(ojs_war = quasi_war)
+```
+
+```{ojs}
+ojsAdmissions = transpose(ojs_admissions)
+ojsWar = transpose(ojs_war)
+```
+
+
+### single chart
+
+
+If I import data into OJS from a file (using FileAttach), it should automatically recognise dates. But that doesn't work with ojs_define(). So I need some extra code for the dates in order to get the plot to work.
+
+```{ojs}
+//| code-fold: show
+d3 = require("d3")
+
+// Define the expected date format
+parseDate = d3.timeParse("%Y-%m-%d");
+
+ojsWarDates = ojsWar.map(d => ({
+  newDate: parseDate(d.date),
+  ...d
+}));
+```
+
+And now it works.
+
+```{ojs}
+//| code-fold: show
+Plot.plot({
+  height: 100,
+  x: {label: "date"},
+  y: {label: null},
+  marks: [
+    Plot.tickX(
+      ojsWarDates, 
+      	{
+      		x: "newDate", 
+      		y: null , 
+      		strokeOpacity: 0.5,
+    	} 
+    )
+  ]
+})
+
+```
+
+
+### faceted
+
+```{ojs}
+//| code-fold: show
+ojsAdmissionsDates = ojsAdmissions.map(d => ({
+  date: parseDate(d.date_admission_std),
+  ...d
+}));
+```
+
+But, after the initial date formatting some more work is needed on the dates in the chart. 
+
+After a lot of failed experiments and searching, I got the answers from [this Observable Notebook](https://observablehq.com/d/d7d0d7e1bfc70637). I'm not sure I would have worked it all out for myself, as there are several adjustments needed, and some javascript stretching my novice skills.
+
+- in the x axis labels, format date as month only
+- reformat the date inside the tick mark code (reset year and format as unixtime)
+- also in the tick mark, set interval to month
+
+```{ojs}
+//| code-fold: show
+Plot.plot({
+  height: 300,
+  marginLeft: 40,
+  x: {tickFormat: d3.timeFormat("%b")} , 
+  fy: {label: null},
+  marks: [
+    Plot.tickX(
+      ojsAdmissionsDates, 
+      	{
+      		x: (d) => new Date(d.date.getTime()).setUTCFullYear(2024),
+      		fy: "ad_grp" , 
+      		interval: "month" 
+    	}
+    )
+  ]
+})
+
+```
+
+At least the month labels go from Jan to Dec without any further faffing. (I haven't quite worked out how to get ggplot to do that yet...)
+

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sharon Howard">
+<meta name="dcterms.date" content="2020-10-01">
+
+<title>Going Interactive with Old Bailey Online Data – In Her Mind’s Eye</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ec840b0bba7ebbecc6939516f9f53fd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="../../site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../../site_libs/jsoneditor-0.18.7/jsoneditor.min.js"></script>
+<script src="../../site_libs/jsonedit-binding-4.0.0/jsonedit.js"></script>
+<link href="../../site_libs/sequences-0.1/sequences.css" rel="stylesheet">
+<script src="../../site_libs/sunburst-binding-2.1.8/sunburst.js"></script>
+<script src="../../site_libs/r2d3-render-0.1.0/r2d3-render.js"></script>
+<script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+<script src="../../site_libs/r2d3-binding-0.2.6/r2d3.js"></script>
+<script src="../../site_libs/d3v4-4.13.0/d3.min.js"></script>
+<script src="../../site_libs/d3-4.9.1/d3.min.js"></script>
+<script src="../../site_libs/forceNetwork-binding-0.4.1/forceNetwork.js"></script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">In Her Mind’s Eye</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resources.html"> 
+<span class="menu-text">Data Resources</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://bsky.app/profile/sharonhoward.bsky.social"> <i class="bi bi-bluesky" role="img" aria-label="Bluesky">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sharonhoward"> <i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://sharonhoward.org"> <i class="bi bi-globe" role="img" aria-label="Website">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss-fill" role="img" aria-label="RSS">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#d3.js-unfinished-business" id="toc-d3.js-unfinished-business" class="nav-link active" data-scroll-target="#d3.js-unfinished-business">D3.js: unfinished business</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#sunburst" id="toc-sunburst" class="nav-link" data-scroll-target="#sunburst">Sunburst</a></li>
+  <li><a href="#circle-packing-diagram" id="toc-circle-packing-diagram" class="nav-link" data-scroll-target="#circle-packing-diagram">Circle Packing diagram</a></li>
+  <li><a href="#networks" id="toc-networks" class="nav-link" data-scroll-target="#networks">Networks</a></li>
+  <li><a href="#a-few-more-resources" id="toc-a-few-more-resources" class="nav-link" data-scroll-target="#a-few-more-resources">A few more resources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Going Interactive with Old Bailey Online Data</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">interactive</div>
+    <div class="quarto-category">methods</div>
+    <div class="quarto-category">OBO</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sharon Howard </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 October 2020</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="d3.js-unfinished-business" class="level2">
+<h2 class="anchored" data-anchor-id="d3.js-unfinished-business">D3.js: unfinished business</h2>
+<p>My first efforts at interactive data visualisations go back several years to some incredibly frustrating attempts to get the hang of <a href="https://d3js.org/">D3.js</a>. These were, with hindsight, doomed because (a) I didn’t really know any javascript, and D3 isn’t easy javascript; (b) I was really only just getting the hang of manipulating data (especially anything with a more complex hierarchical structure, like JSON, which is what D3 mainly likes). D3 was just overwhelming in terms of both code and data.</p>
+<p>In the end, I gave up on working directly with D3 and instead managed to get some <a href="http://london.sharonhoward.org/llpp/addr_auth/">better results</a> with more user-friendly, though also more restricted, D3-based libraries like <a href="http://dimplejs.org/">dimple</a> and <a href="https://d3plus.org/">d3plus</a>.</p>
+<p>Since I’ve been learning to use R, I’ve mainly stuck to static visualisations so far. (It’s not as though there aren’t plenty of choices!) But this year I’d like to revisit D3 and other options for interactive dataviz. I still don’t know much javascript, but I do know a lot more about data wrangling and, what’s more, I can get R to do quite a lot of the work for me.</p>
+<p>The simplest option is to use packages that have already done much of the heavy lifting and provide built-in functions for both data conversion and graph creation. But these are likely to offer limited options in terms of both dataviz types and customisation of output. A more advanced but more powerful approach still does a lot of the fiddly stuff for you, but requires you to write your own D3 scripts.</p>
+<p>First, load up some R libraries I’m likely to use, including the <a href="https://www.tidyverse.org/">Tidyverse</a> for essential data wrangling.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the basics</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># includes dplyr, tidyr, readr etc</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite) <span class="co"># functions for handling JSON data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(listviewer) <span class="co"># useful for looking at json data (and other nested lists)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>I have some Old Bailey Online offences data in D3-compatible JSON that I made long ago for those first stumbling attempts, so I’ll re-use that. But I’ll also use some tabular data that will let me look at functions for converting from R data objects to D3-compatible formats.</p>
+<p>The JSON data covers 1700-1799 and consists of <em>offences</em> rather than trials (a trial can involve more than one offence). It’s hierarchical, with categories and subcategories and has already been summarised, so it’s ready to use.</p>
+<p>The viewer offers a number of ways of exploring json (and other list-type) data; click on the arrow next to “Text” if you’d like to try them out.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>offences_c18_json <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_json</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"site_data/obo/offences_c18.json"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">jsonedit</span>(offences_c18_json, <span class="at">mode =</span> <span class="st">"text"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="jsonedit html-widget html-fill-item" id="htmlwidget-909d1b8f9e4a0e730340" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-909d1b8f9e4a0e730340">{"x":{"data":{"name":"offences","children":[{"name":"theft","children":[{"name":"animalTheft","size":1364},{"name":"burglary","size":2733},{"name":"embezzlement","size":17},{"name":"extortion","size":56},{"name":"gameLawOffence","size":21},{"name":"grandLarceny","size":22154},{"name":"housebreaking","size":752},{"name":"mailTheft","size":16},{"name":"pettyLarceny","size":857},{"name":"pocketpicking","size":1748},{"name":"receiving","size":1807},{"name":"shoplifting","size":1790},{"name":"theftFromPlace","size":5308},{"name":"otherTheft","size":2591}]},{"name":"damage","children":[{"name":"arson","size":56},{"name":"otherDamage","size":29}]},{"name":"breakingPeace","children":[{"name":"assault","size":44},{"name":"wounding","size":82},{"name":"libel","size":7},{"name":"riot","size":107},{"name":"threateningBehaviour","size":5},{"name":"vagabonding","size":1},{"name":"barratry","size":2},{"name":"otherPeace","size":4}]},{"name":"sexual","children":[{"name":"assaultWithIntent","size":10},{"name":"bigamy","size":292},{"name":"rape","size":256},{"name":"sodomy","size":56},{"name":"assaultWithSodomiticalIntent","size":30},{"name":"keepingABrothel","size":2},{"name":"otherSexual","size":3}]},{"name":"royalOffences","children":[{"name":"coiningOffences","size":459},{"name":"religiousOffences","size":9},{"name":"seditiousWords","size":28},{"name":"taxOffences","size":129},{"name":"treason","size":11},{"name":"seditiousLibel","size":25},{"name":"seducingAllegiance","size":14},{"name":"otherRoyal","size":3}]},{"name":"deception","children":[{"name":"bankruptcy","size":20},{"name":"forgery","size":605},{"name":"fraud","size":448},{"name":"perjury","size":378},{"name":"otherDeception","size":2}]},{"name":"violentTheft","children":[{"name":"highwayRobbery","size":2928},{"name":"robbery","size":503},{"name":"otherViolentTheft","size":0}]},{"name":"killing","children":[{"name":"infanticide","size":131},{"name":"murder","size":944},{"name":"manslaughter","size":40},{"name":"pettyTreason","size":16},{"name":"otherKilling","size":23}]},{"name":"miscellaneous","children":[{"name":"kidnapping","size":5},{"name":"pervertingJustice","size":126},{"name":"conspiracy","size":33},{"name":"returningFromTransportation","size":243},{"name":"piracy","size":2},{"name":"otherMisc","size":72}]}]},"options":{"mode":"text","modes":["text","tree","table"]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Then I have two .csv files covering 1720-1819. First, offences data, with the same offence categories and subcategories as the json, but also containing year and decade.</p>
+<p>The second dataset is for <em>trials</em> rather than offences and contains year and decade, offence category only (the first offence listed in the trial if there was more than one) and defendant gender (f, m, fm for mixed).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>offences_1720_csv <span class="ot">&lt;-</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"site_data/obo/offences_17201819.csv"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>offsub1720 <span class="ot">&lt;-</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  offences_1720_csv <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(offcat, offsubcat, <span class="at">name=</span><span class="st">"size"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>trials_1720_csv <span class="ot">&lt;-</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"site_data/obo/trials_17201819.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="sunburst" class="level2">
+<h2 class="anchored" data-anchor-id="sunburst">Sunburst</h2>
+<p>When I was struggling with D3 first time around, I made this <a href="http://sharonhoward.org/ob/offzoomsunburst.html">zoomable sunburst</a> which sort of worked, but the effort it took to get even that far put me off trying to get any further. That was a shame, because they can be both pretty and clever for hierarchical data.</p>
+<p>So I was pleased to find <a href="https://cran.r-project.org/package=sunburstR">sunburstR</a>. The same developer has also made a useful package for converting R data to D3 formats, <a href="https://cran.r-project.org/package=d3r">d3r</a>, so I’ll try that out as well.</p>
+<p>First, the {d3r} function d3_nest() to format the data.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(d3r)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sunburstR)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>offsub1720_nest <span class="ot">&lt;-</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">d3_nest</span>(offsub1720, <span class="at">value_cols =</span> <span class="st">"size"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>trials_decoffgen <span class="ot">&lt;-</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">d3_nest</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  trials_1720_csv <span class="sc">|&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(decade, offcat1, gender, <span class="at">name=</span><span class="st">"size"</span>), <span class="at">value_cols =</span> <span class="st">"size"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>trials_gendecoff <span class="ot">&lt;-</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">d3_nest</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    trials_1720_csv <span class="sc">|&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">count</span>(gender, decade, offcat1, <span class="at">name=</span><span class="st">"size"</span>), <span class="at">value_cols =</span> <span class="st">"size"</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>(Holy cow, that was just so <em>painless</em>.)</p>
+<p>And now for the sunburst itself (it has no labels: hover over sections for information to appear):</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sunburst</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  offsub1720_nest,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">valueField =</span> <span class="st">"size"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="sunburst html-widget html-fill-item" id="htmlwidget-a33d18cfe2d604dfcc02" style="width:100%;height:464px; position:relative;">
+<div>
+<div class="sunburst-main">
+<div class="sunburst-sequence"></div>
+<div class="sunburst-chart">
+<div class="sunburst-explanation" style="visibility:hidden;"></div>
+</div>
+</div>
+<div class="sunburst-sidebar">
+<input type="checkbox" class="sunburst-togglelegend" style="visibility:hidden;">Legend
+<div class="sunburst-legend" style="visibility:hidden;"></div>
+</div>
+</div>
+</div>
+<script type="application/json" data-for="htmlwidget-a33d18cfe2d604dfcc02">{"x":{"data":{"children":[{"name":"breakingPeace","children":[{"name":"assault","size":34,"colname":"offsubcat"},{"name":"barratry","size":2,"colname":"offsubcat"},{"name":"libel","size":16,"colname":"offsubcat"},{"name":"other","size":4,"colname":"offsubcat"},{"name":"riot","size":102,"colname":"offsubcat"},{"name":"threateningBehaviour","size":5,"colname":"offsubcat"},{"name":"vagabond","size":1,"colname":"offsubcat"},{"name":"wounding","size":176,"colname":"offsubcat"}],"colname":"offcat"},{"name":"damage","children":[{"name":"arson","size":65,"colname":"offsubcat"},{"name":"other","size":42,"colname":"offsubcat"}],"colname":"offcat"},{"name":"deception","children":[{"name":"bankrupcy","size":22,"colname":"offsubcat"},{"name":"forgery","size":809,"colname":"offsubcat"},{"name":"fraud","size":541,"colname":"offsubcat"},{"name":"other","size":2,"colname":"offsubcat"},{"name":"perjury","size":404,"colname":"offsubcat"}],"colname":"offcat"},{"name":"kill","children":[{"name":"infanticide","size":130,"colname":"offsubcat"},{"name":"manslaughter","size":73,"colname":"offsubcat"},{"name":"murder","size":916,"colname":"offsubcat"},{"name":"other","size":29,"colname":"offsubcat"},{"name":"pettyTreason","size":16,"colname":"offsubcat"}],"colname":"offcat"},{"name":"miscellaneous","children":[{"name":"conspiracy","size":58,"colname":"offsubcat"},{"name":"kidnapping","size":17,"colname":"offsubcat"},{"name":"other","size":155,"colname":"offsubcat"},{"name":"pervertingJustice","size":136,"colname":"offsubcat"},{"name":"piracy","size":3,"colname":"offsubcat"},{"name":"returnFromTransportation","size":306,"colname":"offsubcat"}],"colname":"offcat"},{"name":"royalOffences","children":[{"name":"coiningOffences","size":1043,"colname":"offsubcat"},{"name":"other","size":2,"colname":"offsubcat"},{"name":"religiousOffences","size":6,"colname":"offsubcat"},{"name":"seditiousLibel","size":8,"colname":"offsubcat"},{"name":"seditiousWords","size":11,"colname":"offsubcat"},{"name":"seducingAllegiance","size":15,"colname":"offsubcat"},{"name":"taxOffences","size":148,"colname":"offsubcat"},{"name":"treason","size":3,"colname":"offsubcat"}],"colname":"offcat"},{"name":"sexual","children":[{"name":"assaultWithIntent","size":8,"colname":"offsubcat"},{"name":"assaultWithSodomiticalIntent","size":29,"colname":"offsubcat"},{"name":"bigamy","size":339,"colname":"offsubcat"},{"name":"keepingABrothel","size":2,"colname":"offsubcat"},{"name":"other","size":3,"colname":"offsubcat"},{"name":"rape","size":277,"colname":"offsubcat"},{"name":"sodomy","size":72,"colname":"offsubcat"}],"colname":"offcat"},{"name":"theft","children":[{"name":"animalTheft","size":1725,"colname":"offsubcat"},{"name":"burglary","size":3403,"colname":"offsubcat"},{"name":"embezzlement","size":367,"colname":"offsubcat"},{"name":"extortion","size":53,"colname":"offsubcat"},{"name":"gameLawOffence","size":16,"colname":"offsubcat"},{"name":"grandLarceny","size":31250,"colname":"offsubcat"},{"name":"housebreaking","size":900,"colname":"offsubcat"},{"name":"mail","size":49,"colname":"offsubcat"},{"name":"other","size":2392,"colname":"offsubcat"},{"name":"pettyLarceny","size":898,"colname":"offsubcat"},{"name":"pocketpicking","size":3004,"colname":"offsubcat"},{"name":"receiving","size":2244,"colname":"offsubcat"},{"name":"shoplifting","size":2111,"colname":"offsubcat"},{"name":"theftFromPlace","size":7256,"colname":"offsubcat"}],"colname":"offcat"},{"name":"violentTheft","children":[{"name":"highwayRobbery","size":3391,"colname":"offsubcat"},{"name":"robbery","size":576,"colname":"offsubcat"}],"colname":"offcat"}],"name":"root"},"options":{"legendOrder":null,"colors":null,"valueField":"size","percent":true,"count":false,"explanation":null,"breadcrumb":[],"legend":false,"sortFunction":null,"sumNodes":true}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Now I’ll make one with three levels using the trials data. In fact, I’ll make two slightly different versions, simply by changing the order of the data.</p>
+<p>In the first one, decade is the root level (inner ring) of the data, followed by offence category, and gender in the outermost ring.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sunburst</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  trials_decoffgen,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="sunburst html-widget html-fill-item" id="htmlwidget-32a4aceb206a3d54dd0c" style="width:100%;height:464px; position:relative;">
+<div>
+<div class="sunburst-main">
+<div class="sunburst-sequence"></div>
+<div class="sunburst-chart">
+<div class="sunburst-explanation" style="visibility:hidden;"></div>
+</div>
+</div>
+<div class="sunburst-sidebar">
+<input type="checkbox" class="sunburst-togglelegend" style="visibility:hidden;">Legend
+<div class="sunburst-legend" style="visibility:hidden;"></div>
+</div>
+</div>
+</div>
+<script type="application/json" data-for="htmlwidget-32a4aceb206a3d54dd0c">{"x":{"data":{"children":[{"name":1720,"children":[{"name":"breakingPeace","children":[{"name":"m","size":23,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":1,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":5,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":21,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":87,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":41,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":135,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":4,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":48,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":4,"colname":"gender"},{"name":"fm","size":9,"colname":"gender"},{"name":"m","size":16,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":16,"colname":"gender"},{"name":"m","size":100,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1628,"colname":"gender"},{"name":"fm","size":161,"colname":"gender"},{"name":"m","size":2304,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":24,"colname":"gender"},{"name":"fm","size":6,"colname":"gender"},{"name":"m","size":261,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1730,"children":[{"name":"breakingPeace","children":[{"name":"f","size":2,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":5,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":1,"colname":"gender"},{"name":"m","size":5,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":17,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":74,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":31,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":113,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":6,"colname":"gender"},{"name":"m","size":13,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":6,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":9,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":18,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":76,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1549,"colname":"gender"},{"name":"fm","size":165,"colname":"gender"},{"name":"m","size":2197,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":37,"colname":"gender"},{"name":"fm","size":23,"colname":"gender"},{"name":"m","size":284,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1740,"children":[{"name":"breakingPeace","children":[{"name":"f","size":1,"colname":"gender"},{"name":"m","size":12,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"m","size":1,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":10,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":70,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":29,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":88,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":1,"colname":"gender"},{"name":"m","size":19,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":3,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":47,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":10,"colname":"gender"},{"name":"m","size":48,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1485,"colname":"gender"},{"name":"fm","size":162,"colname":"gender"},{"name":"m","size":1906,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":70,"colname":"gender"},{"name":"fm","size":20,"colname":"gender"},{"name":"m","size":208,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1750,"children":[{"name":"breakingPeace","children":[{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":7,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":1,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":30,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":147,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":23,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":83,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":55,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":30,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":3,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":50,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1247,"colname":"gender"},{"name":"fm","size":125,"colname":"gender"},{"name":"m","size":1936,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":33,"colname":"gender"},{"name":"fm","size":12,"colname":"gender"},{"name":"m","size":230,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1760,"children":[{"name":"breakingPeace","children":[{"name":"m","size":20,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":4,"colname":"gender"},{"name":"m","size":5,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":21,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":140,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":26,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":74,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"m","size":13,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":3,"colname":"gender"},{"name":"m","size":11,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":4,"colname":"gender"},{"name":"m","size":40,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1159,"colname":"gender"},{"name":"fm","size":152,"colname":"gender"},{"name":"m","size":2320,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":19,"colname":"gender"},{"name":"fm","size":9,"colname":"gender"},{"name":"m","size":176,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1770,"children":[{"name":"breakingPeace","children":[{"name":"m","size":25,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":4,"colname":"gender"},{"name":"m","size":8,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":14,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":141,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":22,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":79,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":4,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":64,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":10,"colname":"gender"},{"name":"fm","size":13,"colname":"gender"},{"name":"m","size":52,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":55,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1517,"colname":"gender"},{"name":"fm","size":217,"colname":"gender"},{"name":"m","size":3324,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":27,"colname":"gender"},{"name":"fm","size":17,"colname":"gender"},{"name":"m","size":384,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1780,"children":[{"name":"breakingPeace","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":83,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":1,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":16,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":24,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":229,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":11,"colname":"gender"},{"name":"m","size":77,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":91,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":20,"colname":"gender"},{"name":"fm","size":33,"colname":"gender"},{"name":"m","size":100,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":1,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":33,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1690,"colname":"gender"},{"name":"fm","size":189,"colname":"gender"},{"name":"m","size":4577,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":76,"colname":"gender"},{"name":"fm","size":16,"colname":"gender"},{"name":"m","size":604,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1790,"children":[{"name":"breakingPeace","children":[{"name":"m","size":23,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":2,"colname":"gender"},{"name":"m","size":9,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":9,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":175,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":10,"colname":"gender"},{"name":"fm","size":4,"colname":"gender"},{"name":"m","size":62,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":8,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":62,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":39,"colname":"gender"},{"name":"fm","size":23,"colname":"gender"},{"name":"m","size":115,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":6,"colname":"gender"},{"name":"m","size":58,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1281,"colname":"gender"},{"name":"fm","size":180,"colname":"gender"},{"name":"m","size":3566,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":51,"colname":"gender"},{"name":"fm","size":11,"colname":"gender"},{"name":"m","size":272,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1800,"children":[{"name":"breakingPeace","children":[{"name":"f","size":3,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":36,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":4,"colname":"gender"},{"name":"m","size":6,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":19,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":145,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":22,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":58,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":7,"colname":"gender"},{"name":"fm","size":3,"colname":"gender"},{"name":"m","size":77,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":62,"colname":"gender"},{"name":"fm","size":16,"colname":"gender"},{"name":"m","size":94,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":9,"colname":"gender"},{"name":"m","size":65,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":1900,"colname":"gender"},{"name":"fm","size":182,"colname":"gender"},{"name":"m","size":4784,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":43,"colname":"gender"},{"name":"fm","size":9,"colname":"gender"},{"name":"m","size":208,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"},{"name":1810,"children":[{"name":"breakingPeace","children":[{"name":"f","size":2,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":64,"colname":"gender"}],"colname":"offcat1"},{"name":"damage","children":[{"name":"f","size":2,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":13,"colname":"gender"}],"colname":"offcat1"},{"name":"deception","children":[{"name":"f","size":27,"colname":"gender"},{"name":"fm","size":7,"colname":"gender"},{"name":"m","size":238,"colname":"gender"}],"colname":"offcat1"},{"name":"kill","children":[{"name":"f","size":21,"colname":"gender"},{"name":"fm","size":2,"colname":"gender"},{"name":"m","size":101,"colname":"gender"}],"colname":"offcat1"},{"name":"miscellaneous","children":[{"name":"f","size":19,"colname":"gender"},{"name":"fm","size":5,"colname":"gender"},{"name":"m","size":102,"colname":"gender"}],"colname":"offcat1"},{"name":"royalOffences","children":[{"name":"f","size":112,"colname":"gender"},{"name":"fm","size":37,"colname":"gender"},{"name":"m","size":317,"colname":"gender"}],"colname":"offcat1"},{"name":"sexual","children":[{"name":"f","size":5,"colname":"gender"},{"name":"fm","size":1,"colname":"gender"},{"name":"m","size":89,"colname":"gender"}],"colname":"offcat1"},{"name":"theft","children":[{"name":"f","size":2331,"colname":"gender"},{"name":"fm","size":302,"colname":"gender"},{"name":"m","size":7956,"colname":"gender"}],"colname":"offcat1"},{"name":"violentTheft","children":[{"name":"f","size":42,"colname":"gender"},{"name":"fm","size":15,"colname":"gender"},{"name":"m","size":442,"colname":"gender"}],"colname":"offcat1"}],"colname":"decade"}],"name":"root"},"options":{"legendOrder":null,"colors":null,"valueField":"size","percent":true,"count":false,"explanation":null,"breadcrumb":[],"legend":false,"sortFunction":null,"sumNodes":true}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>In the second sunburst, the inner ring is gender, second is decade and third is offence category.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sunburst</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  trials_gendecoff,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="sunburst html-widget html-fill-item" id="htmlwidget-ee5e915584f162e81667" style="width:100%;height:464px; position:relative;">
+<div>
+<div class="sunburst-main">
+<div class="sunburst-sequence"></div>
+<div class="sunburst-chart">
+<div class="sunburst-explanation" style="visibility:hidden;"></div>
+</div>
+</div>
+<div class="sunburst-sidebar">
+<input type="checkbox" class="sunburst-togglelegend" style="visibility:hidden;">Legend
+<div class="sunburst-legend" style="visibility:hidden;"></div>
+</div>
+</div>
+</div>
+<script type="application/json" data-for="htmlwidget-ee5e915584f162e81667">{"x":{"data":{"children":[{"name":"f","children":[{"name":1720,"children":[{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":21,"colname":"offcat1"},{"name":"kill","size":41,"colname":"offcat1"},{"name":"miscellaneous","size":4,"colname":"offcat1"},{"name":"royalOffences","size":4,"colname":"offcat1"},{"name":"sexual","size":16,"colname":"offcat1"},{"name":"theft","size":1628,"colname":"offcat1"},{"name":"violentTheft","size":24,"colname":"offcat1"}],"colname":"decade"},{"name":1730,"children":[{"name":"breakingPeace","size":2,"colname":"offcat1"},{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":17,"colname":"offcat1"},{"name":"kill","size":31,"colname":"offcat1"},{"name":"miscellaneous","size":6,"colname":"offcat1"},{"name":"royalOffences","size":6,"colname":"offcat1"},{"name":"sexual","size":18,"colname":"offcat1"},{"name":"theft","size":1549,"colname":"offcat1"},{"name":"violentTheft","size":37,"colname":"offcat1"}],"colname":"decade"},{"name":1740,"children":[{"name":"breakingPeace","size":1,"colname":"offcat1"},{"name":"deception","size":10,"colname":"offcat1"},{"name":"kill","size":29,"colname":"offcat1"},{"name":"miscellaneous","size":1,"colname":"offcat1"},{"name":"royalOffences","size":3,"colname":"offcat1"},{"name":"sexual","size":10,"colname":"offcat1"},{"name":"theft","size":1485,"colname":"offcat1"},{"name":"violentTheft","size":70,"colname":"offcat1"}],"colname":"decade"},{"name":1750,"children":[{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":30,"colname":"offcat1"},{"name":"kill","size":23,"colname":"offcat1"},{"name":"miscellaneous","size":5,"colname":"offcat1"},{"name":"royalOffences","size":5,"colname":"offcat1"},{"name":"sexual","size":3,"colname":"offcat1"},{"name":"theft","size":1247,"colname":"offcat1"},{"name":"violentTheft","size":33,"colname":"offcat1"}],"colname":"decade"},{"name":1760,"children":[{"name":"damage","size":4,"colname":"offcat1"},{"name":"deception","size":21,"colname":"offcat1"},{"name":"kill","size":26,"colname":"offcat1"},{"name":"royalOffences","size":3,"colname":"offcat1"},{"name":"sexual","size":4,"colname":"offcat1"},{"name":"theft","size":1159,"colname":"offcat1"},{"name":"violentTheft","size":19,"colname":"offcat1"}],"colname":"decade"},{"name":1770,"children":[{"name":"damage","size":4,"colname":"offcat1"},{"name":"deception","size":14,"colname":"offcat1"},{"name":"kill","size":22,"colname":"offcat1"},{"name":"miscellaneous","size":4,"colname":"offcat1"},{"name":"royalOffences","size":10,"colname":"offcat1"},{"name":"sexual","size":5,"colname":"offcat1"},{"name":"theft","size":1517,"colname":"offcat1"},{"name":"violentTheft","size":27,"colname":"offcat1"}],"colname":"decade"},{"name":1780,"children":[{"name":"breakingPeace","size":5,"colname":"offcat1"},{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":24,"colname":"offcat1"},{"name":"kill","size":11,"colname":"offcat1"},{"name":"miscellaneous","size":5,"colname":"offcat1"},{"name":"royalOffences","size":20,"colname":"offcat1"},{"name":"sexual","size":1,"colname":"offcat1"},{"name":"theft","size":1690,"colname":"offcat1"},{"name":"violentTheft","size":76,"colname":"offcat1"}],"colname":"decade"},{"name":1790,"children":[{"name":"damage","size":2,"colname":"offcat1"},{"name":"deception","size":9,"colname":"offcat1"},{"name":"kill","size":10,"colname":"offcat1"},{"name":"miscellaneous","size":8,"colname":"offcat1"},{"name":"royalOffences","size":39,"colname":"offcat1"},{"name":"sexual","size":6,"colname":"offcat1"},{"name":"theft","size":1281,"colname":"offcat1"},{"name":"violentTheft","size":51,"colname":"offcat1"}],"colname":"decade"},{"name":1800,"children":[{"name":"breakingPeace","size":3,"colname":"offcat1"},{"name":"damage","size":4,"colname":"offcat1"},{"name":"deception","size":19,"colname":"offcat1"},{"name":"kill","size":22,"colname":"offcat1"},{"name":"miscellaneous","size":7,"colname":"offcat1"},{"name":"royalOffences","size":62,"colname":"offcat1"},{"name":"sexual","size":9,"colname":"offcat1"},{"name":"theft","size":1900,"colname":"offcat1"},{"name":"violentTheft","size":43,"colname":"offcat1"}],"colname":"decade"},{"name":1810,"children":[{"name":"breakingPeace","size":2,"colname":"offcat1"},{"name":"damage","size":2,"colname":"offcat1"},{"name":"deception","size":27,"colname":"offcat1"},{"name":"kill","size":21,"colname":"offcat1"},{"name":"miscellaneous","size":19,"colname":"offcat1"},{"name":"royalOffences","size":112,"colname":"offcat1"},{"name":"sexual","size":5,"colname":"offcat1"},{"name":"theft","size":2331,"colname":"offcat1"},{"name":"violentTheft","size":42,"colname":"offcat1"}],"colname":"decade"}],"colname":"gender"},{"name":"fm","children":[{"name":1720,"children":[{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":5,"colname":"offcat1"},{"name":"kill","size":5,"colname":"offcat1"},{"name":"miscellaneous","size":3,"colname":"offcat1"},{"name":"royalOffences","size":9,"colname":"offcat1"},{"name":"theft","size":161,"colname":"offcat1"},{"name":"violentTheft","size":6,"colname":"offcat1"}],"colname":"decade"},{"name":1730,"children":[{"name":"breakingPeace","size":1,"colname":"offcat1"},{"name":"deception","size":4,"colname":"offcat1"},{"name":"kill","size":3,"colname":"offcat1"},{"name":"royalOffences","size":4,"colname":"offcat1"},{"name":"sexual","size":1,"colname":"offcat1"},{"name":"theft","size":165,"colname":"offcat1"},{"name":"violentTheft","size":23,"colname":"offcat1"}],"colname":"decade"},{"name":1740,"children":[{"name":"deception","size":4,"colname":"offcat1"},{"name":"kill","size":2,"colname":"offcat1"},{"name":"royalOffences","size":2,"colname":"offcat1"},{"name":"theft","size":162,"colname":"offcat1"},{"name":"violentTheft","size":20,"colname":"offcat1"}],"colname":"decade"},{"name":1750,"children":[{"name":"breakingPeace","size":1,"colname":"offcat1"},{"name":"deception","size":4,"colname":"offcat1"},{"name":"kill","size":5,"colname":"offcat1"},{"name":"miscellaneous","size":2,"colname":"offcat1"},{"name":"royalOffences","size":3,"colname":"offcat1"},{"name":"sexual","size":2,"colname":"offcat1"},{"name":"theft","size":125,"colname":"offcat1"},{"name":"violentTheft","size":12,"colname":"offcat1"}],"colname":"decade"},{"name":1760,"children":[{"name":"deception","size":4,"colname":"offcat1"},{"name":"kill","size":5,"colname":"offcat1"},{"name":"theft","size":152,"colname":"offcat1"},{"name":"violentTheft","size":9,"colname":"offcat1"}],"colname":"decade"},{"name":1770,"children":[{"name":"deception","size":2,"colname":"offcat1"},{"name":"kill","size":2,"colname":"offcat1"},{"name":"miscellaneous","size":3,"colname":"offcat1"},{"name":"royalOffences","size":13,"colname":"offcat1"},{"name":"sexual","size":2,"colname":"offcat1"},{"name":"theft","size":217,"colname":"offcat1"},{"name":"violentTheft","size":17,"colname":"offcat1"}],"colname":"decade"},{"name":1780,"children":[{"name":"breakingPeace","size":1,"colname":"offcat1"},{"name":"damage","size":2,"colname":"offcat1"},{"name":"deception","size":5,"colname":"offcat1"},{"name":"miscellaneous","size":1,"colname":"offcat1"},{"name":"royalOffences","size":33,"colname":"offcat1"},{"name":"sexual","size":1,"colname":"offcat1"},{"name":"theft","size":189,"colname":"offcat1"},{"name":"violentTheft","size":16,"colname":"offcat1"}],"colname":"decade"},{"name":1790,"children":[{"name":"deception","size":2,"colname":"offcat1"},{"name":"kill","size":4,"colname":"offcat1"},{"name":"miscellaneous","size":1,"colname":"offcat1"},{"name":"royalOffences","size":23,"colname":"offcat1"},{"name":"theft","size":180,"colname":"offcat1"},{"name":"violentTheft","size":11,"colname":"offcat1"}],"colname":"decade"},{"name":1800,"children":[{"name":"breakingPeace","size":1,"colname":"offcat1"},{"name":"deception","size":1,"colname":"offcat1"},{"name":"kill","size":3,"colname":"offcat1"},{"name":"miscellaneous","size":3,"colname":"offcat1"},{"name":"royalOffences","size":16,"colname":"offcat1"},{"name":"theft","size":182,"colname":"offcat1"},{"name":"violentTheft","size":9,"colname":"offcat1"}],"colname":"decade"},{"name":1810,"children":[{"name":"breakingPeace","size":2,"colname":"offcat1"},{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":7,"colname":"offcat1"},{"name":"kill","size":2,"colname":"offcat1"},{"name":"miscellaneous","size":5,"colname":"offcat1"},{"name":"royalOffences","size":37,"colname":"offcat1"},{"name":"sexual","size":1,"colname":"offcat1"},{"name":"theft","size":302,"colname":"offcat1"},{"name":"violentTheft","size":15,"colname":"offcat1"}],"colname":"decade"}],"colname":"gender"},{"name":"m","children":[{"name":1720,"children":[{"name":"breakingPeace","size":23,"colname":"offcat1"},{"name":"damage","size":5,"colname":"offcat1"},{"name":"deception","size":87,"colname":"offcat1"},{"name":"kill","size":135,"colname":"offcat1"},{"name":"miscellaneous","size":48,"colname":"offcat1"},{"name":"royalOffences","size":16,"colname":"offcat1"},{"name":"sexual","size":100,"colname":"offcat1"},{"name":"theft","size":2304,"colname":"offcat1"},{"name":"violentTheft","size":261,"colname":"offcat1"}],"colname":"decade"},{"name":1730,"children":[{"name":"breakingPeace","size":5,"colname":"offcat1"},{"name":"damage","size":5,"colname":"offcat1"},{"name":"deception","size":74,"colname":"offcat1"},{"name":"kill","size":113,"colname":"offcat1"},{"name":"miscellaneous","size":13,"colname":"offcat1"},{"name":"royalOffences","size":9,"colname":"offcat1"},{"name":"sexual","size":76,"colname":"offcat1"},{"name":"theft","size":2197,"colname":"offcat1"},{"name":"violentTheft","size":284,"colname":"offcat1"}],"colname":"decade"},{"name":1740,"children":[{"name":"breakingPeace","size":12,"colname":"offcat1"},{"name":"damage","size":1,"colname":"offcat1"},{"name":"deception","size":70,"colname":"offcat1"},{"name":"kill","size":88,"colname":"offcat1"},{"name":"miscellaneous","size":19,"colname":"offcat1"},{"name":"royalOffences","size":47,"colname":"offcat1"},{"name":"sexual","size":48,"colname":"offcat1"},{"name":"theft","size":1906,"colname":"offcat1"},{"name":"violentTheft","size":208,"colname":"offcat1"}],"colname":"decade"},{"name":1750,"children":[{"name":"breakingPeace","size":7,"colname":"offcat1"},{"name":"deception","size":147,"colname":"offcat1"},{"name":"kill","size":83,"colname":"offcat1"},{"name":"miscellaneous","size":55,"colname":"offcat1"},{"name":"royalOffences","size":30,"colname":"offcat1"},{"name":"sexual","size":50,"colname":"offcat1"},{"name":"theft","size":1936,"colname":"offcat1"},{"name":"violentTheft","size":230,"colname":"offcat1"}],"colname":"decade"},{"name":1760,"children":[{"name":"breakingPeace","size":20,"colname":"offcat1"},{"name":"damage","size":5,"colname":"offcat1"},{"name":"deception","size":140,"colname":"offcat1"},{"name":"kill","size":74,"colname":"offcat1"},{"name":"miscellaneous","size":13,"colname":"offcat1"},{"name":"royalOffences","size":11,"colname":"offcat1"},{"name":"sexual","size":40,"colname":"offcat1"},{"name":"theft","size":2320,"colname":"offcat1"},{"name":"violentTheft","size":176,"colname":"offcat1"}],"colname":"decade"},{"name":1770,"children":[{"name":"breakingPeace","size":25,"colname":"offcat1"},{"name":"damage","size":8,"colname":"offcat1"},{"name":"deception","size":141,"colname":"offcat1"},{"name":"kill","size":79,"colname":"offcat1"},{"name":"miscellaneous","size":64,"colname":"offcat1"},{"name":"royalOffences","size":52,"colname":"offcat1"},{"name":"sexual","size":55,"colname":"offcat1"},{"name":"theft","size":3324,"colname":"offcat1"},{"name":"violentTheft","size":384,"colname":"offcat1"}],"colname":"decade"},{"name":1780,"children":[{"name":"breakingPeace","size":83,"colname":"offcat1"},{"name":"damage","size":16,"colname":"offcat1"},{"name":"deception","size":229,"colname":"offcat1"},{"name":"kill","size":77,"colname":"offcat1"},{"name":"miscellaneous","size":91,"colname":"offcat1"},{"name":"royalOffences","size":100,"colname":"offcat1"},{"name":"sexual","size":33,"colname":"offcat1"},{"name":"theft","size":4577,"colname":"offcat1"},{"name":"violentTheft","size":604,"colname":"offcat1"}],"colname":"decade"},{"name":1790,"children":[{"name":"breakingPeace","size":23,"colname":"offcat1"},{"name":"damage","size":9,"colname":"offcat1"},{"name":"deception","size":175,"colname":"offcat1"},{"name":"kill","size":62,"colname":"offcat1"},{"name":"miscellaneous","size":62,"colname":"offcat1"},{"name":"royalOffences","size":115,"colname":"offcat1"},{"name":"sexual","size":58,"colname":"offcat1"},{"name":"theft","size":3566,"colname":"offcat1"},{"name":"violentTheft","size":272,"colname":"offcat1"}],"colname":"decade"},{"name":1800,"children":[{"name":"breakingPeace","size":36,"colname":"offcat1"},{"name":"damage","size":6,"colname":"offcat1"},{"name":"deception","size":145,"colname":"offcat1"},{"name":"kill","size":58,"colname":"offcat1"},{"name":"miscellaneous","size":77,"colname":"offcat1"},{"name":"royalOffences","size":94,"colname":"offcat1"},{"name":"sexual","size":65,"colname":"offcat1"},{"name":"theft","size":4784,"colname":"offcat1"},{"name":"violentTheft","size":208,"colname":"offcat1"}],"colname":"decade"},{"name":1810,"children":[{"name":"breakingPeace","size":64,"colname":"offcat1"},{"name":"damage","size":13,"colname":"offcat1"},{"name":"deception","size":238,"colname":"offcat1"},{"name":"kill","size":101,"colname":"offcat1"},{"name":"miscellaneous","size":102,"colname":"offcat1"},{"name":"royalOffences","size":317,"colname":"offcat1"},{"name":"sexual","size":89,"colname":"offcat1"},{"name":"theft","size":7956,"colname":"offcat1"},{"name":"violentTheft","size":442,"colname":"offcat1"}],"colname":"decade"}],"colname":"gender"}],"name":"root"},"options":{"legendOrder":null,"colors":null,"valueField":"size","percent":true,"count":false,"explanation":null,"breadcrumb":[],"legend":false,"sortFunction":null,"sumNodes":true}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>These are very nice, and I think the “breadcrumbs” approach is smart, but they’re not as swish as my D3 originals.</p>
+</section>
+<section id="circle-packing-diagram" class="level2">
+<h2 class="anchored" data-anchor-id="circle-packing-diagram">Circle Packing diagram</h2>
+<p>The package <a href="https://rstudio.github.io/r2d3/index.html">r2d3</a> takes a different approach from a self-contained one like {sunburstR} above. Instead, you write a D3 script which you include in your R script; {r2d3} will <a href="https://rstudio.github.io/r2d3/articles/data_conversion.html">convert data</a> and automatically provide some of the key variables to simplify things, but you’ll need to have some understanding of D3 to go beyond the examples provided in the {r2d3} documentation.</p>
+<p>Let’s try out one of the gallery examples: because I think circlepacking graphs are a fun way to show hierarchical data, that’s the one I’ve <a href="https://rstudio.github.io/r2d3/articles/gallery/circlepacking/">chosen here</a>.</p>
+<p>For this one, I’ll use the offences json data. The area of each leaf circle in a circle-packing diagram is proportional to its value.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r2d3)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">r2d3</span>(<span class="at">data =</span> offences_c18_json, <span class="at">d3_version =</span> <span class="dv">4</span>, <span class="at">script =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"site_data/obo/circlepacking.js"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="r2d3 html-widget html-fill-item" id="htmlwidget-46fb30ef5c29964d419a" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-46fb30ef5c29964d419a">{"x":{"data":{"name":"offences","children":[{"name":"theft","children":[{"name":"animalTheft","size":1364},{"name":"burglary","size":2733},{"name":"embezzlement","size":17},{"name":"extortion","size":56},{"name":"gameLawOffence","size":21},{"name":"grandLarceny","size":22154},{"name":"housebreaking","size":752},{"name":"mailTheft","size":16},{"name":"pettyLarceny","size":857},{"name":"pocketpicking","size":1748},{"name":"receiving","size":1807},{"name":"shoplifting","size":1790},{"name":"theftFromPlace","size":5308},{"name":"otherTheft","size":2591}]},{"name":"damage","children":[{"name":"arson","size":56},{"name":"otherDamage","size":29}]},{"name":"breakingPeace","children":[{"name":"assault","size":44},{"name":"wounding","size":82},{"name":"libel","size":7},{"name":"riot","size":107},{"name":"threateningBehaviour","size":5},{"name":"vagabonding","size":1},{"name":"barratry","size":2},{"name":"otherPeace","size":4}]},{"name":"sexual","children":[{"name":"assaultWithIntent","size":10},{"name":"bigamy","size":292},{"name":"rape","size":256},{"name":"sodomy","size":56},{"name":"assaultWithSodomiticalIntent","size":30},{"name":"keepingABrothel","size":2},{"name":"otherSexual","size":3}]},{"name":"royalOffences","children":[{"name":"coiningOffences","size":459},{"name":"religiousOffences","size":9},{"name":"seditiousWords","size":28},{"name":"taxOffences","size":129},{"name":"treason","size":11},{"name":"seditiousLibel","size":25},{"name":"seducingAllegiance","size":14},{"name":"otherRoyal","size":3}]},{"name":"deception","children":[{"name":"bankruptcy","size":20},{"name":"forgery","size":605},{"name":"fraud","size":448},{"name":"perjury","size":378},{"name":"otherDeception","size":2}]},{"name":"violentTheft","children":[{"name":"highwayRobbery","size":2928},{"name":"robbery","size":503},{"name":"otherViolentTheft","size":0}]},{"name":"killing","children":[{"name":"infanticide","size":131},{"name":"murder","size":944},{"name":"manslaughter","size":40},{"name":"pettyTreason","size":16},{"name":"otherKilling","size":23}]},{"name":"miscellaneous","children":[{"name":"kidnapping","size":5},{"name":"pervertingJustice","size":126},{"name":"conspiracy","size":33},{"name":"returningFromTransportation","size":243},{"name":"piracy","size":2},{"name":"otherMisc","size":72}]}]},"type":"list","container":"svg","options":null,"script":"var d3Script = function(d3, r2d3, data, svg, width, height, options, theme, console) {\nthis.d3 = d3;\n\nsvg = d3.select(svg.node());\n/* R2D3 Source File:  /Users/vanity/r_projects/mindseye/mindseye/site_data/obo/circlepacking.js */\n// !preview r2d3 data = jsonlite::read_json(\"flare.json\"), d3_version = 4\n\n// Based on: https://bl.ocks.org/mbostock/4063530\n\nvar diameter = Math.min(width, height),\n    g = svg.append(\"g\").attr(\n      \"transform\",\n      \"translate(\" + (width - diameter) / 2 + \",\" + (height - diameter) / 2 + \")\"),\n    format = d3.format(\",d\");\n\nvar pack = d3.pack()\n    .size([diameter - 4, diameter - 4]);\n\nr2d3.onRender(function(root, svg, width, height, options) {\n  root = d3.hierarchy(root)\n      .sum(function(d) { return d.size; })\n      .sort(function(a, b) { return b.value - a.value; });\n\n  var node = g.selectAll(\".node\")\n    .data(pack(root).descendants())\n    .enter().append(\"g\")\n      .attr(\"class\", function(d) { return d.children ? \"node\" : \"leaf node\"; })\n      .attr(\"transform\", function(d) { return \"translate(\" + d.x + \",\" + d.y + \")\"; });\n\n  node.append(\"title\")\n      .text(function(d) { return d.data.name + \"\\n\" + format(d.value); });\n\n  node.append(\"circle\")\n      .attr(\"r\", function(d) { return d.r; });\n\n  node.filter(function(d) { return !d.children; }).append(\"text\")\n      .attr(\"dy\", \"0.3em\")\n      .attr(\"font-size\", Math.max(width, height) / 100)\n      .text(function(d) { return d.data.name.substring(0, d.r / 3); });\n});\n};","style":"/* R2D3 Source File:  /Users/vanity/r_projects/mindseye/mindseye/site_data/obo/circlepacking.css */\ncircle {\n  fill: rgb(31, 119, 180);\n  fill-opacity: .25;\n  stroke: rgb(31, 119, 180);\n  stroke-width: 1px;\n}\n\n.leaf circle {\n  fill: #ff7f0e;\n  fill-opacity: 1;\n}\n\ntext {\n  font: sans-serif;\n  text-anchor: middle;\n}","version":4,"theme":{"default":{"background":"#FFFFFF","foreground":"#000000"},"runtime":null},"useShadow":true},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Hover over the circles to see the counts. I guess that counts as slightly interactive, but to go properly interactive with this package, it looks as though I may need to learn something about <a href="https://shiny.rstudio.com/">Shiny apps</a>. So that will have to wait for another post.</p>
+</section>
+<section id="networks" class="level2">
+<h2 class="anchored" data-anchor-id="networks">Networks</h2>
+<p>Network graphs are among the most famous uses of interactive dataviz, and there is a cool R package for this, <a href="http://christophergandrud.github.io/networkD3/">networkD3</a>, with plenty of customisation options. I’ll make a <a href="https://en.wikipedia.org/wiki/Force-directed_graph_drawing">force-directed network graph</a> of offence subcategories that appear together in trials. (The package also includes other types of network graph, eg Sankey and radial diagrams. )</p>
+<p>(My method using widyr::pairwise_count() to create pairs for the edges list is not particularly elegant but it’ll do for now.)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(widyr)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(networkD3)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># widyr::pairwise to create pairs for edges list</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>offences_pairs <span class="ot">&lt;-</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>offences_1720_csv <span class="sc">|&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">offence =</span> <span class="fu">paste</span>(offcat, offsubcat, <span class="at">sep=</span><span class="st">"__"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(trial_id, offence) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_count</span>(offence, <span class="at">sort =</span> T) <span class="sc">|&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n<span class="sc">&gt;</span><span class="dv">9</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>n) <span class="sc">|&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_count</span>(offence, trial_id, <span class="at">upper=</span><span class="cn">FALSE</span>, <span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n<span class="sc">&gt;</span><span class="dv">1</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># use the pairs to make nodes and edges</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>offences1720_nodes <span class="ot">&lt;-</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>offences_pairs <span class="sc">|&gt;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>n) <span class="sc">|&gt;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(item1<span class="sc">:</span>item2, <span class="at">names_to=</span><span class="st">"t"</span>, <span class="at">values_to=</span><span class="st">"group_label"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(group_label) <span class="sc">|&gt;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(group_label) <span class="sc">|&gt;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(group_label, <span class="at">into=</span><span class="fu">c</span>(<span class="st">"group"</span>, <span class="st">"label"</span>), <span class="at">sep=</span><span class="st">"__"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowid_to_column</span>(<span class="st">"id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id=</span>id<span class="dv">-1</span>)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>offences1720_edges <span class="ot">&lt;-</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>offences_pairs <span class="sc">|&gt;</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(offences1720_nodes <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">s=</span>id), <span class="at">by=</span><span class="fu">c</span>(<span class="st">"item1"</span><span class="ot">=</span><span class="st">"group_label"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(offences1720_nodes <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">t=</span>id), <span class="at">by=</span><span class="fu">c</span>(<span class="st">"item2"</span><span class="ot">=</span><span class="st">"group_label"</span>), <span class="at">suffix=</span><span class="fu">c</span>(<span class="st">"_a"</span>, <span class="st">"_b"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> n<span class="sc">/</span><span class="dv">20</span>) <span class="co"># for appearance</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The network graph uses the the offence categories as groups (colours of the nodes) and the width of the edges to indicate the strength of the pairing.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">forceNetwork</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Links =</span> <span class="fu">as.data.frame</span>(offences1720_edges),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nodes =</span> <span class="fu">as.data.frame</span>(offences1720_nodes),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Source=</span><span class="st">"s"</span>, <span class="at">Target=</span><span class="st">"t"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">500</span>, <span class="at">width=</span><span class="dv">900</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">NodeID =</span> <span class="st">"label"</span>, <span class="at">Group =</span> <span class="st">"group"</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Value =</span> <span class="st">"weight"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">opacity =</span> <span class="fl">0.8</span>, <span class="at">fontSize =</span> <span class="dv">14</span>, </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">zoom =</span> <span class="cn">TRUE</span>, <span class="at">opacityNoHover =</span> <span class="cn">TRUE</span>, <span class="at">bounded =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-6c3551ecdd66bd930c89" style="width:100%;height:361px;" class="forceNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6c3551ecdd66bd930c89">{"x":{"links":{"source":[20,27,17,20,22,20,25,24,28,20,25,27,20,27,25,20,28,17,17,20,27,20,28,27,17,4,20,20,17,20,27,27,17,22,17,17,28,22,27,25,20,27,28,22,28,20,20,24,27,28,28,17,27,26,20,27,25,20,27,29,8,28,22,15,28,20,22,27,7,5,20,20,27,17,26,11,8,12,28,16,28],"target":[25,25,25,27,25,22,26,25,25,17,16,17,26,22,21,16,29,28,21,28,26,21,7,21,22,5,24,5,26,9,28,16,16,16,29,9,21,21,9,9,2,24,22,26,16,23,29,29,5,14,24,7,23,21,4,4,29,10,10,1,12,9,9,13,26,7,23,29,29,6,18,8,8,8,9,9,9,9,19,3,0],"value":[51.05,13.25,10.35,5.05,4,3.65,2.55,2.35,2.2,2.15,2.15,1.75,1.3,1.25,1.25,1.2,1.2,0.9,0.85,0.75,0.6,0.6,0.55,0.55,0.5,0.45,0.4,0.4,0.35,0.35,0.3,0.3,0.3,0.3,0.3,0.3,0.25,0.25,0.25,0.25,0.25,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1],"colour":["#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666"]},"nodes":{"name":["assault","wounding","arson","other","forgery","fraud","perjury","murder","other","pervertingJustice","returnFromTransportation","coiningOffences","taxOffences","assaultWithSodomiticalIntent","rape","sodomy","animalTheft","burglary","embezzlement","extortion","grandLarceny","housebreaking","other","pettyLarceny","pocketpicking","receiving","shoplifting","theftFromPlace","highwayRobbery","robbery"],"group":["breakingPeace","breakingPeace","damage","damage","deception","deception","deception","kill","miscellaneous","miscellaneous","miscellaneous","royalOffences","royalOffences","sexual","sexual","sexual","theft","theft","theft","theft","theft","theft","theft","theft","theft","theft","theft","theft","violentTheft","violentTheft"]},"options":{"NodeID":"label","Group":"group","colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":14,"fontFamily":"serif","clickTextSize":35,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-30,"opacity":0.8,"zoom":true,"legend":true,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":true,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>I feel like I’m finally getting somewhere!</p>
+</section>
+<section id="a-few-more-resources" class="level2">
+<h2 class="anchored" data-anchor-id="a-few-more-resources">A few more resources</h2>
+<ul>
+<li><a href="http://www.rebeccabarter.com/blog/2017-04-20-interactive/">Rebecca Barter, Interactive visualization in R</a></li>
+<li><a href="http://www.sthda.com/english/articles/33-social-network-analysis/137-interactive-network-visualization-using-r/">STHDA, Interactive network visualization using R</a> (STHDA has other relevant articles; try a search)</li>
+<li><a href="https://rviews.rstudio.com/2018/09/20/shiny-r2d3/">Edgar Ruiz, Interactive plots in Shiny</a></li>
+</ul>
+<p>Packages to try out:</p>
+<ul>
+<li><a href="https://github.com/mattflor/chorddiag">chorddiag</a> D3 chord diagrams in R</li>
+<li><a href="https://blog.rstudio.com/2015/06/24/d3heatmap/">d3heatmap</a> (also need <a href="https://www.htmlwidgets.org/">html widgets</a>)</li>
+<li><a href="https://rstudio.github.io/dygraphs/">dygraphs for R</a></li>
+<li><a href="https://rstudio.github.io/leaflet/">Leaflet for R</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/mindseye\.sharonhoward\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Unless otherwise stated, code and visualisations are <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY SA 4.0</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

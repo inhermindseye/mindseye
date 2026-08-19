@@ -1,0 +1,12 @@
+---
+title: "Westminster Coroners Inquests, 1760-1799"
+author: "Sharon Howard"
+date: "2025-11-14"
+categories: [interactive, LL, death]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[Westminster Coroners' Inquests dashboard](https://sharonhoward.github.io/mindseye_of/inquests.html)</button>
+</div>
+
+A dashboard made in Observable Framework, exploring gender and verdicts across nine London parishes between 1760 and 1799.

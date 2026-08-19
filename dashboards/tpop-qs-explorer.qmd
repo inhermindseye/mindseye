@@ -1,0 +1,17 @@
+---
+title: "TPOP Quarter Sessions Petitions Explorer"
+date: "2026-01-31"
+author: "Sharon Howard"
+categories: [interactive, TPOP, petitioning]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[Quarter Sessions Petitions Explorer](https://the-power-of-petitioning.github.io/interactive/qs-petitions-explorer.html)</button>
+</div>
+
+Summary: an interactive data explorer for 1700 petitions to magistrates, 1573-1800.
+
+Source: the [Power of Petitioning](https://petitioning.history.ac.uk/) project.  
+
+
+

@@ -1,0 +1,389 @@
+---
+title: "Petitions to the House of Commons, 1780-1918"
+description: "Trends in large-scale political petitioning in the long 19th century"
+author: "Sharon Howard"
+date: '2025-04-28'
+categories: [petitioning, politics]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+
+This post explores a dataset from the project *Rethinking Petitions, Parliament and People in the Long Nineteenth Century*, led by Prof. Richard Huzzey, which is available open access from the UKDA (details at the bottom of the past).
+There's also an accompanying 2020 [*Past and Present* article](https://academic.oup.com/past/article/248/1/123/5819582) by Richard Huzzey and Henry Miller (also open access) which goes into much more detail than this post will do.
+
+> The data was produced as part of a project examining the role of petitions and petitioning in the UK during the ‘long’ nineteenth century (1780-1918) as a universal form of political expression, participation, mobilisation and representative before democracy... in this period many more people petitioned than voted... Petitioning was key to all the major mass campaigns and social movements of the time, such as anti-slavery. 
+
+The dataset records over a million public petitions to the House of Commons between 1780 and 1918, by the subjects that they addressed, placed in broader categories to facilitate analysis. For the 1833 to 1918 period, the data also records the 165 million signatures on public petitions to the House of Commons, classified by subject and category. [NB: public petitions are defined as "requests for measures of general applicability rather than demands for specific legislation limited to a locality or particular group".]
+
+
+
+## Overview of change over time
+
+```{r includes}
+
+library(scales)  
+library(janitor) 
+library(readxl)
+library(glue)
+
+library(knitr)
+library(kableExtra)
+
+library(slider)
+library(patchwork)
+library(treemapify)
+library(ggridges)
+
+library(tidytext)
+library(tidyverse)
+
+library(ggthemes)
+theme_set(theme_minimal()) # set preferred ggplot theme 
+
+
+
+public_petitions_xlsx_1833 <-
+  read_excel(here::here("site_data/tpop/Public_Petitions_1833-1918.xlsx")) |>
+  clean_names("snake") |>
+  # nothing in these
+  select(-x10:-x16)
+
+public_petitions_1833 <-
+  public_petitions_xlsx_1833 |>
+  mutate(id_no = paste(session, number, sep="_")) |>
+  mutate(year = session) |>
+  relocate(id_no, year)|>
+  mutate(category = str_replace_all(new_category, "\\s+", " ")) |>
+  # rename Infrastructure and Communications > Infrastructure
+  mutate(category = if_else(category=="Infrastructure and Communications", "Infrastructure", category)) |>
+  mutate(across(c(subject, sub_category), ~str_replace_all(., "\\s+", " ")))  |>  
+  filter(!is.na(number_of_public_petitions)) 
+
+public_petitions_xlsx_1780 <-
+  read_excel(here::here("site_data/tpop/Public_Petitions_1780-1832.xlsx"), guess_max = 15000) |>
+  clean_names("snake")
+
+public_petitions_1780 <-
+public_petitions_xlsx_1780 |>
+  add_count(id_no) |> 
+  filter(n==1) |> select(-n)  |>
+  mutate(date = str_remove(date, "in$")) |>
+  mutate(date = str_replace(date, "/1842$", "/1832")) |>
+  mutate(date = str_replace(date, "42857", "1/5/1815")) |>
+  mutate(date = str_replace(date, "May", "05")) |>
+  mutate(date = str_replace(date, "/61811", "/6/1811")) |>
+  mutate(date = str_replace(date, "30/2/1788", "29/2/1788")) |>
+  mutate(date = str_replace(date, "^20/1803", "20/6/1803")) |>
+  mutate(date = str_replace(date, "10//1822", "10/7/1822")) |>
+  mutate(date = parse_date_time(date, "dmy")) |>
+  mutate(year = year(date)) |>
+  relocate(id_no, year) |>
+  mutate(across(c(category, subject), ~str_replace_all(., "\\s+", " "))) |>  
+  filter(!is.na(number_of_petitions))
+
+
+petitions_1833_year_category_subcat <-
+  public_petitions_1833 |>
+  group_by(year, category, sub_category) |>
+  summarise(petitions=sum(number_of_public_petitions), signatures=sum(number_of_signatures), .groups = "drop_last") |>
+  ungroup()
+
+petitions_1833_year_category <-
+  petitions_1833_year_category_subcat |>
+  group_by(year, category) |>
+  summarise(petitions=sum(petitions), signatures=sum(signatures), .groups = "drop_last") |>
+  ungroup()
+
+petitions_1833_year <-
+  petitions_1833_year_category |>
+  group_by(year) |>
+  summarise(petitions=sum(petitions), signatures=sum(signatures) ) |>
+  ungroup()
+
+
+petitions_1780_year_category <-
+public_petitions_1780 |>
+  group_by(year, category) |>
+  summarise(petitions=sum(number_of_petitions), .groups = "drop_last") |>
+  ungroup()
+
+petitions_1780_year <-
+  petitions_1780_year_category |>
+  group_by(year) |>
+  summarise(petitions=sum(petitions)) |>
+  ungroup()
+
+petitions_all_year <-
+  bind_rows(
+    petitions_1780_year,
+    petitions_1833_year
+  )
+
+petitions_all_year_category <-
+  bind_rows(
+    petitions_1780_year_category,
+    petitions_1833_year_category
+  )
+```
+
+There are a lot of fluctuations in annual totals so I'll use rolling averages (which are really easy to do with the [slider](https://slider.r-lib.org/) package). Makes it easier to see there are two main peaks, in the 1840s and the 1870s. A later peak is more of an isolated spike.
+
+```{r}
+petitions_all_year |>
+  mutate(rmp = slide_dbl(petitions, mean, .before = 5) ) |>
+  ggplot(aes(year, petitions)) +
+  geom_line() +
+  labs(y="counts")  +
+
+petitions_all_year |>
+  mutate(rmp = slide_dbl(petitions, mean, .before = 5) ) |>
+  ggplot(aes(year, rmp)) +
+  geom_line() +
+  labs(y="rolling avg") +
+  
+  plot_layout(ncol=1) +
+  plot_annotation(title = "Public petitions per year: raw counts vs 5 year rolling averages")
+```
+
+
+
+## Categories 
+
+In the dataset, petition subjects were divided into nine categories (with sub-categories for 1833-1918):
+
+1. `Parliament` (inc. elections and representation, parliamentary procedure, monarchy, constitution)
+2. `Ecclesiastical` (inc. church-state relations, established churches, religious liberty, sabbatarianism)
+3. `Colonies` (inc. colonies and their governance, slave trade and slavery, colonial wars)
+4. `Taxes` (inc. direct and indirect taxes, tariffs and trade, licensing)
+5. `Legal` (inc. law and justice, crime and punishment)
+6. `Social` (inc. public health, moral reform, poor law/poverty, labour, education, culture)
+7. `Economy` (inc. finance and commerce, sectors of the economy, land and agriculture)
+8. `Infrastructure` (inc. railways, waterways, roads, communications, local government)
+9. `War and Peace` (inc. foreign policy, war, defence, except for colonial wars)
+
+[See Huzzey and Miller *P&P* article p.13 for categories data presented in a table.]
+
+A treemap is a nice way to see the relative size of the categories.
+
+```{r}
+petitions_all_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions)) |>
+  ungroup() |>
+  ggplot(aes(area=petitions, fill=category, label=category)) +
+  geom_treemap(show.legend = F) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", reflow = TRUE, grow = TRUE) +
+  #scale_fill_colorblind() + # not enough values available...
+  scale_fill_tableau() +
+  labs(title="Treemap of petition categories 1780-1918")
+```
+
+However, when broken down into 1780-1832 and 1833-1918 periods, there are substantial differences. Because the numbers are so much larger, the 1833-1918 treemap looks virtually identical to the overall one.
+
+```{r}
+petitions_1833_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions)) |>
+  ungroup() |>
+  ggplot(aes(area=petitions, fill=category, label=category)) +
+  geom_treemap(show.legend = F) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", reflow = TRUE, grow = TRUE) +
+  scale_fill_tableau() +
+  labs(title="Treemap of petition categories 1833-1918")
+```
+
+The only 1780-1832 category that's different enough to register in the overall treemap at all is `Colonies`. Several categories are more evenly distributed than in the later period, and the relative unimportance of `Social` issues is striking. 
+
+```{r}
+petitions_1780_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions)) |>
+  ungroup() |>
+  ggplot(aes(area=petitions, fill=category, label=category)) +
+  geom_treemap(show.legend = F) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", reflow = TRUE, grow = TRUE) +
+  scale_fill_tableau() +
+  labs(title="Treemap of petition categories 1780-1832")
+```
+
+Bar charts are less pretty than treemaps, but they do make comparison of the rankings easier.
+
+```{r}
+petitions_1780_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions) ) |>
+  ungroup() |>
+  mutate(category = fct_reorder(category, petitions)) |>
+  ggplot(aes(petitions, category)) +
+  geom_col() +
+  labs(y=NULL, x="petitions", title="1780-1832") +
+  
+petitions_1833_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions) ) |>
+  ungroup() |>
+  mutate(category = fct_reorder(category, petitions)) |>
+  ggplot(aes(petitions, category)) +
+  geom_col() +
+  scale_x_continuous(labels = label_number(big.mark = ",")) +
+  labs(y=NULL, x="petitions", title="1833-1918") +
+
+  
+plot_annotation(title = "Popularity of categories compared")
+```
+
+
+I can do more detailed visualisations of changing priorities using [ridgeline plots](https://wilkelab.org/ggridges/articles/introduction.html). 
+
+
+(I'll split into two periods again, because in a combined chart 1780-32 is too small to see anything much at all.)
+
+The way this works is to divide up the data into roughly 5-year "bins" and calculate the proportion ("density") of each bin in the category total. Because it's proportional, it doesn't matter that categories are different sizes, making it much easier to compare how they change. 
+
+So for 1780-1832 we can see that `War and Peace` is the one category getting any attention before the 1810s, and can also see the take-off (but with some variations) right at the end of the period.
+
+```{r}
+petitions_1780_year_category |>
+  uncount(petitions) |>
+  mutate(category=fct_rev(category)) |>
+  ggplot(aes(x = year, y = category, group=category, fill=category, height = after_stat(density))) +   ## height doesn't seem to make any difference?  
+  geom_density_ridges(stat = "binline", bins = 11, scale = 0.95, draw_baseline = FALSE, show.legend = FALSE) +
+  # `expand` option for both axes to remove unneeded padding 
+  scale_y_discrete(expand = c(0, 0)) +     
+  scale_x_continuous(expand = c(0, 0), breaks = seq(1780, 1840, 10) ) +  
+  scale_fill_tableau(direction = -1) +
+  coord_cartesian(clip = "off") +  #clip = "off" to avoid clipping of the very top of the top ridgeline
+  theme_ridges(font_size=12) +
+  theme(axis.text.y = element_text(vjust = 0), legend.position = "none", 
+        panel.grid.minor.x=element_blank(),
+        panel.grid.major.x=element_blank()
+        ) +
+  theme_ridges() +
+  labs(y=NULL, title = "Petition categories 1780-1832")
+```
+
+The 1833-1918 ridgeline plot highlights the rapid decline of `Colonies` after 1840. There are differences in distribution of the two leading categories: `Ecclesiastical` is quite evenly spread, whereas `Social` has more ups and downs.
+
+```{r}
+petitions_1833_year_category |>
+  select(-signatures) |>
+  # aha. but shurely it should be possible to do it without this.
+  uncount(petitions) |>
+  mutate(category=fct_rev(category)) |>
+  ggplot(aes(x = year, y = category, group=category, fill=category, height = after_stat(density))) +   ## height doesn't seem to make any difference?  
+  geom_density_ridges(stat = "binline", bins = 18, scale = 0.95, draw_baseline = FALSE) +
+  # `expand` option for both axes to remove unneeded padding 
+  scale_y_discrete(expand = c(0, 0)) +     
+  scale_x_continuous(expand = c(0, 0), breaks = seq(1830, 1920, 10) ) +  
+  scale_fill_tableau(direction = -1) +
+  coord_cartesian(clip = "off") +  #clip = "off" to avoid clipping of the very top of the top ridgeline
+  theme_ridges(font_size=12) +
+  theme(axis.text.y = element_text(vjust = 0), legend.position = "none", 
+        panel.grid.minor.x=element_blank(),
+        panel.grid.major.x=element_blank()
+        ) +
+  labs(y=NULL, title="Petition categories 1833-1918")
+```
+
+
+
+
+
+## Signatures and petitions (1833-1918)
+
+There are in total ``r label_comma()(sum(petitions_1833_year$signatures))`` signatures (!), an average of ``r round(sum(petitions_1833_year$signatures)/sum(petitions_1833_year$petitions), 1)`` signatures per petition. 
+
+```{r include=FALSE}
+#sum(petitions_1833_year$signatures)
+# 164,806,884
+# petitions_1833_year |>
+#   summarise(petitions=sum(petitions), signatures=sum(signatures)) |>
+#   mutate(sigpp = signatures/petitions)
+# 172.7669	
+## TILr using scales::label_**() outside a ggplot! label_comma()(sum(petitions_1833_year$signatures))
+```
+
+
+Broadly speaking, signatures follow the same overall trends as petitions. But the spike in the early years is more prominent: *petitions* are at their height around 1875, whereas *signatures* peak in the 1840s. 
+
+```{r}
+petitions_1833_year |>
+  mutate(petitions = slide_dbl(petitions, mean, .before = 5), signatures=slide_dbl(signatures, mean, .before = 5)) |>
+  pivot_longer(c(petitions, signatures), names_to = "c", values_to = "rm") |>
+  ggplot(aes(x=year, y=rm)) +
+  geom_line() +
+  facet_wrap(~c, scales="free", ncol=1) +
+  labs(y="rolling average")
+```
+
+
+The higher number of signatures per petition before c.1850 can be seen here too, but is dwarfed by the massive increase in signatures per petition from about 1910. According to Huzzey and Miller, after 1900 petitioning "was sustained to an even greater degree by a few long-running campaigns" (p. 18); in other words a higher proportion of (the much smaller numbers of) petitions had *lots* of signatures.
+
+```{r}
+petitions_1833_year |>
+    mutate(sp=signatures/petitions) |>
+    mutate(rmsp = slide_dbl(sp, mean, .before = 5)) |>
+  ggplot(aes(year, rmsp)) +
+  geom_line() +
+  labs(y="rolling average", title = "Signatures per petition, 1833-1918")
+```
+
+
+Unsurprisingly perhaps, signatures per petition also vary considerably by petition category. But if you compare with the earlier bar charts, they actually vary rather *less* than numbers of petitions.
+
+```{r}
+petitions_1833_year_category |>
+  group_by(category) |>
+  summarise(petitions= sum(petitions), signatures=sum(signatures)) |>
+  ungroup() |>
+  mutate(sigsperp = signatures/petitions) |>
+  mutate(category = fct_reorder(category, sigsperp)) |>
+  ggplot(aes(sigsperp, category)) +
+  geom_col() +
+  labs(y=NULL, x="signatures per petition", title = "Average signatures per petition by category")
+```
+
+As a treemap, just because.
+
+```{r}
+petitions_1833_year_category |>
+  group_by(category) |>
+  summarise(signatures= sum(signatures)) |>
+  ungroup() |>
+  ggplot(aes(area=signatures, fill=category, label=category)) +
+  geom_treemap(show.legend = F) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", reflow = TRUE, grow = TRUE) +
+  #scale_fill_colorblind() + # not enough values...
+  scale_fill_tableau() +
+  #scale_fill_manual(values = c("orange", "lightgrey", "#41b6c4", "#1d91c0")) + # i think this ordering is alphabetical
+  labs(title="Treemap of petition signatures 1833-1918")
+```
+
+## Data citation
+
+Miller, Henry and Huzzey, Richard (2022). Public Petitions to the House of Commons, 1780-1918. [Data Collection]. Colchester, Essex: UK Data Service. 10.5255/UKDA-SN-855556
+
+
+## Resources
+
+The dataset: [Public Petitions to the House of Commons 1780-1918](https://reshare.ukdataservice.ac.uk/855556/)
+
+P&P article: Richard Huzzey and Henry Miller, [Petitions, Parliament and Political Culture: Petitioning the House of Commons, 1780–1918](https://doi.org/10.1093/pastj/gtz061), *Past & Present* (2020)
+
+
+Using the slider package for rolling averages
+
+- [Mockup blog](https://themockup.blog/posts/2022-11-16-rolling-summaries-with-slider-in-r/index.html)
+- [NJ Tierney](https://www.njtierney.com/post/2020/10/20/roll-avg-covid/)
+
+
+Ridgeline plots
+
+- [DataToViz](https://www.data-to-viz.com/graph/ridgeline.html)
+- [Daily Dose of Data Science](https://blog.dailydoseofds.com/p/ridgeline-plots-an-underrated-gem)
+
+
+

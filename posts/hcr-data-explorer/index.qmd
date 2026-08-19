@@ -1,0 +1,528 @@
+---
+title: "HO Criminal Registers Data Explorer"
+date: "2026-01-23"
+author: "Sharon Howard"
+categories: [interactive, crime, LL]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r}
+library(janitor)
+library(scales)
+library(glue)
+library(reactable)
+
+library(tidytext)
+library(tidyverse)
+
+library(mindseyedata)
+
+source(here::here("dashboards/_R/reactable.R"))
+
+hcr_csv <-
+  read_csv(here::here("site_data/ll/hcr_dhoas_20260122.csv"))
+```
+
+```{r}
+## there is a lot of data and it's slow to render, so if you're tweaking it, use only a subset of the data for testing!
+
+hcr <-
+hcr_csv |>
+  # once it's re-sorted, the first entry in register is erroneous! ffs.
+  filter(dp_id !="hcrNAHOCR70005_n16-1") |>
+  # change _ to a nicer sep.
+  mutate(across(c(sentence_category, outcome), ~str_replace_all(., "_", ", "))) |>
+  
+  # but you need to do something else to this...
+  # make <date>, consistent with date_committed, and avoid it being handled as datetime
+  mutate(date_tried = as.Date(date_tried))  |>
+  # adapted code from bn data essays.
+  mutate(year_tried = year(date_tried)) |>
+  mutate(m = as.character(month(date_tried, label=TRUE, abbr=TRUE))) |>
+  # don't need to worry about NAs if you use precision
+  mutate(nice_date_tried = case_when(
+    date_tried_precision=="y" ~ as.character(year_tried),
+    date_tried_precision=="ym" ~ paste(m, year_tried ),
+    date_tried_precision=="ymd" ~ paste( day(date_tried) , m, year_tried)
+  )) |>
+  select(-m) |>
+  relocate(nice_date_tried, .after = court) |>
+  
+  # tidy up given/surname and make a name column
+# do you want to expand abbrev first names? maybe if you do this seriously but not atm. but do need to remove NAs.
+  mutate(across(c(given_name, surname), ~if_else(is.na(.), "??", .))) |>
+  mutate(across(c(given_name, surname), ~str_remove_all(., "[:.,;]+$"))) |>
+  mutate(name = glue("{surname}, {given_name}")) |> 
+  
+  # expand abbrev gender
+  mutate(gender= case_when(
+    gender=="f" ~ "female",
+    gender=="m" ~ "male",
+    .default = gender
+    )) |>
+  
+#  relocate(dp_id, name, date_committed, gender, age, height_inches)  |>
+  # full img path needed for urls; page number only for text.
+  mutate(
+    url_text = str_sub(ll_image_ref, 12),
+    url_img = paste0( str_sub(ll_image_ref, 1, 11) ,  str_sub(ll_image_ref, 5) ) 
+  ) |>
+  
+  # tidy up descriptions...?
+  mutate(description = case_when(
+    dp_id=="hcrNAHOCR70005_n2243-1" ~ NA, # v long and not actually a description
+    .default = description
+  )) 
+  
+  ## too much stuff for testing. can just get first 1000 rows
+  ##head(1000)
+```
+
+
+
+
+```{r}
+# https://glin.github.io/reactable/articles/sticky-columns-selection.html
+# is this style= lsit() a reactable thing? htmlwidgest? htmltools? 
+# more exmaples... all property names should be camelCased
+
+# style = list(
+#     display = "inline-block",
+#     marginRight = "0.5rem",
+#     width = width,
+#     height = height,
+#     backgroundColor = color,
+#     borderRadius = "50%"
+#   ))
+
+# Background style to visually distinguish sticky columns.  backgroundColor = "#f7f7f7", 
+sticky_style <- list(borderRight = "2px solid rgba(0, 0, 0, 0.1)", fontWeight = 600) # , fontSize="110%"  bold doesn't work here... will need to add it to the col. maybe can just add inline to the <a> ? or give the a a class. bold is a bit heavy; try 500 or 600. guess what, 500 is indistingushable from normal and 600 indistinguishable from bold. :< ok make it a bit bigger instead. and it won't let you use % without fannying about with %s. ffs. will larger font-size work in sticky style? yes. try weight again in mindseye?
+
+sticky_header_style <- list(borderRight = "2px solid rgba(0, 0, 0, 0.1)", borderTop = "1px solid rgba(0,0,0,0.1") 
+
+group_left_style <- list(borderLeft = "1px solid rgba(0, 0, 0, 0.1)") 
+
+# added to reactable.R: headerMakeSpace 
+# js function to replace _ in header names with space. maybe should do camelCase as well but that's harder and i don't often use it. 
+
+
+```
+
+
+```{css}
+input.rt-search {width: 50%; align-self: flex-start;}
+div.hcr-info-details {font-weight: normal; font-size: 80%; margin-left:15px;}
+.details-linked {font-size:110%; font-style: italic;}
+```
+
+```{js}
+// Custom JavaScript cell renderer for the name column, adding description on a second row :-)
+// need if for NA descriptions 
+
+function renderHcr(cellInfo) {
+  const url = 'https://www.digitalpanopticon.org/life?id=' + cellInfo.row['dp_id']
+
+  const title = `<a href="${url}" target="_blank">${cellInfo.value}</a>`
+  
+  let description = cellInfo.row['description']
+  if (description) {
+     details = `<div class="hcr-info-details">${description}</div>`
+  } else {
+    details = ''
+  }
+  
+  const text = `<div class="hcr-info-text">${title}${details}</div>`
+
+  return `<div class="hcr-info">${text}</div>`
+}
+```
+
+
+```{r}
+#set.seed(202601)
+data_reactable <- 
+  hcr |>
+  #slice_sample(n=2000) |> # temp smaller sample for testing details. it's still slow!
+  select(name, date_committed, prison, age, gender, height_inches, crime_cat, crime_sub, court, nice_date_tried, court_decision, sentence_category, outcome, add_outcome, dp_life_id, dp_id, ll_doc_ref, url_text, url_img, description) |>
+  add_count(dp_life_id)  
+# might need to add more cols for details, if you want to use template approach of only having one; then you'll need to hide them.
+```
+
+An interactive table for exploring the [London Lives Home Office Criminal Registers 1792-1801](https://www.londonlives.org/about/cr/). 
+
+
+
+- [Notes](#notes) on using the Explorer
+- [About](#about) the source, the data (with some key caveats), and the Explorer.
+
+```{r}
+#| column: screen-inset-shaded
+
+reactable(
+  data_reactable,
+  columns = list(
+    
+    # make the names "surname, given" and then sorting is easy with no real loss of readability
+    name = colDef(sticky = "left",
+                  style = sticky_style,
+                  headerStyle = sticky_header_style, 
+                  cell = JS("renderHcr"),
+                  html = TRUE,
+                  minWidth = 280 
+                  # html = TRUE,
+                  # cell = function(value, index){
+                  #   sprintf('<a href="https://www.digitalpanopticon.org/life?id=%s" target="_blank">%s</a>', data_reactable$dp_life_id[index], value)
+                  # }
+    ),
+    description=colDef(show=FALSE, searchable = TRUE),
+    
+    ## when there are any col groups *all* cols are put in groups. that means any cols between name and the first group are liable to be put in a group with name and end up sticky. so you have to add them to the next group or put them in a group of their own. now i've added prison, might as well make a group for that and date
+    
+    ## committal group
+    
+    date_committed = colDef(name = "committed", 
+                            format = colFormat(date=TRUE),
+                            style = group_left_style,
+                            headerStyle = group_left_style,
+                            html=TRUE,
+                      header = JS('function(column) {
+                        return column.name + `<div style="color: #737373; font-weight:normal;">(from/to)</div>`
+                      }'),
+
+                            filterMethod = filterMostDateRanges, #hcrDateSplitFilter,
+                            filterInput = filterTextPlaceholderInput("data-table", placeholder = "1787/1801-09")
+                  
+    ),
+    prison = colDef(show = TRUE),
+    
+    ## person group
+
+    age = colDef(#na="-", #na=- works for display only, not for filtering
+                  #sortNALast = TRUE, # not sure about this? what do people expect?
+                  maxWidth = 100,
+                  style = group_left_style,
+                  headerStyle = group_left_style,
+                  html=TRUE,
+                      header = JS('function(column) {
+                        return column.name + `<div style="color: #737373; font-weight: normal;">(from/to)</div>`
+                      }'),
+                  filterMethod = filterNumPosRange
+            # notes about behavious of the function in reactable.R 
+      ),
+    
+    gender = colDef(maxWidth = 100 , 
+                    filterInput = selectFilterInput("data-table"),
+                    # exact text search to avoid the 'male' in 'female' problem
+                   filterMethod = filterTextExact
+    ),
+    
+    # height has decimal points so is filter a bit trickier? seems fine.
+    height_inches = colDef(name = "height (in)", 
+                           html=TRUE,
+                          header = JS('function(column) {
+                            return column.name + `<div style="color: #737373; font-weight:normal;">(from/to)</div>`
+                          }'),
+                           filterMethod = filterNumPosRange
+      ),
+    
+    ## crime group
+    
+    crime_cat = colDef(name= "category", # overrrides default headerMakeSpace
+                       style = group_left_style,
+                       headerStyle = group_left_style,
+                       filterInput = selectFilterInput("data-table"),
+        # exact text search 
+       #filterMethod = filterTextExact
+      # Filter by case-sensitive exact text match not needed for this filter; cats are all distinct.
+ 
+      ),
+    crime_sub = colDef(name = "subcategory",
+                               filterInput = selectFilterInput("data-table"),
+        # exact text search 
+        #filterMethod = filterTextExact
+
+                 
+      ),
+
+    ## court group
+    
+    court = colDef(minWidth = 145, 
+                   style = group_left_style,
+                   headerStyle = group_left_style,
+                   #filterInput = dataListFilterInput("data-table") # test if this works here; yes, but doesnt show arrow
+                   
+      ),
+    # WiP? date tried, nice display, not a date. 
+    nice_date_tried = colDef(name= "tried"),
+    
+    court_decision = colDef(show = TRUE, name="decision"), # name??
+    
+    
+    ## outcomes group
+    
+    # custom rendering to separate multi categories better? will have to test this one out later.
+    sentence_category = colDef(name = "sentence", #show=FALSE,
+                               style = group_left_style,
+                               headerStyle = group_left_style,
+      ),
+    outcome = colDef(#name="further???", # not sure about name yet
+                     html=TRUE,
+                      header = JS('function(column) {
+                        return column.name + `<div style="color: #737373; font-weight: normal;">(if changed)</div>`
+                      }'),
+                     
+      ), 
+    add_outcome = colDef(name = "additional"),
+    
+    ## source group
+    
+    #include to facilitate filtering
+    ll_doc_ref = colDef(show = TRUE, name="register", minWidth = 140, 
+                        style = group_left_style,
+                        headerStyle = group_left_style,
+        ),
+    
+    url_text = colDef(show = TRUE, name="page", #filterable = FALSE,
+                      maxWidth = 100,
+                          html = TRUE,
+                          cell = function(value, index){
+                            sprintf('<a href="https://www.londonlives.org/record/%s" target="_blank">%s</a>',
+                                    data_reactable$url_img[index], value)
+                          }
+        ),
+    
+    # columns to hide. 
+    # to add text columns in details...?
+    dp_id = colDef(show = FALSE), # 
+    n = colDef(show = FALSE),
+    url_img = colDef(show=FALSE),
+    dp_life_id = colDef(show = FALSE)
+    
+  ),
+  
+  ## group cols with headers - likely to be useful if more than a handful of columns.
+  # prob need to ensure cols are already grouped together in the df...
+  # watch out if you omit cols from groups
+  # be careful about including cols in a group with a sticky col.
+  # styling to make clearer which groups headers apply to? default centred
+  # use original col names 
+  columnGroups = list(
+    colGroup(name = "Committal", columns = c("date_committed", "prison")),
+    
+    colGroup(name = "Person", columns = c("gender", "height_inches", "age")),
+    
+    colGroup(name = "Crime", columns = c("crime_cat", "crime_sub"),
+             header = function(value) {
+                          tags$a(href = "https://www.oldbaileyonline.org/about/crimes", target="_blank", value)
+                          }
+             ), 
+    colGroup(name = "Trial", columns = c("court", "nice_date_tried", "court_decision"), 
+             header = function(value) {
+                          tags$a(href = "https://www.londonlives.org/about/criminal-trial/", target="_blank", value)
+                        }
+             ),
+    colGroup(name = "Outcomes", columns = c("sentence_category", "outcome", "add_outcome"),
+             header = function(value) {
+                          tags$a(href = "https://www.oldbaileyonline.org/about/punishment", target="_blank", value)
+                        }
+             ),
+    colGroup(name = "Source", columns = c("ll_doc_ref", "url_text"),
+                          header = function(value) {
+                            tags$a(href = "https://www.londonlives.org/about/CR", target="_blank", value)
+                          })
+  ), # / column groups
+  
+  elementId = "data-table", # change if more than one on the page!
+
+  ## set any column defaults
+
+  defaultColDef = colDef(
+      header = headerMakeSpace, # replaces underscore with space. often all you need to make headers presentable!
+      minWidth = 130, # needs to be a bit wider than testing 
+      searchable=FALSE,
+      sortNALast = TRUE, # i think this probably makes sense because there are a lot of NAs.
+    # start with this commented out as it can slow down large/texty tables. but it's usually worth using.
+    ## can exclude specific column(s) by name in the if() eg '& name !="url_text"'
+    ## this is working but hard to see before starting typing. i'm sure there was an arrow in tests but it's gone now...
+      filterInput = function(values, name) {
+        if (is.character(values) ) {
+        dataListFilterInput("data-table")(values, name)
+      }
+    } # /filterInput
+   ), # /defaultcoldef
+  
+  filterable = TRUE,
+  searchable = TRUE,
+  language = reactableLang(
+    searchPlaceholder = "Search descriptions...",
+    searchLabel = "Search descriptions"
+  ),
+  
+  pagination = TRUE,
+  showPageInfo = TRUE,
+  defaultPageSize = 10,
+  showPageSizeOptions = TRUE,
+  paginationType = "jump", # makes dropdown type input; i think better option than default when there are a lot of pages.
+  pageSizeOptions = c(10, 25, 50, 100),
+  
+  
+# appearance options will vary 
+  highlight = TRUE, # highlight on hover?
+  outlined = TRUE, # borders around the table? i quite like the borders actually.
+  bordered = TRUE, # borders around the table and every cell?
+  borderless = FALSE, #  Remove inner borders from table?
+  striped = FALSE, # zebra striping for table rows. how well does this go with borders?
+  compact = FALSE, # what diff does this make? I think just a bit less padding etc.
+
+    
+  fullWidth = TRUE,
+  # class = NULL, #   Additional CSS classes to apply to the table.
+  # style = NULL, #  Inline styles to apply to table. named list or character string. if named list, property names should be camelCased.
+  # rowClass = NULL, # Additional CSS classes to apply to table rows. character string, a JS() function, or an R function
+  # rowStyle = NULL, # inline styles for table rows. character string / JS() / R function. if named list, camelCase stuff
+  # 
+  # theme = getOption("reactable.theme"), #  Theme options for table, specified by reactableTheme(). Can also be a function that returns a reactableTheme() or NULL.
+  
+  #meta = NULL, #  Custom metadata to pass to JavaScript render functions or style functions. A named list of values that can also be JS() expressions or functions. 
+
+  defaultExpanded = FALSE, # whether to load with nested rows opened 
+  
+
+  ## details = linked entries
+
+    , ## comma starts details... rendering gets quite a lot slower now!
+  details = function(index) {
+    # F.F.S. make sure this is using the same df as the main reactable.
+    det <- data_reactable |>
+      filter(n>1) |> #select(-n) |>
+      select(dp_life_id, dp_id, name, date_committed, age, gender, height_inches, ll_doc_ref, url_text, url_img)  |>
+      # also need to filter out the main entry
+      filter(dp_life_id == data_reactable$dp_life_id[index] & dp_id != data_reactable$dp_id[index] )
+    
+      # if https://glin.github.io/reactable/articles/examples.html#conditional-row-details
+      # how to do if in this case... NA life_id doesn't work. use n>1 but has to be in data_reactable, not det, it seems
+    
+      if ( data_reactable$n[index] > 1 ) {
+
+       tbl <- reactable(det,
+                     outlined = TRUE, #highlight = TRUE,
+                     #resizable = TRUE, # this does help but it's not immediately obvious that you can resize.
+                     #filterable = TRUE, # only filters within the open details field; might be useful if lots of rows....
+                     fullWidth = FALSE, # fullwidth too wide, 
+                     #defaultPageSize = 30,
+                     defaultColDef = colDef(
+                      #header = headerMakeSpace,
+                      minWidth = 120, # needs to be a bit wider than testing rproj 
+                   ), # /defaultcoldef
+  
+                     columns = list(
+                       name=colDef(minWidth=150),
+                       date_committed=colDef(name="committed", format = colFormat(date=TRUE)), 
+                       age=colDef(maxWidth = 100),
+                       gender=colDef(maxWidth = 110),
+                       height_inches=colDef(maxWidth = 100, name = "height"),
+                       ll_doc_ref = colDef(name = "register", minWidth = 140),
+                       url_text = colDef(show = TRUE, name="page", #filterable = FALSE,
+                       maxWidth = 100,
+                       html = TRUE,
+                       # i think have to use det for url here because of filters yes?
+                       cell = function(value, index){
+                            sprintf('<a href="https://www.londonlives.org/record/%s" target="_blank">%s</a>', det$url_img[index], value)
+                          }
+                        ),
+                       dp_id = colDef(show=FALSE),
+                       dp_life_id = colDef(show=FALSE),
+                       url_img = colDef(show=FALSE)
+                    ) # list
+                  ) # columns.
+       
+       ## added label for details. class styling in separate css chunk.
+       htmltools::div(
+                      htmltools::tags$div("Linked entries", class="details-linked"), 
+                      style = list(margin = "10px 100px"), 
+                      tbl)
+       
+    } ## end if
+  }, # in fact *this* is the end of details() proper but you probably want the next two rows anyway
+  onClick = "expand",
+  rowStyle = list(cursor = "pointer")
+  ## end of details 
+
+)
+
+# test height filter? fine in the 60s but seems like odd behaviour at bottom end. maybe a problem with num filter.
+# oh the num filter is designed to keep blanks if you start/end with slash, isn't it. do you really want that behaviour? do you have a choice if you don't make a specific filter for the table?
+```
+
+
+## Notes
+
+*Filter/search:* 
+
+The descriptions search is a simple text filter. Descriptions can be messy and spelling is variable.
+
+All columns can be filtered
+
+- Text filters match any part of a cell; just start typing to see a list of possible matches
+- The date committed filter requires dates to be typed in "yyyy-mm-dd" order and matches partial or full dates
+- The date committed, age and height filters also match ranges using / as separator, eg:
+  - age: "/30" = up to 30, "30/" = 30+, "30/30" = 30 exactly, and "30/32" = 30 to 32
+  - date: "1796/1797" (any dates in 1792 or 1793); "1793-01/1793-04" (January to April 1793)
+
+
+*Sorting:*
+
+By default, the tables are sorted first by register covering date and then entries are listed in original order (some registers were chronological and some were alphabetical)
+
+- All columns are sortable by clicking on the header
+- Sort multiple columns using the Shift key 
+- Empty cells are sorted to the *end* of the table
+
+
+*Other stuff:*
+
+- The table is very wide and not all columns are visible at once: scroll sideways to see more
+- &#x25B6; to the left of a row can be opened up to see (probable) linked entries in the registers 
+
+
+## Key caveats
+
+- There are many transcription errors! It's advisable to check the linked page images before using the information presented here.
+- Linked entries may contain erroneous links, or links may have been missed
+
+(See notes below for further cautionary tales.)
+
+
+## About 
+
+### The Registers
+
+The Home Office Criminal Registers first appeared in 1791, listing London and Middlesex prisoners only. (They would subsequently be [extended to cover the whole country](https://www.digitalpanopticon.org/England_and_Wales_Criminal_Registers_1791-1892), though the amount of detail recorded was considerably reduced after the first decade.) Most individuals listed had been committed on suspicion of a crime and had not yet been tried; some were subsequently freed (perhaps on bail) without a trial, and some were removed for trial outside London. Some appeared on multiple occasions while waiting for trial or post-trial decisions.
+
+The amount and detail of information that could be recorded is remarkable: personal and biographical information like age, height, physical characteristics and occupation, offence, court and date of trial and sentence, post-trial decisions about pardons, executions, transfer to convict ships, removal or discharge, or prisoners having died in custody (a sadly common event). Occasionally there were also comments about previous offences and reputation. 
+
+It should be noted that none of this information was recorded completely reliably or systematically, particularly post-trial events. But it's an exceptionally rare source of this kind before the 19th century, when it became increasingly normal for the state to record information about criminals in detail. 
+
+
+### The Data
+
+The [dataset](https://doi.org/10.15131/shef.data.5688700) presented here is derived from the Registers in [London Lives](https://www.londonlives.org/), which were subsequently enhanced as part of the [Digital Panopticon](https://www.digitalpanopticon.org).
+ 
+The work carried out for the Digital Panopticon involved converting the original XML transcriptions to a more regular tabular format, with extensive cleaning and standardisation (eg names, gender, ages and heights), efforts to fill "inferred" data (for example, the original registers extensively used "ditto" for repeated information) addition of sentence and outcome categories, and record linkage. But it didn't involve manually cleaning up all the [errors in the transcriptions](https://www.londonlives.org/about/project#toc8). 
+
+I've done some further tidying and standardisation (of crime categories and prisons in particular) for this presentation. But the data should be handled with care.
+
+
+### The Explorer
+
+The Data Explorer has been made using the R [reactable package](https://glin.github.io/reactable/index.html) which enables creation of interactive tables with extensive options for filtering, sorting and customising appearance. 
+
+There is a *lot* of data and the table may be slow to load initially.
+
+The Explorer does *not* attempt to represent all of the information in the Registers - for example, it doesn't include the crime and sentence descriptions or additional columns with details of post-trial disposition, but links to both the relevant page in London Lives and to the individuals' Life Archives in Digital Panopticon are provided.
+
+Where the DP linkage identified likely multiple entries for the same individual, the cross-references are listed in nested rows which can be opened by clicking on &#x25B6; next to the main entry. 
+

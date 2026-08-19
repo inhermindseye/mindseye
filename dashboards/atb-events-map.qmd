@@ -1,0 +1,18 @@
+---
+title: "Map of Events in Alice Thornton’s Books"
+date: "2026-03-24"
+author: "Sharon Howard"
+categories: [maps, interactive, ATB]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[Mapping Alice Thornton’s Books: Events](https://thornton-play-books.github.io/play-books/events-map.html)</button>
+</div>
+
+Summary: an interactive map of Events in the autobiographies of Alice Thornton.
+
+Source: [Alice Thornton's Books](https://thornton.kdl.kcl.ac.uk/).
+
+
+
+

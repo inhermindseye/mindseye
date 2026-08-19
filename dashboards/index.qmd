@@ -1,0 +1,20 @@
+---
+title: "Dashboards and Interactives"
+subtitle: "because all the cool kids are doing it"
+listing:
+  - id: dash-table
+    contents: "*.qmd"
+    sort: "date desc"
+    max-items: 19
+    type: table
+    fields: [date, title]
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    date-format: "D MMM YYYY"
+    feed: false
+toc: false
+page-layout: full
+title-block-banner: false
+---
+

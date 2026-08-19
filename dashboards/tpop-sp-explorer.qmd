@@ -1,0 +1,17 @@
+---
+title: "TPOP State Papers Petitions Explorer"
+date: "2026-01-31"
+author: "Sharon Howard"
+categories: [interactive, TPOP, petitioning]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[State Papers Petitions Explorer](https://the-power-of-petitioning.github.io/interactive/sp-petitions-explorer.html)</button>
+</div>
+
+Summary: an interactive data explorer for 390 petitions to the Crown, 1600-1699.
+
+Source: the [Power of Petitioning](https://petitioning.history.ac.uk/) project.  
+
+
+

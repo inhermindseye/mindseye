@@ -1,0 +1,61 @@
+project:
+  type: website
+  output-dir: docs
+  resources: 
+    - "site_data/"  # to ensure a copy of all the data in docs
+
+    
+website:
+  description: "A historian's data blog"
+  title: "In Her Mind's Eye"
+  site-url: https://mindseye.sharonhoward.org
+  favicon: favicon.png
+  
+  page-footer: "Unless otherwise stated, code and visualisations are [CC BY SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)"
+  
+  
+  navbar:
+    left:
+      - text: Blog
+        href: blog.qmd
+      - about.qmd
+      - resources.qmd
+      
+    right:
+      - icon: bluesky
+        href: https://bsky.app/profile/sharonhoward.bsky.social
+        aria-label: Bluesky
+
+      - icon: github
+        href: https://github.com/sharonhoward
+        aria-label: Github
+        
+      - icon: globe
+        href: https://sharonhoward.org
+        aria-label: Website
+
+      - icon: rss-fill
+        href: index.xml
+        aria-label: RSS
+
+
+format:
+  html:
+    theme: simplex
+    css: styles.css
+    toc: true
+    code-fold: true
+
+
+
+draft-mode: unlinked
+
+
+date-format: "D MMMM YYYY"
+
+
+# freeze computational output
+# (see https://quarto.org/docs/projects/code-execution.html#freeze)
+freeze: auto
+
+

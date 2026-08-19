@@ -1,0 +1,53 @@
+---
+title: "Explorations in history data"
+author: "Sharon Howard"
+listing:
+  - id: posts-table
+    contents: 
+    - posts
+    - "dashboards/!(index).qmd"
+    sort: "date desc"
+    max-items: 10
+    type: table
+    fields: [date, title]
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    date-format: "D MMM YYYY"
+    feed: 
+      items: 10
+      type: partial
+toc: false
+page-layout: full
+title-block-banner: false
+
+---
+
+
+```{r}
+#| include: false
+# have removed TILs 20251024, but keep the commented out stuff in yaml as a model for possibly adding a listing for dashboards later.
+
+# weird thing (noticed 20260405): if you do Render on this page the listing disappears. it only works properly when you Render Website. idk if that's because it's combined sources?
+```
+
+
+
+I’m a historian and my main interests are in early modern social history and digital history. I'm also an enthusiast for open history data and this website is an experiment in bringing together history and data science. [more...](about.qmd)
+
+## Recent Posts
+
+::: {#posts-table}
+:::
+
+[All posts](blog.qmd)
+
+
+<!-- ## Recent Notes -->
+
+<!-- Little things I've learned. -->
+
+<!-- :::{#til-notes} -->
+<!-- ::: -->
+
+<!-- [All notes](til/) -->

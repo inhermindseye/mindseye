@@ -1,0 +1,17 @@
+---
+title: "TPOP House of Lords Petitions Explorer"
+date: "2026-01-31"
+author: "Sharon Howard"
+categories: [interactive, TPOP, petitioning]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[House of Lords Petitions Explorer](https://the-power-of-petitioning.github.io/interactive/hol-petitions-explorer.html)</button>
+</div>
+
+Summary: an interactive data explorer for 730 petitions to the House of Lords, 1597-1696.
+
+Source: the [Power of Petitioning](https://petitioning.history.ac.uk/) project.  
+
+
+

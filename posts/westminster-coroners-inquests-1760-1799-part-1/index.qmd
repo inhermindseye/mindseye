@@ -1,0 +1,570 @@
+---
+title: Westminster Coroners Inquests 1760-1799, Part 1
+author: Sharon Howard
+date: '2018-06-23'
+slug: westminster-coroners-inquests-1760-1799-part-1
+categories: [LL, death]
+ihmefilename: "201806_cwic_1"
+execute: 
+  message: false
+  warning: false
+  echo: false
+---
+
+```{r}
+#| include: false 
+# review august 2026
+```
+
+Introduction
+----
+
+This will be a post in two parts about data relating to the series of Westminster Coroner's Inquests on [London Lives](https://www.londonlives.org), which cover the period 1760-1799.
+
+The main purpose of the coroner in England, from the establishment of the office in the early middle ages, has been to investigate sudden, unnatural or suspicious deaths, and the deaths of prisoners. In the 18th century, the coroner didn't have to have medical or legal qualifications, and he was often a substantial local gentleman.
+
+Only about 1 per cent of all deaths were considered suspicious enough to warrant an inquest. Inquests were usually held within a few days of the death, and conducted at a local alehouse, parish workhouse or in the building in which the death occurred. 
+
+
+
+```{r the_data}
+
+# libraries 
+
+library(scales)
+library(knitr)
+library(readtext)
+library(widyr)
+
+library(patchwork)
+
+library(tidytext)
+library(tidyverse)
+
+library(ggthemes)
+theme_set(theme_minimal()) # set preferred ggplot theme 
+
+
+
+# inquest texts data 
+inquest_texts_data <- readtext(here::here("site_data/ll/wa_inq_txt/*.txt"),
+                               docvarsfrom = "filenames",
+                               dvsep = "txt",
+                               docvarnames = c("img_inq_first")
+)
+
+
+# inquest texts -> tibble format 
+inquest_texts_data <- as_tibble(inquest_texts_data)  
+
+
+# summary data 
+
+cw_summary_data <- read_tsv(here::here("site_data/ll/wa_coroners_inquests_v1-1.tsv"), na="NULL", col_types = cols(doc_date = col_character()))
+
+
+# prep summary data 
+
+## add new columns
+# inquest_add_type: child, prisoner, multi, none 
+# name type named/unnamed 
+# clean up doc dates (a couple end -00 [MySQL accepts this as a valid date format but R doesn't] -> -01), then add doc year, doc month
+# simplify verdict - merge suicides
+## note on joining summary to texts data
+# first_img and inquisition_img are both prefixed WACWIC -> eg WACWIC652000003_WACWIC652000002 
+# but texts ID (from filename) = WACWIC652000003_652000002 (don't remember why I thought this was a good idea)
+# so a little adjustment needed
+
+## filter out 
+# unknown/mixed gender and type multi
+# unknown verdict (not the same as 'undetermined')
+# a random inquest date before 1760 (2891) which I CBA to look up
+
+
+
+
+cw_summary <- cw_summary_data |> 
+  rename(verdict_original = verdict) |>
+  mutate(gender = case_when(
+    gender == "f" ~ "female",
+    gender == "m" ~ "male",
+    TRUE ~ gender),
+    inquest_add_type = case_when(
+      str_detect(deceased_additional_info, "child") ~ "child",
+      str_detect(deceased_additional_info, "p[ri]+soner") ~ "prisoner", # found a typo lol
+      str_detect(deceased_additional_info, "multiple") ~ "multiple",
+      TRUE ~ "none"),
+    
+    name_type = ifelse(!str_detect(the_deceased, regex("unnamed", ignore_case=TRUE)), "named", "unnamed") ,
+    age_type = ifelse(inquest_add_type =="child", "child", "adult"),
+    doc_date = as_date(str_replace(doc_date, "00$", "01")),
+    doc_year = year(doc_date),
+    doc_month = month(doc_date, label = TRUE),
+    verdict = ifelse(str_detect(verdict_original, "suicide"), "suicide", verdict_original)
+  ) |>
+  mutate(first_img_no = str_replace(first_img, "WACWIC","")) |>
+  unite(img_inq_first, inquisition_img, first_img_no, remove=FALSE) |>
+  filter(doc_year > 1759, 
+         str_detect(gender, "male"), 
+         !str_detect(deceased_additional_info, "multi"), 
+         verdict !="-") 
+
+
+
+# join texts to summary data
+# inner join excludes a handful which don't have text (not survived/no image/not rekeyed)
+
+cw_inquest_texts <- cw_summary |> 
+  select(img_inq_first, doc_date, doc_year, doc_month, gender, verdict, inquest_add_type, name_type, age_type, inquisition_img) |>
+  inner_join(inquest_texts_data, by="img_inq_first") 
+
+
+## top-and-tail: remove unwanted formulaic text sections at beginning and end
+
+# these are not exactly the same in each document - a) they contain inserted text, mainly names/dates; b) slight variations in wording and/or rekeying
+# but as it turns out, apart from the names, there isn't *much* variation
+# possibly unnecessary over-complication, but only use second set of regexes on texts for which the first set have failed 
+  
+# the end segment can be located by "in witness whereof" in nearly all cases;
+# reg_end1 deals with all bar 10; 1 of the remaining seems to be truncated anyway; reg_end2 gets the rest
+# don't seem to be any problems with the output, though it's hard to test...
+
+reg_end1 <- "(\\bin +)?(win?th?ne?ss(es)?[[:punct:]]?) +([stw]?here[[:punct:]]? *of|w[eh]+re? *of|whereby|when *of|where *as|when, as well|where was well)"
+#to mop up the remainder
+reg_end2 <- "(in witness( of as well| of the said| foreman of))|((and|the) said coroner as)|((whereof )?as well( as)? the said coroner)|(musson foreman of the said jurors)|(and not coroner as the said)"
+
+# to remove the start...
+# "... upon their oath(s) say" cover nearly everything, just need to account for a few typos
+# tested the results and doens't seem to strip anything it shouldn't
+
+start_reg1 <- "(up *on,? *their *[co]aths?( +say)?|(open|do) *their *oath *say|upon *then? *oath say)"
+# this works for mopping up
+start_reg2 <- "by what means the said"
+
+# process
+#  str_split , limit to 2
+#  map_chr to extract 2nd element of split; .null  catches fails 
+
+cw_inquest_texts_stripped <-
+  cw_inquest_texts |> select(img_inq_first, text) |>
+  mutate(
+    text_split_reg_e1 = map_chr( str_split(text, regex(reg_end1, ignore_case = TRUE), n=2) , 1, .null=NA_character_),
+    text_split_reg_e1_test = map_chr( str_split(text, regex(reg_end1, ignore_case = TRUE), n=2) , 2, .null=NA_character_),
+    text_split_reg_e2_test = map_chr( str_split(text, regex(reg_end2, ignore_case = TRUE), n=2 ), 2, .null=NA_character_)
+  ) |>
+  mutate(text_stripped_end = case_when(
+    !is.na(text_split_reg_e1_test) ~ text_split_reg_e1, 
+    !is.na(text_split_reg_e2_test) ~ map_chr( str_split(text, regex(reg_end2, ignore_case = TRUE), n=2 ) , 1, .null=NA_character_),
+    TRUE ~ text )
+  ) |>
+  select(-text_split_reg_e1:-text_split_reg_e2_test) |>
+  mutate(
+    text_split_reg1 = map_chr(str_split(text_stripped_end, regex(start_reg1, ignore_case = TRUE), n=2) , 2, .null = NA_character_),
+    text_split_reg2 = map_chr(str_split(text_stripped_end, regex(start_reg2, ignore_case=TRUE), n=2) , 2, .null = NA_character_),
+    text_stripped = if_else(!is.na(text_split_reg1), text_split_reg1, text_split_reg2) 
+  ) |>
+  select(-text_split_reg1, -text_split_reg2, -text, -text_stripped_end)  |> 
+  left_join(cw_summary, by="img_inq_first")
+
+
+## gender_year
+# simple aggregation using group_by and summarise, gender x year 
+cw_gender_year <-
+  cw_summary |>
+  mutate(gender = as.factor(gender)) |>
+    count(doc_year, gender)
+
+cw_gender_year_adults <-
+  cw_summary |> filter(age_type == "adult") |>
+  count(doc_year, gender)
+
+#same for children
+cw_gender_year_children <-
+  cw_summary |> filter(age_type == "child") |>
+    count(doc_year, gender) 
+```
+
+
+The data
+----
+
+The dataset I've created contains a wealth of data that can be explored and visualised, including gender of the deceased, locations, dates and verdicts. There are two components to the data:
+
+1. Summary data (in a .tsv file) from the inquests, which includes the inquest date and parish, deceased name if known, verdict, cause of death, if the deceased is a child or a prisoner, and London Lives references. 
+
+2. Plain text files of the *inquisitions*, the formal legal record of the inquest's findings and verdict. (They are often called "inquests", but I'm using the longer term here to avoid confusion between the document and the event.) They were extracted from the original XML files, using the Python library BeautifulSoup. (A very few inquests don't have inquisition texts; this can be because the document doesn't seem to have survived, because the image for it is missing, or because it wasn't transcribed for some other reason.)
+
+The inquest records are actually bundles of various documents; apart from the inquisition, they can include jury lists and verdicts, witness statements, warrants, letters. Nearly all of the information in the summary data has been taken directly from the inquisitions and (in some cases) from verdicts.
+
+The data, with detailed documentation, can be found [here](https://github.com/sharonhoward/ll-coroners). 
+
+For this post, I did a bit of preparatory work on the summary data:
+
+* add a "name type" column (named/unnamed deceased)
+* add an "age type" (adult/child) ("child" simply means that the deceased was described as a child or infant in the documents)
+* exclude a small number of inquests in which there is more than one deceased or gender is unknown
+* simplified verdicts slightly (the original data has two types of suicide) and take out a few cases for which the verdict is unknown (not the same as an "undetermined" verdict; that means the jury couldn't decide)
+* extracted year and month from the inquest dates into separate columns
+
+The original dataset contained ``r cw_summary_data |> tally() # 2894 `` inquests; after cleaning, there are ``r cw_summary |> tally() # 2885 `` (1 inquest = 1 person). Of these, ``r cw_summary |> count(age_type) |> filter(age_type=="child") |> select(n)  # 361 `` were children and in ``r cw_summary |> count(name_type) |> filter(name_type=="unnamed") |> select(n)  # 356 `` cases, the deceased was unnamed. `2881` have inquisitions.
+
+
+Here's a random slice of the summary data.
+
+```{r cwic-1-table-summary-data}
+kable( 
+  sample_n(cw_summary |> select(gender, doc_year, doc_month, age_type, name_type, verdict), 10) |> arrange(doc_year, doc_month) 
+  )
+```
+
+And here's a sample inquisition text:
+
+```{r cwic-1-inquisitions-data}
+kable(
+  cw_inquest_texts |> select(text, inquisition_img) |> 
+  filter(str_length(text) < 1600, str_detect(text, "^City")) |> 
+  slice(12) |> 
+  transmute(text = paste0(text, " (", inquisition_img, ")"))
+  
+, "html", col.names = "") |> 
+  kableExtra::column_spec(1,italic=TRUE, width="90%")
+```
+
+
+Annual and seasonal patterns
+---------
+
+There was a lot of variation in the numbers of inquests from one year to the next, although I think. As London's population was growing rapidly during the 18th century, you would expect inquests to increase; the clear dip in the 1770s and early 1780s, however, is more unexpected. 
+
+It could mean that the assumptions I've been making about the survival of these inquest records need investigation. However, Craig Spence's study of "sudden violent deaths" in London 1650-1750, using different sources, also found considerable fluctuations in numbers.
+
+```{r cwic-1-plot_annual_trends}
+ggplot(cw_summary |> count(doc_year), aes(x=doc_year, y=n)) +
+  geom_bar(stat = "identity") +
+  geom_smooth(method="loess", se=FALSE) +
+  labs(x="year", y="number of inquests", title="Annual counts of inquests 1760-1799")
+```
+
+
+
+Looking at seasonal patterns, it should be borne in mind that the dates are for inquests rather than the actual deaths, but normally an inquest would be held within a few days, so it should be mostly accurate. 
+
+The seasonal variations are quite interesting: the numbers are clearly largest between May and August, but there's a second smaller peak from December to January. These patterns actually underline the fact that the deaths recorded in coroners' inquests are not "normal" deaths. Burial records for late 18th-century London show a *completely different* seasonal pattern, with far more deaths between October and March than during the summer months. Inquests can only tell us about a particular subset of deaths - violent or accidental, sudden or "suspicious" (and the deaths of prisoners in custody, not necessarily a typical group) - and not deaths from disease, illness or, for women, childbirth. 
+
+
+
+```{r cwic-1-plot_monthly_patterns}
+ggplot(cw_summary |> 
+         count(doc_month)
+       , aes(x=doc_month, y= n)) +
+  geom_bar(stat="identity") +
+  labs(x="month", y="number of inquests", title="Monthly counts of inquests")
+```
+
+
+
+
+
+
+
+The deceased
+------
+
+As the monthly graph above has already indicated, the majority of the deceased were male. Overall, ``r cw_summary |>  group_by(gender) |> summarize(n = n()) |>  mutate(perc = paste0(round((n / sum(n))*100, 1), "%")) |> filter(gender=="male") |> select(perc)  # 72.6 `` of the deceased are male. Clearly, men were much more likely to die in circumstances that could lead to an inquest.
+
+
+```{r cwic-1-gender-pie-chart-lol}
+# turn it into a proportional stacked bar chart (by adding position=fill)
+# text + percent labels inside the pie chart
+
+cw_summary |> 
+  count(gender) |>
+  mutate(perc = round((n / sum(n))*100, 1), perc_text = paste0(gender, "\n", perc, "%")) |>
+ggplot(aes(x="", y=n, fill=gender)) +
+  geom_bar(stat='identity', width=1) +
+  geom_text(aes(x=1.2, label=perc_text), position = position_stack(vjust=0.35), colour="white", size=4.5) + # x= and vjust adjust label positioning
+  coord_polar(theta = "y") +
+  scale_fill_tableau() +
+  scale_y_continuous(breaks = NULL) +  # white lines
+  guides(fill="none") + # remove legend
+  ggtitle("Gender of deceased") +
+  theme(panel.grid.major = element_blank(),  # white lines
+        axis.ticks=element_blank(),  # the axis ticks
+          axis.title=element_blank(),  # the axis labels
+          axis.text.x=element_blank()) # the 0.00... 1.00 labels.
+```
+
+
+```{r cwic-1-gender_age_type}
+
+cw_gender_agetype_pc <- 
+  cw_summary |> 
+  count(gender, age_type) |>  
+  spread(gender, n) |> 
+  mutate(tot = female + male, pc_m = round(male * 100 / tot, 1), pcm_text = paste0(pc_m, "%"))  
+
+```
+
+But if we break this down by age type and compare adults and children, we can see that the gender ratio for children is much more evenly balanced; ``r cw_gender_agetype_pc |> filter(age_type == "child") |> select(pcm_text) # 55.1  `` of the children are male, compared to ``r cw_gender_agetype_pc |> filter(age_type == "adult") |> select(pcm_text) # ? `` of adults. 
+
+
+```{r cwic-1-bar-plot_gender_age_type}
+
+ggplot(cw_summary |> 
+    count(gender, age_type)
+       , aes(x=age_type, y=n, fill=gender) ) + 
+    geom_bar(stat="identity", position="fill", width=0.95) +
+    scale_y_continuous(labels = percent_format()) +
+    coord_flip() +
+    scale_fill_tableau() +
+    labs(y="% of inquests", x="age group", title="Gender of deceased by age group (adult/child)") 
+```
+
+It's clear from a brief reading of some inquests on children that 18th-century London was a dangerous place for them. But it may well have been dangerous in a less gendered way than it was for adults. Men were more likely than women to work out of doors in dangerous manual trades, they were more likely to get into brawls, and perhaps more generally to indulge in risky behaviour. Again, closer examination of causes of death, as well as textmining of inquisitions, may well enable more in-depth exploration of this topic.
+
+I want to throw one more variable into the mix: whether the deceased was named or not. There are quite different reasons for adults and children to be nameless in inquests. Unnamed adults were strangers to the locals and officials concerned with the inquest, quite possibly vagrants or poor migrants, whereas the vast majority of nameless children were abandoned new-born infants - suspected victims of infanticide. 
+
+Visualising this with a "faceted" bar chart, shows that only a small proportion of adults were anonymous compared to children. In both the adult and child groups, however, a substantially higher proportion of anonymous deceased were female. This seems quite odd. Is it just a coincidence, given how different the contexts were for adult and child namelessness? 
+
+
+```{r cwic-1-bar-plot_gender_agetype_nametype}
+
+ggplot(cw_summary |> 
+  count(gender, name_type, age_type)
+       , aes(x=gender, y=n, fill=name_type) ) + 
+    geom_bar(stat="identity", position="fill", width=0.95) +
+    scale_y_continuous(labels = percent_format()) +
+    facet_wrap(~age_type) +
+    coord_flip() +
+    scale_fill_tableau() +
+    labs(y="% of inquests", title="Gender ~ age group ~ name type of deceased") 
+```
+
+
+
+
+Verdicts
+-------
+
+There are some issues with the verdict categories in the data at present. They aren't perfectly reliable; they've been identified primarily by keywords in documents, but may need further verification. Secondly, the verdicts are very broadly defined; "natural causes" includes  "visitation of god" (the majority) and "natural" deaths blamed on other causes (eg the result of "want"). More detailed information on cause of death isn't at present consistent/reliable enough to analyse. So the following section is all a bit provisional.
+
+First, a look at the overall verdict proportions. Accidents are in the majority, followed by suicides and natural causes. Homicides are a small minority.
+
+```{r table_verdicts}
+kable(
+cw_summary |> 
+    count(verdict) |>
+         mutate(percent = round((n / sum(n))*100, 2)) |>
+          arrange(desc(n))
+)
+```
+
+
+Year on year, verdict proportions can vary considerably, and it's difficult to see any trends. However, broken down by decade, some patterns do appear: the proportion of verdicts that are of natural causes increases substantially; the share of accidents peaks in the 1770s and then falls back to much the same level as in the 1760s; homicides and suicides also decrease.  
+
+```{r cwic-1-bar-plot_verdicts_decades}
+
+# proportional stacked bar chart for verdicts by decade
+
+cw_summary |>
+    mutate(decade = doc_year - (doc_year %% 10)) |>
+    add_count(decade) |> rename(n_dec = n) |>
+    count(decade, verdict, n_dec) |> 
+    mutate(perc = round(n / n_dec * 100, 1) ) |>
+  
+  ggplot(aes(x=decade, y=n, fill=verdict) ) + 
+    geom_bar(stat="identity", position="fill") +
+    geom_text(aes(label=perc), position = position_fill(vjust=0.5), colour="white") +
+    scale_y_continuous(labels = percent_format()) +
+    scale_fill_tableau() +
+    labs(y="% of inquests", x="decade of inquest", title="Verdicts by decade") 
+
+
+```
+
+
+Let's look at the monthly patterns by verdict. The proportion of **accidental** deaths peaks from June to September, which almost - though not quite - overlaps with the peak inquest months of May to August. On the other hand, the proportion of deaths from **natural causes** is at its highest (and from accidents at its lowest) in December-January. 
+
+Possible explanations for this? The summer months were the time of year when people were most likely to be working and playing outdoors (including, for example, swimming in the River Thames) and so they could well have been more exposed to more risks. (Bearing in mind that homes and indoor workplaces contained their own dangers, of course!) Meanwhile, I think it's possible that many of the December-January 'natural causes' deaths may turn out to be strangers who had been found dead of cold and "want". These are clearly topics for further exploration.
+
+
+```{r cwic-1-bar-plot_verdicts_months}
+# use patchwork package to combine two plots into one graphic
+
+ggplot(cw_summary |> 
+         add_count(doc_month) |> rename(n_mon = n) |>
+         count(doc_month, verdict, n_mon) |>
+         mutate(perc = round(n / n_mon * 100, 1))
+       , aes(x=doc_month, y= n, fill=verdict)) +
+  geom_bar(stat="identity", position = "fill") +
+    #geom_text(aes(label=perc), position = position_fill(vjust=0.5), colour="white") +
+  scale_y_continuous(labels = percent_format())  +
+  scale_fill_tableau() +
+  labs(x="month", y="% of inquests", title="Inquests by month and by verdict") +
+
+ggplot(cw_summary |> 
+         count(doc_month)
+       , aes(x=doc_month, y= n)) +
+  geom_bar(stat="identity") +
+  theme(axis.ticks.x=element_blank(),  # the axis ticks
+          axis.title=element_blank(),  # the axis labels
+          axis.text.x=element_blank()) +
+  
+plot_layout(ncol = 1, heights = c(5, 1))
+```
+
+
+A breakdown of the monthly patterns by gender shows that the proportion of male deaths *also* peaked between June and August, and was at its lowest in January.
+
+
+```{r cwic-1-bar-plot_verdicts_month_gender}
+
+ggplot(cw_summary |> 
+         count(doc_month, gender)
+       , aes(x=doc_month, y= n, fill=gender)) +
+  geom_bar(stat="identity", position = "fill") +
+  scale_fill_tableau() +
+    scale_y_continuous(labels = percent_format()) +
+  labs(x="month", y="% of inquests", title="Inquests by month and gender")
+```
+
+
+And so it's no surprise to have confirmation that men were considerably more likely than women to have died in accidents. A more curious feature at first sight, however, is that female deceased were more likely than men to be victims of homicide, since in court records most killings were male-on-male. The difference here is almost certainly due to the presence of new-born infants (whose gender is not usually systematically analysed in infanticide studes). 
+
+
+```{r cwic-1-bar-plot_gender_verdict}
+# more complex aggregation with calculation of percentages to make text labels, facilitate more precise comparisons
+
+cw_gender_verdict <-
+  cw_summary |> 
+  select(gender, verdict) |> 
+  add_count(gender, name="n_g") |>
+  add_count(gender, verdict, name="n_gv") |>
+  count(gender, verdict, n_gv, n_g) |>
+  dplyr::mutate(pc_gv = n_gv/n_g*100)
+
+cw_gender_verdict |> 
+  ggplot(aes(x=gender, y=pc_gv, fill=verdict, label=round(pc_gv,1) )) + 
+    geom_bar(stat='identity') +   
+    geom_text(position=position_stack(vjust=0.5), colour = "white", size=4) +  
+    labs(y="% of verdicts", fill="verdict", title="Inquest verdicts by gender")  +
+    scale_fill_ptol() 
+
+
+```
+
+
+
+Counting words
+-----
+
+Part 2 will explore the inquisition texts in more depth, but I want to do some basic textmining first. That means, essentially, counting words, which can be a lot more informative than you might think.
+
+
+```{r tokenize_texts}
+# tokenize all texts - top+tailed version 
+cw_inquest_text_words <- 
+  cw_inquest_texts_stripped |>
+  unnest_tokens(word, text_stripped)
+
+# tokenize for unchopped versions
+cw_inquest_text_words_full <-
+  cw_inquest_texts |>
+  unnest_tokens(word, text)
+
+```
+
+To start with some basic stats for the full documents (without any stopwords applied). 
+The `2881` documents contain ``r  cw_inquest_text_words_full |> tally() `` words in total, with ``r n_distinct(cw_inquest_text_words_full$word) `` unique words.
+
+
+The average (mean) length of each document is ``r cw_inquest_text_words_full |> count(img_inq_first) |>  dplyr::summarise(ave = round(mean(n),2) ) # 402.87 `` words. 
+
+The **distribution** of word counts is interesting: this histogram of word counts per document shows that it's what's called a *bimodal distribution* - that is, it has two peaks. So, intriguingly, there are two clusters of inquisitions by document length: short documents that are less than about 300 words in length, and a larger group of longer documents. The second peak, additionally, has a "positive (right-hand) [skew](https://en.wikipedia.org/wiki/Skewness)" (or long tail). What's happening here?
+
+
+```{r cwic-1-histogram_word_counts}
+
+cw_inquest_text_words_full |> 
+  select(img_inq_first, word) |> 
+  count(img_inq_first) |> 
+  ggplot(aes(x=n)) +
+  geom_histogram(binwidth=10) +
+  labs(title="Histogram of word counts per document", x="word count")
+```
+
+One possible reason for that to happen would be some kind of sudden administrative/legal change that resulted in a change in the format of docuemnts. But this scatterplot shows that isn't the case. The bimodal pattern becomes consistent from around 1770 with a very clear gap between the "short" and "long" documents in most years. You can see that the dots become denser (especially, perhaps, in the shorter group?), reflecting the growing numbers of inquests. (This will probably be worth further analysis by decade.) However, there are no sudden changes or obvious big trends; document lengths overall don't appear to change much. 
+
+This stability seems worth noting because (in a broader context of social and legal change, population growth, etc, in London in the later 18th century) change rather than continuity has been a striking feature of other text datasets for this period that I've worked with. Old Bailey Online trials, for example, get longer and more detailed in the second half of the century, though there is also much more variation in length among trial reports. Petitions to Quarter Sessions also vary much more in length than these texts do, ranging from less than 100 words to a few thousand, yet with a shorter average length than the inquisitions. So, on just this one measure, the inquisitions already have some quite distinctive and interesting characteristics. 
+
+
+```{r cwic-1-jitter-plot_wordcounts}
+
+cw_inquest_text_words_full |> 
+  select(img_inq_first, word, doc_year) |> 
+  count(img_inq_first, doc_year) |> 
+  ggplot(aes(x=doc_year, y=n)) +
+  geom_jitter(size=1) +
+  labs(title="Word counts of inquisitions 1760-1799", y="word count", x="year of inquest")
+```
+
+
+On repeating the scatterplot with a breakdown by verdict, the cause of the bimodal pattern becomes immediately much clearer. The short inquisitions are almost entirely verdicts of natural causes or undetermined; the longest documents are mostly homicides, with accidents and suicides in the middle.
+
+```{r cwic-1-jitter-plot_wordcounts_verdicts}
+
+cw_inquest_text_words_full |> 
+  select(img_inq_first, word, doc_year, verdict) |> 
+  count(img_inq_first, doc_year, verdict) |> 
+  ggplot(aes(x=doc_year, y=n, colour=verdict)) +
+  geom_jitter(size=1) +
+  scale_color_tableau() +
+  labs(title="Word counts of inquisitions by verdict 1760-1799", y="word count", x="year of inquest")
+```
+
+Faceting the plot shows a few things that were slightly obscured above: homicide inquisitions, even though they're the smallest group numerically, are by far the most varied in length. Both accidental and natural verdicts inquisitions appear to become more homogenous in length and the trend line shows that they get a bit shorter. (That sudden big spike in the length of natural causes in the early 1790s is so odd that I'm inclined to suspect it's an error in the data; I'll investigate later...)
+
+```{r cwic-1-jitter-facet_wordcounts_verdicts}
+
+cw_inquest_text_words_full |> 
+  select(img_inq_first, word, doc_year, verdict) |> 
+  count(img_inq_first, doc_year, verdict) |> 
+  ggplot(aes(x=doc_year, y=n, colour=verdict)) +
+  geom_jitter(size=1) +
+  geom_smooth(colour="black", se=FALSE, method="loess", linewidth=0.7) +
+  facet_wrap(~verdict) +
+  guides(colour="none") +
+  scale_color_tableau() +
+  labs(title="Word counts of inquisitions 1760-1799", y="word count", x="year of inquest")
+```
+
+
+
+Concluding thoughts
+------
+
+This exploratory quantitative analysis has raised some areas of interest for more detailed investigation in subsequent research (in addition to needing to do some work on improving the data):
+
+* the gendering of different kinds of sudden/violent death
+* the significance of the added dimension of age groups
+* changes over time and seasonal patterns
+
+I'll also want to do some case studies on inquests on "strangers" and (a group not mentioned at all yet) prisoners - the latter are likely to have some distinct characteristics.
+
+In part this will involve some old-fashioned close reading, but I'm also going to experiment with distant reading methods, and in part 2 I'm going to try out more textmining of the inquisitions texts, focusing in particular on comparing texts by verdicts.
+
+
+
+Further resources and reading
+--------
+
+
+[Westminster Coroners' Inquests Data](https://doi.org/10.5281/zenodo.4402837)  
+
+[London Lives Coroners' Inquests](https://www.londonlives.org/about/ic)
+
+["The coroner frequents more public-houses than any man alive"](https://londonhistorians.wordpress.com/2013/09/25/the-coroner-frequents-more-public-houses-than-any-man-alive/)
+
+Craig Spence, *Accidents and Violent Death in Early Modern London, 1650-1750* (Boydell & Brewer, 2016)
+
+John Landers and Anastasia Mouzas, ‘Burial Seasonality and Causes of Death in London 1670–1819’, *Population Studies*, 42 (1988), 59–83

@@ -1,0 +1,529 @@
+---
+title: "A Map of the Elizabethan Court of Requests"
+description: "TNA REQ 2 Pleadings by English and Welsh counties, 1558-1603"
+date: "2026-08-19"
+author: "Sharon Howard"
+categories: [maps, interactive, petitioning]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+## The Court of Requests
+
+The [Court of Requests](https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/court-of-requests-records-1485-1642/) operated from 1485 to 1642 "to provide easy access for poor men and women to Royal justice and equity. A cheap and simple procedure attracted many suitors, not all of them poor but a significant number of them women". It dealt primarily with small-scale civil cases, including property and inheritance disputes, marriage contracts and settlements, and occasionally criminal matters.
+
+[Daniel Gosling](https://bsky.app/profile/thegozfather.bsky.social/post/3mrzjeug2ck2h) has recently finished a project to catalogue the court's [Pleadings (petitions)](https://discovery.nationalarchives.gov.uk/details/r/C13323):
+
+> My Court of Requests pleadings (REQ 2/16-424) project is now complete. Over 28,000 items dating from c.1547-c.1625 (Edw VI to Jas I) now searchable online. 
+
+I could see the data included locations and thought this would make a good excuse to practise some mapping techniques using [Leaflet](https://leafletjs.com/). In particular, I wanted to try out making a [chloropleth](https://data.europa.eu/apps/data-visualisation-guide/choropleth-maps) of counties.
+
+I chose to confine the map to Elizabethan cases because they comprise the bulk of the catalogued cases; there aren't that many before 1558 and (as I understand it) the majority of post-1603 cases haven't been catalogued. So Elizabeth's reign provides a goodly chunk of data to play with. I've also restricted it to England and Wales as those represent the vast majority of identified locations. 22204 locations in 18878 cases could be mapped, using the [Historic County Borders Project](https://county-borders.co.uk/) data.
+
+More problematic was the [normalisation](https://handsondataviz.org/normalize-choropleth.html) of raw case numbers, ie calculating rates relative to county populations in the same period. There are several problems with this, including the inherent uncertainties of early modern demographics, the difficulty of sourcing comparable data for England and Wales (see Notes below for the gruesome details), as well as the artificiality of using snapshots of population counts when the cases cover almost half a century. It's really a terrible idea! 
+
+So I'm not sure I trust the population data enough, for example, to make much of the apparent differences between north and south Wales. But it's even worse not to do it, because using the raw case numbers in a map can be highly misleading. For example, Buckinghamshire and Lincolnshire are referenced in similar numbers of cases (544 and 550). But the 1600 population estimates are c.175,200 for Lincolnshire and c.56,700 for Buckinghamshire. So in fact people in Buckinghamshire were *three* times as likely as Lincolnshire inhabitants to be involved in cases.
+
+And that difference appears to reflect a more general pattern: the map clearly suggests that travel represented a significant barrier to accessing the central courts, even when court costs were relatively low.
+
+Finally, I've added an interactive table to enable a little exploration of the data, with links to the catalogue for full details.
+
+
+```{r}
+library(scales)  
+library(janitor) 
+library(glue)
+
+library(tidytext)
+library(tidyverse)
+
+library(ggthemes)
+
+library(sf)
+
+req2_items_csv <-
+  read_csv(here::here("site_data/tna/req2_eliz2_20260810.csv")) |>
+  clean_names("snake")
+
+req2_counties_csv <-
+  read_csv(here::here("site_data/tna/req2_eliz2_counties_20260816.csv"))
+
+
+population_estimates_csv <-
+  read_csv(here::here("site_data/other/population_estimates_counties_england_wales_20260818.csv"))
+
+population_estimates <-
+population_estimates_csv |>
+  mutate(p = if_else(src=="owen", p1545_63, p1600)) |>
+  select(county, p)
+
+## historic counties borders project (uk)
+## geojson converted from shapefile
+# doesn't have an id col. does it need one? should join the req2 data by county.
+
+hcp_historic_counties_engwales_geojson <-
+  st_read(here::here("site_data/geo/hcp_counties.geojson"), quiet=TRUE) 
+
+## NB need an acknowledgment line in any public posts: 
+hcp_credit <- "This post made use of data provided by the [Historic County Borders Project](https://www.county-borders.co.uk)."
+
+
+```
+
+
+
+```{r}
+req2_filtered <-
+  req2_items_csv |>
+# initial reign filter using context_description
+  filter(str_detect(context, regex("ELIZABETH", ignore_case = T))) |>
+# keep only structured descriptions that start with Short Title/Unknown Cause. 
+  filter(str_detect(description, "^(Short Title|\\[Unknown Cause\\]\\.)")) |>
+# reference segments
+  separate(reference, into=c("r1", "r2", "r3"), sep = "/", remove = F, convert = T)  |>
+# pretty sure document type is the only one with capitalisation variant. fix before doing stuff
+  mutate(description = str_replace(description, "Document Type:", "Document type:"))  |> 
+# drop stuff you won't need
+  select(description, id, reference, r2, r3, start_date, end_date) |>
+# date parsing
+  mutate(start_date = as.Date(parse_date_time(start_date, "dmy"))) |>
+  mutate(end_date = as.Date(parse_date_time(end_date, "dmy")))  |>
+  mutate(start_year = year(start_date), end_year = year(end_date)) |>
+# dates
+  # add 1 day to end_date, then get lubridate period
+  mutate(end_date_p1 = end_date+days(1)) |>
+  mutate(start_end = as.period(interval(start_date, end_date_p1))) |>
+  mutate(start_month = month(start_date), start_day=day(start_date), 
+         end_month = month(end_date), end_day=day(end_date)) |>
+  mutate(date_type = case_when(
+    start_date=="1558-11-17" & end_date=="1603-03-24" ~ "reign",
+    start_date=="1558-01-01" & end_date=="1603-12-31"	~ "reign",
+    start_date=="1558-11-17" ~ "reign*",
+    #"1558-11-17"	"1558-11-17"
+  	#"1558-11-17" "1559-11-16"
+    start_date<"1558-01-01" | end_date>"1603-12-31" ~ "other reign",
+    start_year==end_year & start_month==1 & start_day==1 & end_month==12 & end_day==31 ~ "calendar year",
+    start_end==days(1) ~ "day",
+    start_month==1 & start_day==1 & end_month==12 & end_day==31 ~ "calendar years",
+    # aha some regnal year dates... 1596-11-17	1597-11-16. apparently none >1
+    (end_year-start_year==1) & start_month==11 & start_day==17 & end_month==11 & end_day==16 ~ "regnal year",
+    (end_year-start_year>1) & start_month==11 & start_day==17 & end_month==11 & end_day==16 ~ "regnal years",
+    # month; will this work now?  yes! probably.
+    start_end==months(1) ~ "month",
+    start_end<years(1) ~ "months",
+    start_end>years(1) ~ "years",
+    # only a few, all >1 year... actually not all >1 year?
+    #.default = "other"
+    )) |>
+  mutate(date_category = case_when(
+    date_type=="other reign" ~ NA, # to remove
+    date_type %in% c("reign", "reign*") ~ "reign",
+    date_type %in% c("calendar year", "day", "month", "months", "regnal year") ~ "year",
+    end_year-start_year<=5 ~ "year",
+    .default = "period" # keep for now but remove from any date analysis
+  )) |>
+  # drop other reign
+  filter(!is.na(date_category)) |>
+  select(-end_date_p1)  |>
+  arrange(r2, parse_number(r3))
+
+
+req2 <-
+req2_filtered |>
+  select(id, reference, r2, r3, start_year, end_year, date_category, description) |>
+# unnest key:value lines
+  unnest_regex(line, description, 
+               pattern="(?=(^Short Title|Plaintiffs|Defendants|County|Subject|Document type|See also|Note):|^\\[Unknown Cause\\]\\.) *", 
+               to_lower = FALSE) |>
+  separate(line, into=c("key", "value"), sep="(:|\\]\\.) *", extra = "merge") |>
+  # a bit of cleaning before pivot
+  mutate(value = str_remove(value, "\\. *$")) |>
+  mutate(value = str_trim(value)) |>
+  pivot_wider(names_from = key, values_from = value) |>
+  clean_names()  |>
+  select(-unknown_cause) |>
+  arrange(r2, parse_number(r3)) |>
+  mutate(short_title = if_else(is.na(short_title), "[Unknown Cause]", short_title))  |>
+  mutate(subject = if_else( str_detect(subject, "^\\[unspecified"), "[unspecified]", subject ))
+
+
+req2_counties_engwales <-
+req2_counties_csv  |>
+  filter(!is.na(region)) |> 
+  select(id, county=county_hcp)
+
+req2_counties <-
+req2_counties_engwales |>
+  group_by(id) |>
+  arrange(county, .by_group = TRUE) |>
+  summarise(county = paste(county, collapse = "; ")) |>
+  ungroup() |> 
+  inner_join(req2 |> select(id, reference, start_year, end_year, date_category, short_title, subject, r2, r3), by="id") |>
+# construct tna url from id
+  mutate(tna_url = glue("https://discovery.nationalarchives.gov.uk/details/r/{id}"))  |>
+  mutate(dates = case_when(
+    start_year==end_year ~ as.character(start_year),
+    date_category=="reign" & end_year != 1603 ~ paste(start_year, end_year, sep = "-"),
+    date_category=="reign" ~ "1558-1603",
+    .default = paste(start_year, end_year, sep = "-")
+  ))  |>
+  arrange(r2, parse_number(r3), start_year, end_year, county)
+
+
+# don't need left join for this
+hcp_req2_geo <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(
+    req2_counties_engwales |> 
+      count(county, name="cases"), by="county") |>
+  inner_join(population_estimates, by="county")  |>
+  mutate(cr=round(cases/p, 4), cp=cases/p*100) 
+
+# hcp_req2_counts <-
+#   hcp_req2_geo |>
+#   tibble() |>
+#   select(county, region, cases, p, cp)
+
+```
+
+```{r}
+# hcp_req2_geo |>
+#   tibble() |>
+#   select(county, p, cases, cp) |>
+#   #filter(between(p, 70000, 80000)) |>
+#   arrange(cases)
+```
+
+
+```{r}
+ojs_define(ojs_req2_engwales = req2_counties_engwales)
+ojs_define(ojs_req2_counties = req2_counties)
+#ojs_define(ojs_req2_counts = hcp_req2_counts)
+ojs_define(ojs_hcp_req2_geo = hcp_req2_geo)
+```
+
+
+
+
+```{ojs}
+ojsReq2EngWales = transpose(ojs_req2_engwales)
+ojsReq2Counties = transpose(ojs_req2_counties)
+//ojsReq2Counts = transpose(ojs_req2_counts)
+ojsHcpReq2Geo = transpose(ojs_hcp_req2_geo)
+```
+
+
+```{ojs}
+// function for multipolygon data (will prob work for non-multi polygons as well...)
+// reminder:
+// curly braces make an Object. geometry=Object.
+// square braces make an Array. coordinates = (nested) Array
+
+// "hcs_county": "Anglesey", "abbr": "Angle", "hcs_name": "Anglesey", "hcs_code": "AGL", "hcs_number": 2, "county": "Anglesey", "region": "Wales" }, 
+
+function createPolyData(data) {
+  const geoData = {
+    type: 'FeatureCollection',
+    crs: {type: 'name', properties: {name: 'urn:ogc:def:crs:OGC:1.3:CRS84'}},
+    features: []
+  };
+  data.map(h => {
+    geoData.features.push({
+      type: 'Feature',
+      properties: {
+        //id: h.id,
+        county: h.county,
+        region: h.region,
+        n: h.cases, 
+        p: h.p,
+        cp: h.cp
+      },
+      geometry: {
+        type: h.geometry.type,
+        coordinates: h.geometry.coordinates
+      }
+    });
+  });
+  return geoData;
+}
+```
+
+
+```{ojs}
+ojsHcpReq2Poly = createPolyData(ojsHcpReq2Geo)
+```
+
+## Map
+
+(hover over the map to see county names and counts)
+
+
+```{ojs}
+//| column: body
+
+mapHcp = {
+  // Make a container in the Observable DOM to hold the map
+  // can i change dimensions of this to work better for map? yes!
+  // removed width as it seems to conflict with column: 
+  let parent = DOM.element('div', { style: `height:700px` });
+  // Make sure Observable renders the parent container so Leaflet can figure out its size
+  yield parent;
+  
+  // 
+  let map = L.map(parent)
+      .setView([52.9221, -1.4729], 7); // ggl derby. still could be a bit further W? // higher numbers are more zoomed in.
+  
+  // osm is a bit *busy*
+ /* let osmTileLayer = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 20,
+      minZoom: 12
+  })
+  .addTo(map); */
+  
+  // i like this! from ggl ai search but looks fine. light_all / voyager (more colour)
+  let cartoTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png', { 
+    maxZoom: 9,
+    minZoom: 6,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>; <a href="https://www.county-borders.co.uk">Historic County Borders Project</a>' 
+    })
+    .addTo(map);
+  
+
+
+  
+
+ // make a lookup table indexed by county, so we can go from that ID to the count
+ // let countsByGeoId = new Map(ojsHcpReq2Geo.map(row => [row['county'], row]));
+  
+  let styleGenerator = feature => {
+    let style = {
+      "color": "rgb(100, 100, 100)",
+      //"fillColor": req2ColorScale(countsByGeoId.get(feature.properties.county).cp),
+      "fillColor": getColorR(feature.properties.cp),
+      "opacity": 1,
+      "weight": 2, // this is the *width of the boundary lines*, intuitive eh
+      "fillOpacity": 0.5,
+    }
+    return style;
+  };
+
+
+	
+	// simple popup / colour styling
+	
+  let markers = L.geoJSON(null, {
+  
+    style: styleGenerator,
+  
+    onEachFeature: function (feature, layer) {
+    
+    // in the data it's called features not feature ????
+      const data = feature.properties;
+      const tip = `<div class="popup">${data.county} (${data.n} cases; pop. ${data.p})</div>`; 
+      
+      //layer.bindPopup(tip); // click.
+      layer.bindTooltip(tip, {sticky: true}); // hover. 
+      
+    },
+    
+    //pointToLayer: function (feature, latlng) {...}
+  }) ;  
+  
+  markers.addData(ojsHcpReq2Poly).addTo(map);
+
+
+// this isn't needed if no map filters
+  // This is to make these variables accessible in other Observable cells.
+  // It is not necessary for regular HTML web pages.
+  // was mcg, markers. not sure if just changing to map will work; think it's ok!
+  
+ //mutable mapVariables = [map, markers];
+
+}
+
+```
+
+
+
+
+## Explore cases
+
+This table is intended to give just a taste of the catalogued data; for full details follow the links. The [catalogue](https://discovery.nationalarchives.gov.uk/details/r/C13323) also has a keyword and date search facility, and Daniel has been posting search tips and hints on his [Bluesky account](https://bsky.app/profile/thegozfather.bsky.social).
+
+
+
+
+
+```{ojs}
+// for the viewof, make array of county names, plus "All" as starting point. this goes in select_county whatever else you do.
+selected_counties = 
+  ["All"].concat(ojsHcpReq2Geo.map(d => d.county) )
+
+
+// lookup from county names to case ids, because of cases with multiple counties. 
+// input is the full lookup county-id
+// output is an array of just the ids
+
+counties_cases_ids =
+  ojsReq2EngWales
+    .filter( (d) => select_county==d.county || select_county=="All" )
+    .map(d => d.id)
+
+
+// ojs_req2_engwales = req2_counties_engwales = ojsReq2EngWales [county + tna ids] - need this for the lookup
+// ojs_req2_counties = req2_counties = ojsReq2Counties - tna data with county *agg* so not the same as engwales + (id, dates, subjects)
+// ojs_hcp_req2_geo = hcp_req2_geo = ojsHcpReq2Geo  [county + geo data + counts + rates]. 
+
+
+```
+
+```{ojs}
+// filter the full table. then this goes in the table. 
+// but this setup means that if you reset the county, it clears this filter too, which is a bit annoying.
+
+filtered_cases =
+  ojsReq2Counties.filter( (d) => counties_cases_ids.includes(d.id) )
+```
+
+
+```{ojs}
+// inputs.select for county
+viewof select_county = Inputs.select(
+// the All+ county names array
+  selected_counties,
+  { label: "Select county"}
+)
+```
+
+
+```{ojs}
+// inputs search for subject
+viewof search_subjects = Inputs.search(
+    //ojsReq2Counties //.filter( (d) => counties_cases_ids.includes(d.id) )
+    // table of filtered cases
+    filtered_cases
+    , {label: "Filter subject", columns: ["subject"], width: 500}
+    )
+    
+```
+
+
+
+```{ojs}
+//| column: page
+//| classes: reqtable
+
+Inputs.table(
+  // starting with full data set
+  //ojsReq2Counties.filter( (d) => d.county === select_county || select_county==="All" )
+
+  search_subjects
+  , 
+  {
+  rows: 20,
+  //select: false, // doesn't work; ah already have a note "doesn't work - it's a Q problem."
+  format: {
+    dates: (d) => `${d}`,
+    reference: (d, i, data) => htl.html`<a href=${data[i].tna_url} target=_blank>${d}</a>`
+  } ,
+    columns: [
+    "reference",
+    "short_title",
+    "dates",
+    "county",
+    "subject"
+  ], 
+  header: {
+    short_title: "title",
+    dates: "date"
+  }
+}
+  )
+```
+
+
+
+## Notes
+
+I used TNA's Discovery API to fetch calendared cases with dates between 1558 and 1603, and then filtered out any items described as belonging to other reigns, or lacking structured descriptions. That results in 20680 Elizabethan cases. Note that the majority are dated by reign only; a few have more precise dates.
+
+I used the `County` field in descriptions to map locations. The `Subject` field also contains more localised place names which I didn't use, and I don't know if all of them have been identified for `County`.
+
+Cases can refer to more than one county; each mention of a county is counted in the map. Most excluded cases had no specified location (about 1750), and there are small numbers of locations that are outside England and Wales, or unidentifiable/uncertain. (NB: Middlesex encompasses London and the Isle of Wight is part of Hampshire.)
+
+In order to calculate rates from the raw case numbers, I had to combine population estimates from a number of different sources.
+
+- The English counties have the most up-to-date estimates thanks to recent work by CAMPOP, and I've used their table of county totals for 1600. ([Population estimates for England and Wales c.1680](https://www.campop.geog.cam.ac.uk/research/projects/transport/data/population1680.html))
+- Unfortunately, CAMPOP didn't see fit to include Wales in their table (though they clearly have Welsh data), so for the Welsh counties I had to turn to Leonard Owen's 70-year-old estimates. Not only is this much older work, the dates given don't exactly match; I've used his 1545/63 counts. ([The population of Wales in the sixteenth and seventeenth centuries](http://hdl.handle.net/10107/1415159))
+- And one final hurdle: Owen didn't include Monmouthshire, and it was remarkably difficult to track down an accessible online source. I resorted eventually to an *1841* estimate (at A Vision of Britain, but that website wasn't loading when I was trying to get to it - a regular occurrence, unfortunately - and so the link is to an archived version from the Wayback Machine). Comparison of other counties' numbers with CAMPOP's indicated that, despite the age of the source, it should be at least somewhere in the same ballpark; for the moment that's the best I can do. ([Estimated Population of England and Wales, 1570-1750](https://web.archive.org/web/20260207094204/https://www.visionofbritain.org.uk/census/GB1841ABS_1/6))
+
+(I thought I'd read online a few years ago that someone is undertaking a project to re-do population estimates for early modern Wales, but I may have hallucinated it; I can't find anything about it at the moment.)
+
+
+## Credits 
+
+- [The National Archives UK](https://www.nationalarchives.gov.uk/)
+- REQ 2 calendar: [Daniel Gosling](https://bsky.app/profile/thegozfather.bsky.social)
+- County boundaries map data: [Historic County Borders Project](https://www.county-borders.co.uk)
+
+## Resources
+
+- [REQ 2 Court of Requests: Pleadings](https://discovery.nationalarchives.gov.uk/details/r/C13323)
+- [Court of Requests Research Guide](https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/court-of-requests-records-1485-1642/)
+- [Court of Requests (Wikipedia)](https://en.wikipedia.org/wiki/Court_of_Requests)
+- [Laura Flannigan: Justice in the Court of Requests, 1483-1538](https://doi.org/10.17863/CAM.59242)
+- [TNA Discovery API](https://www.nationalarchives.gov.uk/terms-and-conditions/discovery-for-developers-about-the-application-programming-interface-api/)
+- [Leaflet Chloropleth Tutorial](https://leafletjs.com/examples/choropleth/)
+- [Learning Leaflet (ObservableHQ)](https://observablehq.com/@rahulbot/learning-leaflet)
+
+
+```{ojs}
+// based on leaflet tutorial. use in styleGenerator 
+// if adding map filters it probably won't work, since the numbers are fixed...
+// might be able to work out something using same colours but with rankings rather than fixed counts
+
+function getColorN(d) {
+    return d > 2000 ? '#800026' :
+           d > 1000  ? '#BD0026' :
+           d > 500  ? '#E31A1C' :
+           d > 250  ? '#FC4E2A' :
+           d > 100   ? '#FD8D3C' :
+           d > 50   ? '#FEB24C' :
+           d > 25   ? '#FED976' :
+                      '#FFEDA0';
+}
+
+
+// not enough contrast really
+//req2ColorScale = d3.scaleSequentialQuantile([...ojsHcpReq2Geo.map(tract => parseInt(tract['n']))], d3.interpolateBlues) 
+
+
+function getColorR(d) {
+    return d > 1.5 ? '#800026' :
+           d > 1.0  ? '#BD0026' :
+           d > .8  ? '#E31A1C' :
+           d > .6  ? '#FC4E2A' :
+           d > .4   ? '#FD8D3C' :
+           d > .2   ? '#FEB24C' :
+           d > .1   ? '#FED976' :
+                      '#FFEDA0';
+}
+
+```
+
+```{r}
+# hcp_req2_counts |>
+#   mutate(ppp = cp*100) |>
+#   arrange(-ppp)
+```
+
+
+
+```{css}
+/* get rid of select boxes in table unless you want to do something with them. */
+.reqtable table input {display: none;} 
+```
+

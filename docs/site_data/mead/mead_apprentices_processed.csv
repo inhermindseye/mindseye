@@ -1,0 +1,554 @@
+uid,ApprenticeLastName,ApprenticeFirstName,MasterLastName,MasterFirstName,OccupationCode,YearsApprenticed,Year17,GenderApprentice,year_apprenticed,decade_apprenticed,years_apprenticed,master_fname,Occupation,GenderMaster
+1,,Charles,Bringhurst,James,202,6,81,male,1781,1780,4-7,James,unknown,male
+2,,Jack,Butler,Anthony,202,11,93,male,1793,1790,8-11,Anthony,unknown,male
+3,,Lydia,Williams,Mary,48,12,69,female,1769,1760,12-15,Mary,housewife,female
+4,,Maria,Instone,John,48,5,94,female,1794,1790,4-7,John,housewife,male
+5,,Mary,Bonner,Elizabeth,48,4,94,female,1794,1790,4-7,Elizabeth,housewife,female
+6,,Phebe,Betterton,Benjamin,48,19,82,female,1782,1780,>15,Benjamin,housewife,male
+7,,Robert,Dehass,John Philip,202,19,82,male,1782,1780,>15,John,unknown,male
+8,,Rose,Donaldson,Joseph,48,20,82,female,1782,1780,>15,Joseph,housewife,male
+9,Adams,Francis,Bament,John,65,6,81,male,1781,1780,4-7,John,cordwainer-shoemaker,male
+10,Adams,Richard T.,Tidmarsh,Richard,202,17,90,male,1790,1790,>15,Richard,unknown,male
+11,Aitkens,Thomas,Robinson,Joseph,154,7,68,male,1768,1760,4-7,Joseph,sailmaker,male
+12,Aitkins,George,Bonnell,Charles,61,11,94,male,1794,1790,8-11,Charles,cooper,male
+13,Alcom,George,Aitken,John,29,1,96,male,1796,1790,<4,John,cabinet maker,male
+14,Alcorn,Matthew,Brown,William,29,3,96,male,1796,1790,<4,William,cabinet maker,male
+15,Alley,James,Perkins,William,106,3,97,male,1797,1790,<4,William,house carpenter,male
+16,Archer,Mary,Skellinger,Daniel,48,3,95,female,1795,1790,<4,Daniel,housewife,male
+17,Arm,Tulley,Tulley,William,22,1,97,male,1797,1790,<4,William,mantua maker,male
+18,Arreare,James,Lawrence,Giles,29,14,54,male,1754,1750,12-15,Giles,cabinet maker,male
+19,Averwine,Christiana,Blarson,Daniel,48,13,98,female,1798,1790,12-15,Daniel,housewife,male
+20,Averwine,Christiana,May,Adam,48,13,98,female,1798,1790,12-15,Adam,housewife,male
+21,Aymar,John Henry,Drullman,Henry,136,4,96,male,1796,1790,4-7,Henry,painter,male
+22,Bade,Carolina,Crawford,James,48,3,98,female,1798,1790,<4,James,housewife,male
+23,Bagley,John,Caton,James,122,4,70,male,1770,1770,4-7,James,mariner,male
+24,Baily,Sarah,Castle,Charlotte,48,6,98,female,1798,1790,4-7,Charlotte,housewife,female
+25,Ballaged,Hannah,Chancellor,Willliam,48,2,96,female,1796,1790,<4,Willliam,housewife,male
+26,Banks,Ann,Young,Henry,48,18,68,female,1768,1760,>15,Henry,housewife,male
+27,Barber,John,Wood,John,122,5,68,male,1768,1760,4-7,John,mariner,male
+28,Bardin,John,Weed,Ely,65,6,65,male,1765,1760,4-7,Ely,cordwainer-shoemaker,male
+29,Barnes,Samuel,Davees,William,65,6,95,male,1795,1790,4-7,William,cordwainer-shoemaker,male
+30,Barns,James,Amies,Thomas,65,13,97,male,1797,1790,12-15,Thomas,cordwainer-shoemaker,male
+31,Barry,Margaret,Wisman,Samuel,48,11,96,female,1796,1790,8-11,Samuel,housewife,male
+32,Bartholemew,Melony,Moor,Ralph,122,5,69,female,1769,1760,4-7,Ralph,mariner,male
+33,Baustick,Rachel,Crozier,Matthew,48,8,96,female,1796,1790,8-11,Matthew,housewife,male
+34,Beavore,Peter,Shuster,Adam,27,3,99,male,1799,1790,<4,Adam,butcher,male
+35,Bellamy,Robert,O'brien,William,190,5,98,male,1798,1790,4-7,William,tailor,male
+36,Benouf,Sarah,Gibbs,Benjamin,48,3,70,female,1770,1770,<4,Benjamin,housewife,male
+37,Benson,John,Summers,George,106,7,96,male,1796,1790,4-7,George,house carpenter,male
+38,Berry,Elizabeth,Kelly,Margaret,48,4,69,female,1769,1760,4-7,Margaret,housewife,female
+39,Betty,Sary,Henderson,Margaret,48,7,68,female,1768,1760,4-7,Margaret,housewife,female
+40,Biesmanin,Catherine,Krafft,Geo. Michael,48,26,70,female,1770,1770,>15,Geo,housewife,male
+41,Bill,Hannah,Potter,Richard,202,5,91,female,1791,1790,4-7,Richard,unknown,male
+42,Bird,Margaret,Frank,John,48,6,70,female,1770,1770,4-7,John,housewife,male
+43,Black,Phoebe,Lehman,Joseph,48,3,99,female,1799,1790,<4,Joseph,housewife,male
+44,Blother,Lawrence,Stagg,John,202,7,63,male,1763,1760,4-7,John,unknown,male
+45,Boardman Thomas,Swan,Richard,,100,10,52,male,1752,1750,8-11,,hatter,undetermined
+46,Booth,John,Granger,John,128,6,68,male,1768,1760,4-7,John,merchant,male
+47,Bowdwyne,Mary,Gardner,Joseph,48,5,68,female,1768,1760,4-7,Joseph,housewife,male
+48,Bower,Paul C.,Breton,Paul C.,202,14,82,male,1782,1780,12-15,Paul,unknown,male
+49,Bradford,Parker,Pinyard,Mathias,61,7,95,male,1795,1790,4-7,Mathias,cooper,male
+50,Brimmely,James,Motley,Walter,3,5,66,male,1766,1760,4-7,Walter,baker,male
+51,Bristol,Abner,Oman,John,65,6,98,male,1798,1790,4-7,John,cordwainer-shoemaker,male
+52,Brittan,John,Orr,Hugh,65,13,98,male,1798,1790,12-15,Hugh,cordwainer-shoemaker,male
+53,Britten,Joseph,Wagner,Henry,175,16,98,male,1798,1790,>15,Henry,skindresser,male
+54,Brown,James,Brown,Elijah,61,13,96,male,1796,1790,12-15,Elijah,cooper,male
+55,Brown,Lydia,Bird,Caleb&Mary,48,3,94,female,1794,1790,<4,Caleb&Mary,housewife,mixed
+56,Brown,William,Bush,Solomon,83,12,94,male,1794,1790,12-15,Solomon,farmer,male
+57,Brussell,Joseph,Freglohan,Philip,140,6,81,male,1781,1780,4-7,Philip,ship pilot,male
+58,Bryan,Elizabeth,Bayard,John,48,6,68,female,1768,1760,4-7,John,housewife,male
+59,Buckiman,John,Logan,Adams,65,15,96,male,1796,1790,12-15,Adams,cordwainer-shoemaker,male
+60,Burke,Benezer,Norton,George,48,15,97,female,1797,1790,12-15,George,housewife,male
+61,Burke,Levi,Rickey,James,65,5,70,male,1770,1770,4-7,James,cordwainer-shoemaker,male
+62,Burton,Edward,Marley,Richard J.,65,6,96,male,1796,1790,4-7,Richard,cordwainer-shoemaker,male
+63,Bush,Alexander,Harding,William,106,17,99,male,1799,1790,>15,William,house carpenter,male
+64,Bush,Alexander,Hofner,Jacob,65,19,97,male,1797,1790,>15,Jacob,cordwainer-shoemaker,male
+65,Bussey,Mathias,January,Peter,65,4,66,male,1766,1760,4-7,Peter,cordwainer-shoemaker,male
+66,Cad,John,Robison,Joseph,65,14,92,male,1792,1790,12-15,Joseph,cordwainer-shoemaker,male
+67,Campble,Joseph,Master,John M.,10,5,96,male,1796,1790,4-7,John,liquors bottler,male
+68,Cannon,Mary,Rawles,Robert,48,7,62,female,1762,1760,4-7,Robert,housewife,male
+69,Carney,Rosanna,Hickman,Benjamin,48,7,99,female,1799,1790,4-7,Benjamin,housewife,male
+70,Carr,Edward,Richards,John,202,2,98,male,1798,1790,<4,John,unknown,male
+71,Carr,Nancy,Banks,John,48,13,96,female,1796,1790,12-15,John,housewife,male
+72,Carr,William,Spafford,William,148,9,64,male,1764,1760,8-11,William,ropemaker,male
+73,Carrowle,Ann,Williams,Samuel,48,8,70,female,1770,1770,8-11,Samuel,housewife,male
+74,Cavelin,Garret,Prior,Thomas,129,10,66,male,1766,1760,8-11,Thomas,miller,male
+75,Caveny,John,Traquair,James,184,4,96,male,1796,1790,4-7,James,stone cutter,male
+76,Chambers,John,Pritchett,William,61,6,61,male,1761,1760,4-7,William,cooper,male
+77,Charlton,Mary,Stevens,Isabella,48,12,58,female,1758,1750,12-15,Isabella,housewife,female
+78,Charlton,Mary,Davidson,Mungo,202,10,59,female,1759,1750,8-11,Mungo,unknown,male
+79,Chattan,Elizabeth,Ware,David,48,10,70,female,1770,1770,8-11,David,housewife,male
+80,Chattin,Elizabeth,Mcdongal,John&Wife,48,10,70,female,1770,1770,8-11,John&Wife,housewife,mixed
+81,Civercoks,Dennis,Girard,Stephen,122,3,90,male,1790,1790,<4,Stephen,mariner,male
+82,Clark,John,Hayduck,Robert,136,4,96,male,1796,1790,4-7,Robert,painter,male
+83,Clark,Mark,Steel,William,48,7,68,male,1768,1760,4-7,William,housewife,male
+84,Clauson,John,Jngles,John,148,8,66,male,1766,1760,8-11,John,ropemaker,male
+85,Climmons,Edward,Waine,Humphrey,202,9,83,male,1783,1780,8-11,Humphrey,unknown,male
+86,Coats,Elizabeth,Gregory,William,48,10,93,female,1793,1790,8-11,William,housewife,male
+87,Cochran,William,Weaver,John,147,20,97,male,1797,1790,>15,John,rigger,male
+88,Cochran,Ann,Clevalier,Peter,48,11,62,female,1762,1760,8-11,Peter,housewife,male
+89,Cochran,William,Weaver,John,147,20,97,male,1797,1790,>15,John,rigger,male
+90,Cockran,William,Schnuder,John,61,5,96,male,1796,1790,4-7,John,cooper,male
+91,Colladay,Joseph,Kollock,John,154,4,93,male,1793,1790,4-7,John,sailmaker,male
+92,Collins,Mary,David,John,48,7,69,female,1769,1760,4-7,John,housewife,male
+93,Collins,William,Browm,James,65,10,64,male,1764,1760,8-11,James,cordwainer-shoemaker,male
+94,Collins,William,Myers,Lewis,192,5,97,male,1797,1790,4-7,Lewis,tanner,male
+95,Conely,Catharine,Neer,James,48,10,97,female,1797,1790,8-11,James,housewife,male
+96,Connor,Wittington,Dehart,Jacob,202,12,99,male,1799,1790,12-15,Jacob,unknown,male
+97,Cook,George,Snyder,Gasper,61,15,96,male,1796,1790,12-15,Gasper,cooper,male
+98,Cool,George,Breaclies,Vander,27,7,68,male,1768,1760,4-7,Vander,butcher,male
+99,Cooley,George,Fritz,John,118,14,59,male,1759,1750,12-15,John,limner,male
+100,Corman,Robert,Lay,Thomas,202,4,69,male,1769,1760,4-7,Thomas,unknown,male
+101,Cornwall,Jeremiah,Fisher,James C.,99,14,96,male,1796,1790,12-15,James,hairdresser,male
+102,Courtenay,Jacob,Pattin,Robert,208,21,68,male,1768,1760,>15,Robert,weaver,male
+103,Covert,Isaac,Elfrith,Jeremiah,202,4,68,male,1768,1760,4-7,Jeremiah,unknown,male
+104,Covert,Lidia,Jones,Charity,48,5,68,female,1768,1760,4-7,Charity,housewife,female
+105,Cox,Deborah,Rhobur,Henry,48,9,81,female,1781,1780,8-11,Henry,housewife,male
+106,Craig,John,Hood,Seymore,122,6,70,male,1770,1770,4-7,Seymore,mariner,male
+107,Creamer,Boaz,Philips,John,99,7,96,male,1796,1790,4-7,John,hairdresser,male
+108,Crispen,James,Barnes,Thomas,68,6,95,male,1795,1790,4-7,Thomas,currier,male
+109,Crosdle,Jane,Coates,Thomas,48,4,96,female,1796,1790,4-7,Thomas,housewife,male
+110,Crossley,Susanna,Young,William,48,12,68,female,1768,1760,12-15,William,housewife,male
+111,Dabrich,Hector,Miller,John,65,10,92,male,1792,1790,8-11,John,cordwainer-shoemaker,male
+112,Dalewood,John,Dawson,Michael,140,4,68,male,1768,1760,4-7,Michael,ship pilot,male
+113,Daney,Martha,Smith,Daniel,48,3,98,female,1798,1790,<4,Daniel,housewife,male
+114,Darin,Jolin,Mifflin,Samuel,122,6,59,male,1759,1750,4-7,Samuel,mariner,male
+115,Darling,Elizabeth,Robinson,Richard,48,6,96,female,1796,1790,4-7,Richard,housewife,male
+116,Daughty,James,Taylor,Lewis,190,12,98,male,1798,1790,12-15,Lewis,tailor,male
+117,Davis,Peter Robinso,Dumoutet,John,94,13,97,male,1797,1790,12-15,John,goldsmith,male
+118,Davis,Susannah,Davis,John,48,17,70,female,1770,1770,>15,John,housewife,male
+119,Davise,Richard,Rutter,Richard,133,7,93,male,1793,1790,4-7,Richard,nailer,male
+120,Dawes,Elisha,Johnson,William,23,7,70,male,1770,1770,4-7,William,bricklayer,male
+121,Dawling,Juditdh,Bainbridge,William,48,14,98,female,1798,1790,12-15,William,housewife,male
+122,Dawling,Sarah,Strong,Joseph,48,7,98,female,1798,1790,4-7,Joseph,housewife,male
+123,Dawson,Ann,Greenfield,Elizabeth,48,15,81,female,1781,1780,12-15,Elizabeth,housewife,female
+124,Day,John,Ulrich,John,65,3,94,male,1794,1790,<4,John,cordwainer-shoemaker,male
+125,Dayley,Mary,Stacy,John,48,15,68,female,1768,1760,12-15,John,housewife,male
+126,Derrick,William,Skelly,Thomas,122,7,96,male,1796,1790,4-7,Thomas,mariner,male
+127,Dickey,Sarah,Wood,Jonathan,48,16,67,female,1767,1760,>15,Jonathan,housewife,male
+128,Dill,Jane,Garritson,Cornelius,48,13,70,female,1770,1770,12-15,Cornelius,housewife,male
+129,Dill,Sarah,Dexter,James,48,12,67,female,1767,1760,12-15,James,housewife,male
+130,Donaldson,Sarah,Bolton,Everand,48,7,80,female,1780,1780,4-7,Everand,housewife,male
+131,Donnis,Thomas,Klingle,Andrew,61,9,94,male,1794,1790,8-11,Andrew,cooper,male
+132,Donnol,A.,Whitehead,Charles,48,10,97,female,1797,1790,8-11,Charles,housewife,male
+133,Dorkinderin,John,Dartnell,Thomas,65,8,97,male,1797,1790,8-11,Thomas,cordwainer-shoemaker,male
+134,Dowman,William,Gill,Henry,202,18,65,male,1765,1760,>15,Henry,unknown,male
+135,Downey,Barnaby,Potter,Mathew,7,4,61,male,1761,1760,4-7,Mathew,blacksmith,male
+136,Downing,Joseph,Shewell,Stephen,122,4,69,male,1769,1760,4-7,Stephen,mariner,male
+137,Downing,Mary,Haly,Penelope,202,13,59,female,1759,1750,12-15,Penelope,unknown,female
+138,Downing,William,Lievene,Gabriel,94,8,68,male,1768,1760,8-11,Gabriel,goldsmith,male
+139,Duffee,Barnaby,Walter,Peter,7,5,69,male,1769,1760,4-7,Peter,blacksmith,male
+140,Durron,William,Allen,Richard,65,5,99,male,1799,1790,4-7,Richard,cordwainer-shoemaker,male
+141,Edward,Jabitha,Gillingham,James,48,11,66,female,1766,1760,8-11,James,housewife,male
+142,Edwards,James,Albison,Ricloff,202,6,65,male,1765,1760,4-7,Ricloff,unknown,undetermined
+143,Eller,Daniel,Fitlen,George,65,8,69,male,1769,1760,8-11,George,cordwainer-shoemaker,male
+144,Ellis,Elizabeth,Pryor,Charles,48,9,97,female,1797,1790,8-11,Charles,housewife,male
+145,Farrel,Catherine,Correy,William,202,4,62,female,1762,1760,4-7,William,unknown,male
+146,Feggin,William,Barrett,John,3,8,80,male,1780,1780,8-11,John,baker,male
+147,Ferguson,Elizabeth,Hodgkinson,Thomas,48,17,69,female,1769,1760,>15,Thomas,housewife,male
+148,Ferrell,Jane,Fignet,Andrew,89,6,64,female,1764,1760,4-7,Andrew,glovemaker-muffmaker,male
+149,Fesinger,Samuel,Swisher,John,133,16,64,male,1764,1760,>15,John,nailer,male
+150,Feslinger,Andrew,Wederman,,202,16,64,male,1764,1760,>15,,unknown,undetermined
+151,Finton,James,Deshong,Godfrey,146,3,96,male,1796,1790,<4,Godfrey,printer,male
+152,Fisbe,Melanie,Besse,John Baptist,48,8,95,female,1795,1790,8-11,John,housewife,male
+153,Flowers,William,Flowers,Christian,190,17,94,male,1794,1790,>15,Christian,tailor,male
+154,Flowon,Mark,Scott,Robert,106,11,64,male,1764,1760,8-11,Robert,house carpenter,male
+155,Ford,John,Midlen,Walter,122,6,96,male,1796,1790,4-7,Walter,mariner,male
+156,Foristren,Cathrin,Dolinson,Aurthur,48,10,65,female,1765,1760,8-11,Aurthur,housewife,male
+157,Francis,Mary,Cathrall,Isaac,48,3,69,female,1769,1760,<4,Isaac,housewife,male
+158,French,Thomas,Gross,Frederick,61,18,68,male,1768,1760,>15,Frederick,cooper,male
+159,Fricket,Philotilia,Woodhouse,William,48,4,70,female,1770,1770,4-7,William,housewife,male
+160,Fryer,Henry,Dowers,Edward,154,4,96,male,1796,1790,4-7,Edward,sailmaker,male
+161,Fryers,Henry,Allwine,Lawrence,41,3,97,male,1797,1790,<4,Lawrence,chairmaker,male
+162,Galland,Peggy,Jones,Philip,48,9,99,female,1799,1790,8-11,Philip,housewife,male
+163,Garden         B,Enjamin     P,Aris           P,Eter,83,18,95,male,1795,1790,>15,Eter,farmer,male
+164,Gardner,Jacob,Roth,Jacob,202,8,62,male,1762,1760,8-11,Jacob,unknown,male
+165,Gardner,Susannah,Pettey,Rob,48,10,54,female,1754,1750,8-11,Rob,housewife,male
+166,Garret,John,Faulk,Capt.john,122,5,96,male,1796,1790,4-7,Capt,mariner,male
+167,Geary,Stephen,Price,William,140,8,94,male,1794,1790,8-11,William,ship pilot,male
+168,Gennins,John,Dillingham,Simeon,122,4,97,male,1797,1790,4-7,Simeon,mariner,male
+169,George,Charlotte,Marsell,Joseph,48,14,90,female,1790,1790,12-15,Joseph,housewife,male
+170,Gettle,George,Morton,Samuel,202,11,68,male,1768,1760,8-11,Samuel,unknown,male
+171,Glyn,Eleanor,Warner,John,48,8,96,female,1796,1790,8-11,John,housewife,male
+172,Glynn,Elizabeth,Atkinson,George,48,10,61,female,1761,1760,8-11,George,housewife,male
+173,Gold,Noah,Ridgway,Richard,25,3,97,male,1797,1790,<4,Richard,brickmaker,male
+174,Gordon,John,Town,Thomas,122,5,96,male,1796,1790,4-7,Thomas,mariner,male
+175,Grace,Samuel,Condy,Jeremiah,202,7,99,male,1799,1790,4-7,Jeremiah,unknown,male
+176,Gradiri,Joseph,Leib,George,192,5,95,male,1795,1790,4-7,George,tanner,male
+177,Graham,Elizabeth,Helbron,Peter,48,14,97,female,1797,1790,12-15,Peter,housewife,male
+178,Graham,Margaret,Helbron,Peter,48,6,97,female,1797,1790,4-7,Peter,housewife,male
+179,Graves,Catharine,Allwine,Lawrence,48,9,98,female,1798,1790,8-11,Lawrence,housewife,male
+180,Gray,Elizabeth,Trimble,James,48,3,96,female,1796,1790,<4,James,housewife,male
+181,Gray,Thomas,Hume,Robert,122,5,79,male,1779,1770,4-7,Robert,mariner,male
+182,Green,Jane,Evans,Edward&Rebeca,48,9,70,female,1770,1770,8-11,Edward&Rebeca,housewife,mixed
+183,Green,Tabitha,Field,Nathan,48,6,97,female,1797,1790,4-7,Nathan,housewife,male
+184,Griscum,Samuel,Johnson,David,65,19,81,male,1781,1780,>15,David,cordwainer-shoemaker,male
+185,Habbight,John,Heyle,John,26,18,96,male,1796,1790,>15,John,brushmaker,male
+186,Hacker,Jacob,Smith,James,17,10,66,male,1766,1760,8-11,James,brass founder,male
+187,Halbert,Joseph,Jorden,Joseph,142,4,94,male,1794,1790,4-7,Joseph,plasterer,male
+188,Hall,Ann,Graham,William,48,11,69,female,1769,1760,8-11,William,housewife,male
+189,Hall,George,Sihlosser,,176,15,65,male,1765,1760,12-15,,skinner,undetermined
+190,Halor,John K.,Klingh,George,61,2,92,male,1792,1790,<4,George,cooper,male
+191,Hambleton,John,Thompson,Capt.john,122,5,97,male,1797,1790,4-7,Capt,mariner,male
+192,Hambleton,Robert,Shannon,James,83,17,66,male,1766,1760,>15,James,farmer,male
+193,Hand,James,Browne,William,166,5,96,male,1796,1790,4-7,William,shipwright,male
+194,Hand,John,Black,George,166,3,97,male,1797,1790,<4,George,shipwright,male
+195,Handy,Mary,Nancleve,Aaron,48,3,99,female,1799,1790,<4,Aaron,housewife,male
+196,Hantman,John,Taylor,J.r.,202,22,97,male,1797,1790,>15,J,unknown,undetermined
+197,Harding,Hannah,Whitesides,John,48,13,98,female,1798,1790,12-15,John,housewife,male
+198,Harding,Rachel,Harris,Francis,48,4,68,female,1768,1760,4-7,Francis,housewife,male
+199,Harford,Hiram,Taylor,George,83,10,99,male,1799,1790,8-11,George,farmer,male
+200,Hargon,Dennis,Benninghoff,Jacob,198,13,69,male,1769,1760,12-15,Jacob,tobacconist,male
+201,Harmon,Charles,Tomkins,Charles,171,13,99,male,1799,1790,12-15,Charles,housekeeper,male
+202,Harmon,George,Young,Nicholas,170,11,68,male,1768,1760,8-11,Nicholas,ship joiner,male
+203,Harport,Peter,Jorden,Michael,150,10,82,male,1782,1780,8-11,Michael,saddler,male
+204,Harris,Joseph,Wallace,William,190,7,51,male,1751,1750,4-7,William,tailor,male
+205,Harris,Joseph,Scott,William,190,6,52,male,1752,1750,4-7,William,tailor,male
+206,Harrison,John,Smith,Robert,100,9,68,male,1768,1760,8-11,Robert,hatter,male
+207,Harrison,Thomas,Remer,William,147,4,95,male,1795,1790,4-7,William,rigger,male
+208,Hartford,Henry,Copperthwart,Mark,65,10,97,male,1797,1790,8-11,Mark,cordwainer-shoemaker,male
+209,Hartford,Hiram,Manning,William,196,10,99,male,1799,1790,8-11,William,tinman,male
+210,Harvey,Robert,Collings,Richard,88,18,55,male,1755,1750,>15,Richard,gardener,male
+211,Harwood,John,James,John,202,4,67,male,1767,1760,4-7,John,unknown,male
+212,Hawkins,John,Richards,Samuel,65,8,70,male,1770,1770,8-11,Samuel,cordwainer-shoemaker,male
+213,Hawkins,Mary,Richards,Sam,48,9,70,female,1770,1770,8-11,Sam,housewife,male
+214,Hawkins,Sarah,Cliffton,Miller,48,10,70,female,1770,1770,8-11,Miller,housewife,male
+215,Hayter,Elizabeth,Lang,James,48,12,82,female,1782,1780,12-15,James,housewife,male
+216,Hayter,James,Lang,James,148,10,82,male,1782,1780,8-11,James,ropemaker,male
+217,Hebert,Joseph,Stiles,Henry,122,5,70,male,1770,1770,4-7,Henry,mariner,male
+218,Heberthweight,Olivia,Rogers,Thom.&Eliz.,48,8,82,female,1782,1780,8-11,Thom,housewife,male
+219,Heltzing,John,Andrews,Jacob,190,14,90,male,1790,1790,12-15,Jacob,tailor,male
+220,Henry,Charlotte,Dalley,Mary,48,9,99,female,1799,1790,8-11,Mary,housewife,female
+221,Hensey,Samuel,Darrack,Thomas,102,13,79,male,1779,1770,12-15,Thomas,harness maker,male
+222,Hensley,Samuel,Hill,John,29,3,62,male,1762,1760,<4,John,cabinet maker,male
+223,Hill,Thomas,Simington,George,65,12,98,male,1798,1790,12-15,George,cordwainer-shoemaker,male
+224,Hinton,Mary,Morrison,Samuel,48,10,63,female,1763,1760,8-11,Samuel,housewife,male
+225,Hoct,Frederick,Baker,Frederick,3,6,56,male,1756,1750,4-7,Frederick,baker,male
+226,Hoefferman,Margaret,Fisher,David,48,4,70,female,1770,1770,4-7,David,housewife,male
+227,Hollmer,Mary,Holmes,William,48,17,64,female,1764,1760,>15,William,housewife,male
+228,Hombaugh,Mary,Hipler,Henry H.,48,11,93,female,1793,1790,8-11,Henry,housewife,male
+229,Hook,John,Sufference,George,63,12,68,male,1768,1760,12-15,George,coppersmith,male
+230,Hooker,Thomas,Claypoole,Joseph,100,10,98,male,1798,1790,8-11,Joseph,hatter,male
+231,Hopkins,John,Wood,John,122,7,68,male,1768,1760,4-7,John,mariner,male
+232,Hopkins,Phillope,Parrish,Isaack,100,7,64,female,1764,1760,4-7,Isaack,hatter,male
+233,Howard,Richard,Pearson,John,65,9,65,male,1765,1760,8-11,John,cordwainer-shoemaker,male
+234,Hughes,Wm Smith,Carmichael,John,5,7,98,male,1798,1790,4-7,John,barber,male
+235,Hulsman,Christian,Price,Benjamin,7,4,97,male,1797,1790,4-7,Benjamin,blacksmith,male
+236,Hurley,Elizabeth,Prihard,Mary,202,11,65,female,1765,1760,8-11,Mary,unknown,female
+237,Hutson,Ann,Broughton,Sarah,202,9,65,female,1765,1760,8-11,Sarah,unknown,female
+238,Indian,Elizabeth,Jones,Daniel,202,7,65,female,1765,1760,4-7,Daniel,unknown,male
+239,Isles,John C.,Cowns,Earle,65,4,96,male,1796,1790,4-7,Earle,cordwainer-shoemaker,male
+240,Jacque,John,Gillin,William,211,6,95,male,1795,1790,4-7,William,waiter,male
+241,Jameson,Sally,Knight,Thomas,48,10,99,female,1799,1790,8-11,Thomas,housewife,male
+242,Jefferies,Eleanor,Donaldson,William T.,48,6,99,female,1799,1790,4-7,William,housewife,male
+243,Jefferies,Martha,Donaldson,William,48,11,99,female,1799,1790,8-11,William,housewife,male
+244,Jefferys,Samuel,Bass,Robert,2,6,96,male,1796,1790,4-7,Robert,apothecary,male
+245,Jemison,Agnus,Brown,Gustarus,48,5,63,female,1763,1760,4-7,Gustarus,housewife,male
+246,Jenkins,Charles,Beninghove,Jacob,198,11,82,male,1782,1780,8-11,Jacob,tobacconist,male
+247,Jenkins,David,Nutter,Henry,26,17,67,male,1767,1760,>15,Henry,brushmaker,male
+248,Jice,Mary,Shoemaker,Ely,48,12,92,female,1792,1790,12-15,Ely,housewife,male
+249,Johnson,John,Elliot,John,26,7,69,male,1769,1760,4-7,John,brushmaker,male
+250,Johnson,Robert,Motley,Walter,3,2,69,male,1769,1760,<4,Walter,baker,male
+251,Johnson,Thomas,Rogers,Joseph,17,6,66,male,1766,1760,4-7,Joseph,brass founder,male
+252,Johnston,William,Brown,William,33,7,98,male,1798,1790,4-7,William,carpenter,male
+253,Johnstone,George,Brock,John,98,6,98,male,1798,1790,4-7,John,gunsmith,male
+254,Jolly,Mary,Kester,Leonard,48,10,65,female,1765,1760,8-11,Leonard,housewife,male
+255,Jomton,John,Robinett,Richard,61,13,96,male,1796,1790,12-15,Richard,cooper,male
+256,Jones,Elizabeth,Harper,Alice,202,6,59,female,1759,1750,4-7,Alice,unknown,female
+257,Jones,Elizabeth,Millingburger,Michael,48,11,67,female,1767,1760,8-11,Michael,housewife,male
+258,Jones,Isaac,Duncan,John,198,15,61,male,1761,1760,12-15,John,tobacconist,male
+259,Jones,William,Locton,John,122,7,69,male,1769,1760,4-7,John,mariner,male
+260,Jordan,Daniel,Kemp,William,3,3,98,male,1798,1790,<4,William,baker,male
+261,Keen,Eleoner,Jones,Charles,48,7,62,female,1762,1760,4-7,Charles,housewife,male
+262,Kelley,James,Strickland,John,190,15,58,male,1758,1750,12-15,John,tailor,male
+263,Kelly,Charles,Beverhdt,William V.,190,10,70,male,1770,1770,8-11,William,tailor,male
+264,Kensinger,John,Hook,John,145,18,97,male,1797,1790,>15,John,potter,male
+265,Kent,John,Tattnall,Robert,122,5,65,male,1765,1760,4-7,Robert,mariner,male
+266,Keyler,Ann Catherine,Carter,William,48,9,69,female,1769,1760,8-11,William,housewife,male
+267,Keys,Isaac,Payson,Israel,68,12,98,male,1798,1790,12-15,Israel,currier,male
+268,Keys,Sarah,Simmons,Joseph,48,9,98,female,1798,1790,8-11,Joseph,housewife,male
+269,Kidney,Mary,Jones,David,48,11,68,female,1768,1760,8-11,David,housewife,male
+270,Kidney,Mary,Lopton,John,48,11,68,female,1768,1760,8-11,John,housewife,male
+271,King,Clementia,Moylan,Jasper,48,7,96,female,1796,1790,4-7,Jasper,housewife,male
+272,King,John,Davis,George,202,13,97,male,1797,1790,12-15,George,unknown,male
+273,Kinsey,Daniel,Burrone,John,122,4,91,male,1791,1790,4-7,John,mariner,male
+274,Kinslaw,Katherine,Barnes,Daniel,48,13,69,female,1769,1760,12-15,Daniel,housewife,male
+275,Kissick,Alexander,Hulsekamp,Garret,140,6,97,male,1797,1790,4-7,Garret,ship pilot,male
+276,Kitts,J.l.,Smith,Tim,122,9,97,male,1797,1790,8-11,Tim,mariner,male
+277,Kitts,Joseph,Gurling,Abraham,202,3,96,male,1796,1790,<4,Abraham,unknown,male
+278,Koss,David,Vanhort,James,164,4,93,male,1793,1790,4-7,James,shallopman,male
+279,Laub,George,Grove,Anthony,190,20,68,male,1768,1760,>15,Anthony,tailor,male
+280,Laxly,John,Bringhurst,John,202,10,82,male,1782,1780,8-11,John,unknown,male
+281,Leching,Rosanna,Edgar,John,48,14,64,female,1764,1760,12-15,John,housewife,male
+282,Leddy,Matthew,Quandrible,Charles,122,7,94,male,1794,1790,4-7,Charles,mariner,male
+283,Lee,William,Ross,William,202,11,64,male,1764,1760,8-11,William,unknown,male
+284,Leonard,Elizabeth,Strayley,George&Mary,48,11,94,female,1794,1790,8-11,George&Mary,housewife,mixed
+285,Letillier,John,Dugee,Samuel,102,8,96,male,1796,1790,8-11,Samuel,harness maker,male
+286,Lindsey,David,Hewes,Caleb,202,14,64,male,1764,1760,12-15,Caleb,unknown,male
+287,Linsey,John,Edwards,Marshall,202,16,67,male,1767,1760,>15,Marshall,unknown,male
+288,Litman,Jacob,Gavin,Joseph,65,8,66,male,1766,1760,8-11,Joseph,cordwainer-shoemaker,male
+289,Litman,Jacob,Stille,John,190,9,66,male,1766,1760,8-11,John,tailor,male
+290,Lively,John,Hagner,Vollentine,61,9,67,male,1767,1760,8-11,Vollentine,cooper,male
+291,Lord,John,Worrell,Robert,65,13,58,male,1758,1750,12-15,Robert,cordwainer-shoemaker,male
+292,Lougherly,Nelly,Cummings,John,48,7,97,female,1797,1790,4-7,John,housewife,male
+293,Lukins,Margaret,Steinhauer,Michael&Barb,48,13,94,female,1794,1790,12-15,Michael&Barb,housewife,mixed
+294,Lutz,Barbara,Hegl,Henry,48,5,93,female,1793,1790,4-7,Henry,housewife,male
+295,M Clughan,William,Claypooh,James,136,9,66,male,1766,1760,8-11,James,painter,male
+296,M Clure,William,Ledrau,Joseph,23,7,68,male,1768,1760,4-7,Joseph,bricklayer,male
+297,M Cluse,John,Wilkins,Caleb,190,8,81,male,1781,1780,8-11,Caleb,tailor,male
+298,M Ginniss,Catrine,M Cullock,Mary,48,13,67,female,1767,1760,12-15,Mary,housewife,female
+299,M'clure,William,Lowell,Ezra,122,8,96,male,1796,1790,8-11,Ezra,mariner,male
+300,M'coy,Elizabeth,Winchester,Elhanan,48,11,82,female,1782,1780,8-11,Elhanan,housewife,male
+301,M'williams,James,Humphreys,Clem,122,6,82,male,1782,1780,4-7,Clem,mariner,male
+302,Mackey,Neil,Kammarer,Henry,125,16,81,male,1781,1780,>15,Henry,paper maker,male
+303,Magu,Dinah,Ingrom,George,48,29,65,female,1765,1760,>15,George,housewife,male
+304,Maholland,Mary,Whelan,James,48,12,94,female,1794,1790,12-15,James,housewife,male
+305,Mains,Jane,Mason,William,48,9,97,female,1797,1790,8-11,William,housewife,male
+306,Malabar,John,Meany,John,122,13,98,male,1798,1790,12-15,John,mariner,male
+307,Malowne,John,Lindhall,Benjamin,29,7,92,male,1792,1790,4-7,Benjamin,cabinet maker,male
+308,Maris,Isaac,Miles,John,98,6,98,male,1798,1790,4-7,John,gunsmith,male
+309,Marsh,,M'mullen,William,202,26,82,male,1782,1780,>15,William,unknown,male
+310,Marshal,Mary,Goodman,Walter&Wife,48,8,81,female,1781,1780,8-11,Walter&Wife,housewife,mixed
+311,Marshall,John,Israeloan,Casper,211,5,94,male,1794,1790,4-7,Casper,waiter,male
+312,Martino,John,Bourschett,John,202,9,96,male,1796,1790,8-11,John,unknown,male
+313,Masters,John,Hamilton,William,106,5,98,male,1798,1790,4-7,William,house carpenter,male
+314,Maxfield,David,Vallois,Gabriel,190,9,81,male,1781,1780,8-11,Gabriel,tailor,male
+315,May,Susannah,Cowperthwait,Joseph,48,8,70,female,1770,1770,8-11,Joseph,housewife,male
+316,Meeker,Elizabeth,Renshaw,Charles,48,12,98,female,1798,1790,12-15,Charles,housewife,male
+317,Meeker,Maria,Alberger,Susan,48,14,97,female,1797,1790,12-15,Susan,housewife,female
+318,Meeker,Maria,Hallowell,William,48,13,98,female,1798,1790,12-15,William,housewife,male
+319,Melberg,Frederick,Alberiere,Christian,27,14,54,male,1754,1750,12-15,Christian,butcher,male
+320,Mercier,Marie Louis,Dumoutet,John B.,98,2,96,male,1796,1790,<4,John,gunsmith,male
+321,Metzer,John,Richards,John,109,12,98,male,1798,1790,12-15,John,ironmonger,male
+322,Micgiu,Elenar,Cussin,Joseph,202,8,65,female,1765,1760,8-11,Joseph,unknown,male
+323,Michell,Simon,Stephins,James,3,7,65,male,1765,1760,4-7,James,baker,male
+324,Miller,Adam,Schively,Henry,69,3,96,male,1796,1790,<4,Henry,cutler,male
+325,Miller,Francas,Johnson,James,48,11,61,female,1761,1760,8-11,James,housewife,male
+326,Mitchell,Peter,Jones,Henry,122,12,65,male,1765,1760,12-15,Henry,mariner,male
+327,Moane,Jonathan,Mcgill,Andrew,190,11,97,male,1797,1790,8-11,Andrew,tailor,male
+328,Moffet,John,Patterson,Robert,122,5,69,male,1769,1760,4-7,Robert,mariner,male
+329,Montgomery,John,Cather,Robert,114,5,70,male,1770,1770,4-7,Robert,joiner,male
+330,Moore,Andrew,Stapler,Stephen,61,8,57,male,1757,1750,8-11,Stephen,cooper,male
+331,Moore,David,Wheeler,Sam,69,4,68,male,1768,1760,4-7,Sam,cutler,male
+332,Moore,Samuel,Kenton,Richard,65,9,62,male,1762,1760,8-11,Richard,cordwainer-shoemaker,male
+333,Moore,Thomas,Dehart,Jacob,122,8,81,male,1781,1780,8-11,Jacob,mariner,male
+334,Moore,William,Polk,Jehoshaphat,150,10,97,male,1797,1790,8-11,Jehoshaphat,saddler,male
+335,Morrison,Hugh,Allardice,Samuel,63,3,97,male,1797,1790,<4,Samuel,coppersmith,male
+336,Morse,William,Leib,John,211,5,94,male,1794,1790,4-7,John,waiter,male
+337,Morton,Jacob,Allwine,Lawrence,41,3,96,male,1796,1790,<4,Lawrence,chairmaker,male
+338,Mulatto,Hestor,Moredilk,Hannah,202,22,59,male,1759,1750,>15,Hannah,unknown,female
+339,Mulatto,Lloyd,Dorsey,Elizabeth,211,9,97,male,1797,1790,8-11,Elizabeth,waiter,female
+340,Mulatto,Matt&Bitt,Mcculloch,Hugh,202,29,79,male,1779,1770,>15,Hugh,unknown,male
+341,Mullen,William,Mullin,William,65,19,97,male,1797,1790,>15,William,cordwainer-shoemaker,male
+342,Murphy,Daniel,Traquair,James,184,2,97,male,1797,1790,<4,James,stone cutter,male
+343,Murphy,William,Levis,William,125,12,96,male,1796,1790,12-15,William,paper maker,male
+344,Murray,James,Remer,William,147,5,95,male,1795,1790,4-7,William,rigger,male
+345,Mccartney,John,Bennet,Philip,202,5,67,male,1767,1760,4-7,Philip,unknown,male
+346,Mccarty,Catherine,Ellis,Robert,48,10,99,female,1799,1790,8-11,Robert,housewife,male
+347,Mccaslin,Alexander,Campbell,Robert,181,9,96,male,1796,1790,8-11,Robert,stationer,male
+348,Mccummings,John,Good,George,148,5,68,male,1768,1760,4-7,George,ropemaker,male
+349,Mcdannell,Thomas,Henderson,Peter,200,12,66,male,1766,1760,12-15,Peter,turner,male
+350,Mcdonnald,Margaret,Hale,Matthew,48,4,97,female,1797,1790,4-7,Matthew,housewife,male
+351,Mcfetterick,William,Scull,William,202,3,62,male,1762,1760,<4,William,unknown,male
+352,Mcgennis,Hugh,Cooper,Robert,65,11,70,male,1770,1770,8-11,Robert,cordwainer-shoemaker,male
+353,Mchutehine,George,Eblin,Michael,202,12,90,male,1790,1790,12-15,Michael,unknown,male
+354,Mckinney,James,Shawcar,Charles,3,4,66,male,1766,1760,4-7,Charles,baker,male
+355,Mclachlan,Margaret,Coyle,John,48,6,99,female,1799,1790,4-7,John,housewife,male
+356,Mcmullen,James,Jewell,Kennith,190,3,99,male,1799,1790,<4,Kennith,tailor,male
+357,Mcmullen,James,Mcgill,Andrew,190,5,98,male,1798,1790,4-7,Andrew,tailor,male
+358,Mcmullen,James,Mcgill,Andrew,190,5,98,male,1798,1790,4-7,Andrew,tailor,male
+359,Mcmullin,James,Hiss,John,190,7,96,male,1796,1790,4-7,John,tailor,male
+360,Nable,John,Birch,Wm Young,13,11,98,male,1798,1790,8-11,Wm,bookbinder,male
+361,Negro,Samuel,Moore,P. Doctor,202,5,69,male,1769,1760,4-7,P,unknown,undetermined
+362,Newland,Edward,Wood,John,204,14,70,male,1770,1770,12-15,John,watchmaker,male
+363,Newton,Sarah,Patterson,John,48,12,96,female,1796,1790,12-15,John,housewife,male
+364,Nichol,James,Traquair,James,184,13,96,male,1796,1790,12-15,James,stone cutter,male
+365,Niff,Enock,Boyd,Parker,138,9,96,male,1796,1790,8-11,Parker,pewterer,male
+366,Norten,Hanna,Barkun,Isaac,48,12,64,female,1764,1760,12-15,Isaac,housewife,male
+367,Overstack,John,Hall,Philip,27,8,62,male,1762,1760,8-11,Philip,butcher,male
+368,Ozburn,Elizabeth,Halkerston,Robert,48,13,65,female,1765,1760,12-15,Robert,housewife,male
+369,Paradise,John,Young,John,150,5,66,male,1766,1760,4-7,John,saddler,male
+370,Parker,Hester,Robeson,Jane,48,11,79,male,1779,1770,8-11,Jane,housewife,female
+371,Parker,Margaret,Robeson,Sarah,48,13,79,female,1779,1770,12-15,Sarah,housewife,female
+372,Parry,Richard,Knox,Joseph,202,9,99,male,1799,1790,8-11,Joseph,unknown,male
+373,Patridge,David,Bonnick,William,83,13,98,male,1798,1790,12-15,William,farmer,male
+374,Patridge,John,Stammers,Edward,3,11,98,male,1798,1790,8-11,Edward,baker,male
+375,Pease,Thomas,Gale,Jonas,33,31,62,male,1762,1760,>15,Jonas,carpenter,male
+376,Peel,Mary,Cline,Henry,202,8,52,female,1752,1750,8-11,Henry,unknown,male
+377,Peles,Elizabeth,Dickinson,James,48,3,67,female,1767,1760,<4,James,housewife,male
+378,Perry,Jonathan,Dufit,George,33,7,97,male,1797,1790,4-7,George,carpenter,male
+379,Perry,Jonathan,Durfor,George,202,7,97,male,1797,1790,4-7,George,unknown,male
+380,Peterson,Peter,Doleman,Paul,3,3,68,male,1768,1760,<4,Paul,baker,male
+381,Peterson,Peter,Clymer,Walter,202,2,69,male,1769,1760,<4,Walter,unknown,male
+382,Peterson,Peter,Lunderburgher,Mathias,3,3,69,male,1769,1760,<4,Mathias,baker,male
+383,Peterson,Peter,Sloeher,George,192,4,68,male,1768,1760,4-7,George,tanner,male
+384,Philips,William,Lamb,Joseph,5,10,62,male,1762,1760,8-11,Joseph,barber,male
+385,Phillips,William,Gillis,Neal,122,5,67,male,1767,1760,4-7,Neal,mariner,male
+386,Pickey,John,Rawle,Francis,148,11,90,male,1790,1790,8-11,Francis,ropemaker,male
+387,Pines,Violet,Newport,Mary,48,6,70,female,1770,1770,4-7,Mary,housewife,female
+388,Plunket,Thomas,Paul,John,65,11,65,male,1765,1760,8-11,John,cordwainer-shoemaker,male
+389,Pope,Peter,Cannon,James,122,11,59,male,1759,1750,8-11,James,mariner,male
+390,Porter,Daniel,Thompson,William,61,3,98,male,1798,1790,<4,William,cooper,male
+391,Potter,William,Cameron,John,13,8,96,male,1796,1790,8-11,John,bookbinder,male
+392,Powell,John,Barnes,John,33,7,96,male,1796,1790,4-7,John,carpenter,male
+393,Power,Robert,M Elroy,Arch,202,12,65,male,1765,1760,12-15,Arch,unknown,male
+394,Preston,John,Launslager,Jacob,27,1,98,male,1798,1790,<4,Jacob,butcher,male
+395,Preston,Thomas,Quin,Charles,142,7,64,male,1764,1760,4-7,Charles,plasterer,male
+396,Price,John,Simington,George,65,13,98,male,1798,1790,12-15,George,cordwainer-shoemaker,male
+397,Prince,Gasper,Beckley,John,99,9,96,male,1796,1790,8-11,John,hairdresser,male
+398,Probert,Sarah,Coates,Samuel,48,3,97,female,1797,1790,<4,Samuel,housewife,male
+399,Quine,John,Beaks,Joseph,122,6,92,male,1792,1790,4-7,Joseph,mariner,male
+400,Ramsey,William,Fearon,Joseph,151,6,81,male,1781,1780,4-7,Joseph,tallow chandler,male
+401,Read,James,Poulnot,Nicolas,65,3,96,male,1796,1790,<4,Nicolas,cordwainer-shoemaker,male
+402,Read,Sarah,Lownes,John,48,6,66,female,1766,1760,4-7,John,housewife,male
+403,Ready,Ann,Moynihan,Maurice,48,15,96,female,1796,1790,12-15,Maurice,housewife,male
+404,Ready,Margaret,Gallagher,James,48,7,96,female,1796,1790,4-7,James,housewife,male
+405,Redgrave,Charlotte,Fleck,Mary,48,3,81,female,1781,1780,<4,Mary,housewife,female
+406,Redman,Mary,Cispier,William,48,9,65,female,1765,1760,8-11,William,housewife,male
+407,Rees,Adam,James,Abel,83,8,68,male,1768,1760,8-11,Abel,farmer,male
+408,Registers,John,Primord,A.,99,5,96,male,1796,1790,4-7,A,hairdresser,undetermined
+409,Reily,William,Perkins,William,7,11,98,male,1798,1790,8-11,William,blacksmith,male
+410,Reynolds,Mary,Scott,Robert,48,9,97,female,1797,1790,8-11,Robert,housewife,male
+411,Rice,Abigail,Robinson,Thomas,48,25,56,female,1756,1750,>15,Thomas,housewife,male
+412,Ridgeway,John,Conrad,Benjamin,202,6,83,male,1783,1780,4-7,Benjamin,unknown,male
+413,Ripton,Bernard,Carroll,Thomas,65,3,79,male,1779,1770,<4,Thomas,cordwainer-shoemaker,male
+414,Riydon,John,Dawkins,Capt. John,122,7,96,male,1796,1790,4-7,Capt,mariner,male
+415,Roach,Dinah,Rush,Daniel,48,14,95,female,1795,1790,12-15,Daniel,housewife,male
+416,Robeson,Mary,Johnson,Joseph,202,29,70,female,1770,1770,>15,Joseph,unknown,male
+417,Robinson,Benjamin,Kingston,Thomas,106,4,97,male,1797,1790,4-7,Thomas,house carpenter,male
+418,Roger,John,Thackara,William,142,6,97,male,1797,1790,4-7,William,plasterer,male
+419,Rouget,William,Potts,Charles,122,8,96,male,1796,1790,8-11,Charles,mariner,male
+420,Rudolph,Elizabeth,Walker,Lewis,48,10,98,female,1798,1790,8-11,Lewis,housewife,male
+421,Rudolph,John,Beek,Paul,202,9,65,male,1765,1760,8-11,Paul,unknown,male
+422,Rudy,Hannah,Hall,Richard,48,11,99,female,1799,1790,8-11,Richard,housewife,male
+423,Russel,Elizabeth,Mcoy,Eleiner,48,10,59,female,1759,1750,8-11,Eleiner,housewife,female
+424,Russel,Mary,Johns,Henry,48,7,59,female,1759,1750,4-7,Henry,housewife,male
+425,Ryan,Patience,Pusey,Joshua E.,48,7,96,female,1796,1790,4-7,Joshua,housewife,male
+426,Ryley,Mary,Magu,Martha,48,2,94,female,1794,1790,<4,Martha,housewife,female
+427,Ryneck,Joanna,Pyle,Hannah,48,5,98,female,1798,1790,4-7,Hannah,housewife,female
+428,Samey,Lewis,Donnaldson,Joseph,202,4,98,male,1798,1790,4-7,Joseph,unknown,male
+429,Sammon,Ezekiah,Hunter,Joseph,202,7,69,male,1769,1760,4-7,Joseph,unknown,male
+430,Sawyer,Henry,Ducomb,Vincent,99,6,96,male,1796,1790,4-7,Vincent,hairdresser,male
+431,Scot,Christopher,Hillard,James,61,11,66,male,1766,1760,8-11,James,cooper,male
+432,Scurry,Peter,Carpenter,Jasper,114,6,68,male,1768,1760,4-7,Jasper,joiner,male
+433,Sears,John,Vaughan,John,122,12,98,male,1798,1790,12-15,John,mariner,male
+434,Seriminger,Margaret,Palmer,Thomas,48,6,96,female,1796,1790,4-7,Thomas,housewife,male
+435,Shangler,John,Gilbert,Jacob,190,7,97,male,1797,1790,4-7,Jacob,tailor,male
+436,Shaw,Robert,Brock,Bartholimew,83,15,97,male,1797,1790,12-15,Bartholimew,farmer,male
+437,Sheldon,William,Shippen,William,100,4,97,male,1797,1790,4-7,William,hatter,male
+438,Shreeve,John,Hoskins,William,147,6,95,male,1795,1790,4-7,William,rigger,male
+439,Shurry,Mary,Kimp,George,48,12,96,female,1796,1790,12-15,George,housewife,male
+440,Silas,Ann,Watkins,Joseph,48,10,68,female,1768,1760,8-11,Joseph,housewife,male
+441,Sims,Elioner,Gass,John,48,4,68,female,1768,1760,4-7,John,housewife,male
+442,Sind,Sophia,Matlack,Titus,48,5,68,female,1768,1760,4-7,Titus,housewife,male
+443,Singer,Adam,Moliere,Glenry,148,9,98,male,1798,1790,8-11,Glenry,ropemaker,undetermined
+444,Singer,Adam,Beringer,Charles,190,10,97,male,1797,1790,8-11,Charles,tailor,male
+445,Singer,Adam,Barringer,Charles,190,10,97,male,1797,1790,8-11,Charles,tailor,male
+446,Sly,Samuel,Howell,Samuel,122,4,79,male,1779,1770,4-7,Samuel,mariner,male
+447,Smiley,Mary,Narcissus,Lewis,48,4,96,female,1796,1790,4-7,Lewis,housewife,male
+448,Smith,Anthony,Qugley,Philip,202,10,96,male,1796,1790,8-11,Philip,unknown,male
+449,Smith,Elizabeth,Mendenhall,Isaac,48,5,96,female,1796,1790,4-7,Isaac,housewife,male
+450,Smith,George,Moore,Thomas,122,7,67,male,1767,1760,4-7,Thomas,mariner,male
+451,Smith,Jacob,Kline,Abraham,106,9,97,male,1797,1790,8-11,Abraham,house carpenter,male
+452,Smith,Jane,Evans,Elizabeth,48,8,52,female,1752,1750,8-11,Elizabeth,housewife,female
+453,Smith,Mary,Summus,John,48,14,96,female,1796,1790,12-15,John,housewife,male
+454,Smith,Mary,Archibald,Catharine,48,4,79,female,1779,1770,4-7,Catharine,housewife,female
+455,Smith,Samuel,Smith,Samuel,3,20,66,male,1766,1760,>15,Samuel,baker,male
+456,Smith,Sarah,Whitelock,Thomas,202,6,82,female,1782,1780,4-7,Thomas,unknown,male
+457,Stacy,Sarah,Savery,William,48,2,67,female,1767,1760,<4,William,housewife,male
+458,Steel,James,Fentham,John G.,51,13,96,male,1796,1790,12-15,John,coachmaker,male
+459,Stephens,Stephen,Starr,Bauldwin J.,65,7,67,male,1767,1760,4-7,Bauldwin,cordwainer-shoemaker,undetermined
+460,Stevens,Thomas,Buckley,Thomas,39,7,70,male,1770,1770,4-7,Thomas,caulker,male
+461,Steward,Henry,Craig,Seth,174,4,98,male,1798,1790,4-7,Seth,silversmith,male
+462,Steward,Robert,Alberger,Adam,27,14,97,male,1797,1790,12-15,Adam,butcher,male
+463,Stewart,James,Stotesbury,Arthur,122,7,96,male,1796,1790,4-7,Arthur,mariner,male
+464,Stewart,John,Batcheller,Thom.freeman,63,6,79,male,1779,1770,4-7,Thom,coppersmith,male
+465,Stinson,Eliza,Durfor,George,48,10,97,female,1797,1790,8-11,George,housewife,male
+466,Stinson,Elizabeth,Kein,Jacob,48,10,96,female,1796,1790,8-11,Jacob,housewife,male
+467,Stinson,Samuel,Keen,Samuel,192,17,96,male,1796,1790,>15,Samuel,tanner,male
+468,Stinson,Vinkbride,Hook,John,145,10,96,male,1796,1790,8-11,John,potter,male
+469,Stipley,Moses,Hutsecum,Garret,207,3,69,male,1769,1760,<4,Garret,waterman,male
+470,Stone,Elizabeth,Phipps,Stephen,48,9,69,female,1769,1760,8-11,Stephen,housewife,male
+471,Strange,Barbara,Pearson,Joshua,202,14,56,female,1756,1750,12-15,Joshua,unknown,male
+472,Swigert,Peter,Fredrich,Lewis,208,18,55,male,1755,1750,>15,Lewis,weaver,male
+473,Sycott,John,Martin,Robert,202,12,99,male,1799,1790,12-15,Robert,unknown,male
+474,Tames,Mary,Corbett,Alexander,48,14,96,female,1796,1790,12-15,Alexander,housewife,male
+475,Tatnel,Jonathan,Duncan,John,100,7,68,male,1768,1760,4-7,John,hatter,male
+476,Taylor,George,Wier,George,83,12,94,male,1794,1790,12-15,George,farmer,male
+477,Taylor,Jennet,Stoops,Elizabeth,48,4,70,female,1770,1770,4-7,Elizabeth,housewife,female
+478,Taylor,John,Rawle,Francis,148,5,97,male,1797,1790,4-7,Francis,ropemaker,male
+479,Temple,John,Shoemaker,Jacob,202,20,90,male,1790,1790,>15,Jacob,unknown,male
+480,Thomas,Jared,Jones,William,102,7,99,male,1799,1790,4-7,William,harness maker,male
+481,Thompson,Elizabeth,Oliphant,William,48,5,66,female,1766,1760,4-7,William,housewife,male
+482,Thompson,Jane,Whitall,James,202,10,61,female,1761,1760,8-11,James,unknown,male
+483,Thompson,Margaret,Lees,William,202,12,61,female,1761,1760,12-15,William,unknown,male
+484,Thorton,John,Durfor,George,106,5,96,male,1796,1790,4-7,George,house carpenter,male
+485,Timber,Isaac,Reese,Valentine,27,11,80,male,1780,1780,8-11,Valentine,butcher,male
+486,Tisson,Peter,Bradford,Thomas,146,7,96,male,1796,1790,4-7,Thomas,printer,male
+487,Toeri,Peter Antonio,Wharton,Thomas Jr.,122,7,70,male,1770,1770,4-7,Thomas,mariner,male
+488,Tom,Joseph,Tumble,Francis,83,4,70,male,1770,1770,4-7,Francis,farmer,male
+489,Townsend,John,Butcher,John,65,7,97,male,1797,1790,4-7,John,cordwainer-shoemaker,male
+490,Townsey,Nancy,Brown,John,48,7,94,female,1794,1790,4-7,John,housewife,male
+491,Townsey,Nancy,Brown,John,202,7,93,female,1793,1790,4-7,John,unknown,male
+492,Toy,Wilson,Kysu,William,65,6,80,male,1780,1780,4-7,William,cordwainer-shoemaker,male
+493,Tryer,Peggy,Rietter,Jacob,48,15,94,female,1794,1790,12-15,Jacob,housewife,male
+494,Tufft,Peter,Beck,Peter,65,7,81,male,1781,1780,4-7,Peter,cordwainer-shoemaker,male
+495,Tysink,Christiana,Eaton,Jonathan,192,14,96,female,1796,1790,12-15,Jonathan,tanner,male
+496,Vontaine,Chivutt,Gens,Hara,192,3,96,male,1796,1790,<4,Hara,tanner,undetermined
+497,Wade,Richard,Dunkin,Robert H.,202,6,99,male,1799,1790,4-7,Robert,unknown,male
+498,Waggonu,William,Gassiness,George,202,7,96,male,1796,1790,4-7,George,unknown,male
+499,Walker,Elaine,Morris,Eliku Eldrige,48,6,95,female,1795,1790,4-7,Eliku,housewife,undetermined
+500,Walker,John,Fling,William,92,5,94,male,1794,1790,4-7,William,glazier,male
+501,Wallace,John,Patterson,Robert,122,7,69,male,1769,1760,4-7,Robert,mariner,male
+502,Waller,Samuel,Lynch,James,200,8,94,male,1794,1790,8-11,James,turner,male
+503,Warner,William,Field,Benjamin,202,16,64,male,1764,1760,>15,Benjamin,unknown,male
+504,Warrell,Thomas,Collins,Chalkley,3,11,97,male,1797,1790,8-11,Chalkley,baker,male
+505,Waterman,William,Emrik,Battzer,3,4,96,male,1796,1790,4-7,Battzer,baker,undetermined
+506,Watkins,Jonathan,Massey,William,202,8,90,male,1790,1790,8-11,William,unknown,male
+507,Watson,James,Hile,Henry,27,19,93,male,1793,1790,>15,Henry,butcher,male
+508,Watson,John,Witherton,Caesar,202,7,98,male,1798,1790,4-7,Caesar,unknown,male
+509,Watts,James,Hair,Edward,3,7,64,male,1764,1760,4-7,Edward,baker,male
+510,Wayn,Elizabeth,Dewhurst,John,48,9,96,female,1796,1790,8-11,John,housewife,male
+511,Webster,Iese,May,Lewis,65,5,92,male,1792,1790,4-7,Lewis,cordwainer-shoemaker,male
+512,Webster,Jessie,Henry,George,65,4,95,male,1795,1790,4-7,George,cordwainer-shoemaker,male
+513,Webster,Jessie,Wilt,Martin,27,6,92,male,1792,1790,4-7,Martin,butcher,male
+514,Welsh,John,Ricard,John,122,6,96,male,1796,1790,4-7,John,mariner,male
+515,West,Job,Crouding,Peter,106,2,97,male,1797,1790,<4,Peter,house carpenter,male
+516,Weston,John,Holdstock,Joseph,179,11,68,male,1768,1760,8-11,Joseph,smith,male
+517,Weston,William,Brown,Thurston,83,16,64,male,1764,1760,>15,Thurston,farmer,male
+518,Wheatly,Frederick,Drullman,Henry,136,4,95,male,1795,1790,4-7,Henry,painter,male
+519,White,Michael,Hamilton,Alexander,122,6,70,male,1770,1770,4-7,Alexander,mariner,male
+520,Whitehead,Polly,Davis,Thomas,48,8,94,female,1794,1790,8-11,Thomas,housewife,male
+521,Whitman,Caleb Gill,Bretz,Jacob,3,4,96,male,1796,1790,4-7,Jacob,baker,male
+522,Widowfield,William,Cox,William,41,2,68,male,1768,1760,<4,William,chairmaker,male
+523,Wilbert,Christopher,Past,Lawrence,202,16,54,male,1754,1750,>15,Lawrence,unknown,male
+524,Wiley,Mary,Jones,Sarah,48,3,96,female,1796,1790,<4,Sarah,housewife,female
+525,Wilkinson,Christiana,Knight,John,48,12,69,female,1769,1760,12-15,John,housewife,male
+526,William,John,Westar,Peter,212,5,96,male,1796,1790,4-7,Peter,wheelwright,male
+527,Williams,Catherine,Chusman,Samuel,202,4,65,female,1765,1760,4-7,Samuel,unknown,male
+528,Williams,Catherine,Starn,James,202,3,65,female,1765,1760,<4,James,unknown,male
+529,Williams,George,Barret,John,3,11,81,male,1781,1780,8-11,John,baker,male
+530,Williams,John,Barker,Petar,7,8,65,male,1765,1760,8-11,Petar,blacksmith,male
+531,Williams,John,Paddiek,Rubin,122,6,97,male,1797,1790,4-7,Rubin,mariner,male
+532,Williams,John,Busson,Lewis,122,17,82,male,1782,1780,>15,Lewis,mariner,male
+533,Williams,John,Dickinson,Tom,65,8,97,male,1797,1790,8-11,Tom,cordwainer-shoemaker,male
+534,Williams,Nathaniel,Justin,John,145,10,93,male,1793,1790,8-11,John,potter,male
+535,Williams,Phiby,Kerlin,William,202,8,65,female,1765,1760,8-11,William,unknown,male
+536,Williams,Robert G.,Scattergood,John H.,192,10,97,male,1797,1790,8-11,John,tanner,male
+537,Willis,Hannah,Lawrence,Thomas,48,3,68,female,1768,1760,<4,Thomas,housewife,male
+538,Wills,Ann,Morton,James,48,14,66,female,1766,1760,12-15,James,housewife,male
+539,Willson,Sarah,January,Petter,48,4,65,female,1765,1760,4-7,Petter,housewife,male
+540,Wilson,Elizabeth,Mccarneehan,Blair,190,7,65,female,1765,1760,4-7,Blair,tailor,male
+541,Wilson,John,Mcneal,Patrick,122,4,96,male,1796,1790,4-7,Patrick,mariner,male
+542,Wilson,John,Fisher,Samuel,122,7,70,male,1770,1770,4-7,Samuel,mariner,male
+543,Wilson,John,Schrider,Jacob,136,16,91,male,1791,1790,>15,Jacob,painter,male
+544,Winn,John,Griffith,Isaac,106,4,96,male,1796,1790,4-7,Isaac,house carpenter,male
+545,Winters,Harriet,Johns,Elizabeth,48,4,96,female,1796,1790,4-7,Elizabeth,housewife,female
+546,Wolf,John,Dunn,John,65,8,62,male,1762,1760,8-11,John,cordwainer-shoemaker,male
+547,Woodside,Elenor,Hartman,Henry,202,16,62,female,1762,1760,>15,Henry,unknown,male
+548,Woolf,John M.,Detrict,David,198,10,82,male,1782,1780,8-11,David,tobacconist,male
+549,Yardley,Samuel,Case,John,202,4,69,male,1769,1760,4-7,John,unknown,male
+550,Yarless,Samuel,Perry,Martin,5,5,64,male,1764,1760,4-7,Martin,barber,male
+551,Yeoman,James,Irwin,John M.,122,2,96,male,1796,1790,<4,John,mariner,male
+552,Yurow,Mary,Hampton,Rachel,48,6,97,female,1797,1790,4-7,Rachel,housewife,female
+553,Zryer,Mary,Stine,Isaac,48,9,92,female,1792,1790,8-11,Isaac,housewife,male

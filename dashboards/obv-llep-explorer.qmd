@@ -1,0 +1,17 @@
+---
+title: "London Lives Pauper Examinations Explorer"
+date: "2026-03-18"
+author: "Sharon Howard"
+categories: [interactive, LL, poor]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[London Lives Pauper Examinations Explorer](https://london.sharonhoward.org/llep/llep-data-explorer.html)</button>
+</div>
+
+Summary: an interactive data explorer for 10,700 pauper examinations from two London parishes, 1739-1800.
+
+Source: [London Lives](https://www.londonlives.org) / [LLEP](https://london.sharonhoward.org/llep/).
+
+
+

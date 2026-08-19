@@ -1,0 +1,21 @@
+---
+title: "Blog Archive"
+listing:
+  contents: 
+    - posts
+    - "dashboards/!(index).qmd"
+  sort: "date desc"
+  type: default
+  fields: [date, title, categories]
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  date-format: "D MMM YYYY"
+  max-items: 100
+  feed: 
+    items: 20
+    type: partial
+page-layout: full
+title-block-banner: false
+---
+&nbsp;

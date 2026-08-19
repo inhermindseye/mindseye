@@ -1,0 +1,18 @@
+---
+title: "London Lives Petitions Explorer"
+date: "2026-03-18"
+author: "Sharon Howard"
+categories: [interactive, LL, petitioning]
+---
+
+<div class="d-grid gap-2">
+<button class="btn speciallink">[London Lives Petitions Explorer](https://london.sharonhoward.org/llpp/llpp-data-explorer.html)</button>
+</div>
+
+Summary: an interactive data explorer for 10,000 petitions to London and Middlesex magistrates, 1690-1799.
+
+Source: [London Lives](https://www.londonlives.org) / [LLPP](https://london.sharonhoward.org/llpp/).
+
+
+
+

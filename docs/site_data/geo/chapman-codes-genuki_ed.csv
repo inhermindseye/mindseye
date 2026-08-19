@@ -1,0 +1,165 @@
+code,name,country
+ABD,Aberdeenshire,Scotland
+AGY,Anglesey,Wales
+ALD,Alderney,Channel Islands
+ANS,Angus,Scotland
+ANT,County Antrim,Northern Ireland
+ARL,Argyllshire,Scotland
+ARM,County Armagh,Northern Ireland
+AVN,Avon,England
+AYR,Ayrshire,Scotland
+BAN,Banffshire,Scotland
+BDF,Bedfordshire,England
+BEW,Berwickshire,Scotland
+BKM,Buckinghamshire,England
+BOR,Borders,Scotland
+BRE,Breconshire,Wales
+BRK,Berkshire,England
+BUT,Bute,Scotland
+CAE,Caernarvonshire,Wales
+CAI,Caithness,Scotland
+CAM,Cambridgeshire,England
+CAR,County Carlow,Ireland
+CAV,County Cavan,Ireland
+CEN,Central,Scotland
+CGN,Cardiganshire,Wales
+CHI,,Channel Islands (Sometimes just "CI")
+CHS,Cheshire,England
+CLA,County Clare,Ireland
+CLK,Clackmannanshire,Scotland
+CLV,Cleveland,England
+CMA,Cumbria,England
+CMN,Carmarthenshire,Wales
+CON,Cornwall,England
+COR,County Cork,Ireland
+CUL,Cumberland,England
+CWD,Clwyd,Wales
+DBY,Derbyshire,England
+DEN,Denbighshire,Wales
+DEV,Devon,England
+DFD,Dyfed,Wales
+DFS,Dumfries-shire,Scotland
+DGY,Dumfries and Galloway,Scotland
+DNB,Dunbartonshire,Scotland
+DON,County Donegal,Ireland
+DOR,Dorset,England
+DOW,County Down,Northern Ireland
+DUB,County Dublin,Ireland
+DUR,County Durham,England
+ELN,East Lothian,Scotland
+ENG,,England
+ERY,East Riding of Yorkshire,England
+ESS,Essex,England
+FER,County Fermanagh,Northern Ireland
+FIF,Fife,Scotland
+FLN,Flintshire,Wales
+GAL,County Galway,Ireland
+GLA,Glamorgan,Wales
+GLS,Gloucestershire,England
+GMP,Grampian,Scotland
+GNT,Gwent,Wales
+GSY,Guernsey,Channel Islands
+GTM,Greater Manchester,England
+GWN,Gwynedd,Wales
+HAM,Hampshire,England
+HEF,Herefordshire,England
+HLD,Highland,Scotland
+HRT,Hertfordshire,England
+HUM,Humberside,England
+HUN,Huntingdonshire,England
+HWR,Hereford and Worcester,England
+INV,Inverness-shire,Scotland
+IOM,Isle of Man,Isle of Man
+IOW,Isle of Wight,England
+IRL,,Ireland
+JSY,Jersey,Channel Islands
+KCD,Kincardineshire,Scotland
+KEN,Kent,England
+KER,County Kerry,Ireland
+KID,County Kildare,Ireland
+KIK,County Kilkenny,Ireland
+KKD,Kirkcudbrightshire,Scotland
+KRS,Kinross-shire,Scotland
+LAN,Lancashire,England
+LDY,County Londonderry,Northern Ireland
+LEI,Leicestershire,England
+LET,County Leitrim,Ireland
+LEX,County Laois,Ireland
+LIM,County Limerick,Ireland
+LIN,Lincolnshire,England
+LKS,Lanarkshire,Scotland
+LND,London,England
+LOG,County Longford,Ireland
+LOU,County Louth,Ireland
+LTN,Lothian,Scotland
+MAY,County Mayo,Ireland
+MDX,Middlesex,England
+MEA,County Meath,Ireland
+MER,Merionethshire,Wales
+MGM,Mid Glamorgan,Wales
+MGY,Montgomeryshire,Wales
+MLN,Midlothian,Scotland
+MOG,County Monaghan,Ireland
+MON,Monmouthshire,Wales
+MOR,Morayshire,Scotland
+MSY,Merseyside,England
+NAI,Nairn,Scotland
+NBL,Northumberland,England
+NFK,Norfolk,England
+NIR,,Northern Ireland
+NRY,North Riding of Yorkshire,England
+NTH,Northamptonshire,England
+NTT,Nottinghamshire,England
+NYK,North Yorkshire,England
+OFF,County Offaly,Ireland
+OKI,Orkney,Scotland
+OXF,Oxfordshire,England
+PEE,Peebles-shire,Scotland
+PEM,Pembrokeshire,Wales
+PER,Perth,Scotland
+POW,Powys,Wales
+RAD,Radnorshire,Wales
+RFW,Renfrewshire,Scotland
+ROC,Ross and Cromarty,Scotland
+ROS,County Roscommon,Ireland
+ROX,Roxburghshire,Scotland
+RUT,Rutland,England
+SAL,Shropshire,England
+SCT,,Scotland
+SEL,Selkirkshire,Scotland
+SFK,Suffolk,England
+SGM,South Glamorgan,Wales
+SHI,Shetland,Scotland
+SLI,County Sligo,Ireland
+SOM,Somerset,England
+SRK,Sark,Channel Islands
+SRY,Surrey,England
+SSX,Sussex,England
+STD,Strathclyde,Scotland
+STI,Stirlingshire,Scotland
+STS,Staffordshire,England
+SUT,Sutherland,Scotland
+SXE,East Sussex,England
+SXW,West Sussex,England
+SYK,South Yorkshire,England
+TAY,Tayside,Scotland
+TIP,County Tipperary,Ireland
+TWR,Tyne and Wear,England
+TYR,County Tyrone,Northern Ireland
+WLS,,Wales
+WAR,Warwickshire,England
+WAT,County Waterford,Ireland
+WEM,County Westmeath,Ireland
+WES,Westmorland,England
+WEX,County Wexford,Ireland
+WGM,West Glamorgan,Wales
+WIC,County Wicklow,Ireland
+WIG,Wigtownshire,Scotland
+WIL,Wiltshire,England
+WIS,Western Isles,Scotland
+WLN,West Lothian,Scotland
+WMD,West Midlands,England
+WOR,Worcestershire,England
+WRY,West Riding of Yorkshire,England
+WYK,West Yorkshire,England
+YKS,Yorkshire,England

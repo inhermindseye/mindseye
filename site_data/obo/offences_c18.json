@@ -1,0 +1,108 @@
+{
+"name" : "offences",
+"children" : [
+	{
+	"name" : "theft",
+	"children" : [
+		{"name" : "animalTheft", "size" : 1364},
+		{"name" : "burglary", "size" : 2733},
+		{"name" : "embezzlement", "size" : 17},
+		{"name" : "extortion", "size" : 56},
+		{"name" : "gameLawOffence", "size" : 21},
+		{"name" : "grandLarceny", "size" : 22154},
+		{"name" : "housebreaking", "size" : 752},
+		{"name" : "mailTheft", "size" : 16},
+		{"name" : "pettyLarceny", "size" : 857},
+		{"name" : "pocketpicking", "size" : 1748},
+		{"name" : "receiving", "size" : 1807},
+		{"name" : "shoplifting", "size" : 1790},
+		{"name" : "theftFromPlace", "size" : 5308},
+		{"name" : "otherTheft", "size" : 2591}
+		]
+	},
+	{
+	"name" : "damage",
+	"children" : [
+		{"name" : "arson", "size" : 56},
+		{"name" : "otherDamage", "size" : 29}
+		]
+	},
+	{
+	"name" : "breakingPeace",
+	"children" : [
+		{"name" : "assault", "size" : 44},
+		{"name" : "wounding", "size" : 82},
+		{"name" : "libel", "size" : 7},
+		{"name" : "riot", "size" : 107},
+		{"name" : "threateningBehaviour", "size" : 5},
+		{"name" : "vagabonding", "size" : 1},
+		{"name" : "barratry", "size" : 2},
+		{"name" : "otherPeace", "size" : 4}
+		]
+	},
+	{
+	"name" : "sexual",
+	"children" : [
+		{"name" : "assaultWithIntent", "size" : 10},
+		{"name" : "bigamy", "size" : 292},
+		{"name" : "rape", "size" : 256},
+		{"name" : "sodomy", "size" : 56},
+		{"name" : "assaultWithSodomiticalIntent", "size" : 30},
+		{"name" : "keepingABrothel", "size" : 2},
+		{"name" : "otherSexual", "size" : 3}
+		]
+	},
+	{
+	"name" : "royalOffences",
+	"children" : [
+		{"name" : "coiningOffences", "size" : 459},
+		{"name" : "religiousOffences", "size" : 9},
+		{"name" : "seditiousWords", "size" : 28},
+		{"name" : "taxOffences", "size" : 129},
+		{"name" : "treason", "size" : 11},
+		{"name" : "seditiousLibel", "size" : 25},
+		{"name" : "seducingAllegiance", "size" : 14},
+		{"name" : "otherRoyal", "size" : 3}
+		]
+	},
+	{
+	"name" : "deception",
+	"children" : [
+		{"name" : "bankruptcy", "size" : 20},
+		{"name" : "forgery", "size" : 605},
+		{"name" : "fraud", "size" : 448},
+		{"name" : "perjury", "size" : 378},
+		{"name" : "otherDeception", "size" : 2}
+		]
+	},
+	{
+	"name" : "violentTheft",
+	"children" : [
+		{"name" : "highwayRobbery", "size" : 2928},
+		{"name" : "robbery", "size" : 503},
+		{"name" : "otherViolentTheft", "size" : 0}
+		]
+	},
+	{
+	"name" : "killing",
+	"children" : [
+		{"name" : "infanticide", "size" : 131},
+		{"name" : "murder", "size" : 944},
+		{"name" : "manslaughter", "size" : 40},
+		{"name" : "pettyTreason", "size" : 16},
+		{"name" : "otherKilling", "size" : 23}
+		]
+	},
+	{
+	"name" : "miscellaneous",
+	"children" : [
+		{"name" : "kidnapping", "size" : 5},
+		{"name" : "pervertingJustice", "size" : 126},
+		{"name" : "conspiracy", "size" : 33},
+		{"name" : "returningFromTransportation", "size" : 243},
+		{"name" : "piracy", "size" : 2},
+		{"name" : "otherMisc", "size" : 72}
+		]
+	}
+]
+}

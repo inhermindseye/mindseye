@@ -1,0 +1,731 @@
+---
+title: "Death in 18th-century London"
+subtitle: "Demographic patterns and causes of death"
+author: "Sharon Howard"
+date: "2025-09-20"
+categories: [death]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+## Introduction
+
+**Content note: this post discusses infant and child mortality.**
+
+London (like most cities at the time) was an extraordinarily dangerous place to live in the 18th and 19th centuries, where life expectancy was lower than in rural populations. It was also a place that generated large amounts of information about deaths. In this post, I look at a dataset of burials created by The Cambridge Group for the History of Population and Social Structure (CAMPOP), and compare it with modern deaths data for England and Wales from the Office for National Statistics.
+
+
+## The data
+
+- [London Stepney Burials with Fees, 1733-1843](https://doi.org/10.5255/UKDA-SN-8642-2) (CC-BY NC)
+
+> These individual level burials were collected to analyse variations and changes in mortality in London's populous East End manufacturing district, in a very large parish where extant daybook accounts itemise burial costs, which varied according to services provided. These data consist of parish burial account book burials and parish register burials filling in gaps where there were no extant/accessible burial accounts books for St Dunstan Stepney, London between 1733 and 1843. This produces a continuous series of burials except for a gap beginning July 1808 and ending January 1812.
+
+The dataset was created as part of a [Migration, Mortality and Medicalisation project](https://www.campop.geog.cam.ac.uk/research/projects/migrationmortalitymedicalisation/). 
+I'm using a cleaned and deduplicated subset for 1775-1830 (full years only), containing 29,023 burials. 
+
+
+- [Annual deaths registered in England and Wales, by sex and age](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsregisteredinenglandandwalesseriesdrreferencetables) 
+
+The series begins in 1963; I've pulled out five years (pre-Covid), 2011-15, containing 2,521,567 deaths.
+
+
+```{r}
+## packages
+
+library(readxl)
+library(janitor)
+library(scales)
+
+library(knitr)
+library(kableExtra)
+
+library(patchwork)
+
+library(tidytext)
+library(tidyverse)
+
+library(ggthemes)
+theme_set(theme_minimal())
+
+### devtools::install_github("hrbrmstr/waffle")
+library(waffle)
+```
+
+
+
+
+```{r}
+burials_1775_gender_csv <-
+  read_csv(here::here("site_data/stepney_burials/burials_1775_gender.csv"))
+
+burials_csv <-
+  read_csv(here::here("site_data/stepney_burials/stepney_burials_cleaned_v2408.csv"))
+
+
+burials_1775 <-
+  burials_csv  |>
+  mutate(year = year(date)) |> 
+  filter(between(year, 1775, 1830) & source=="daybook" ) |>
+  # only six months for 1808 so remove it altogether
+  # so there's a gap 1808-12 but all years shd be complete
+  filter(year != 1808) |>
+  mutate(month_num = month(date),
+         month_name = month(date, label=TRUE) )  |>
+  # tidy up causes a bit. 
+  mutate(cause_cln = case_when(
+    is.na(cause) | cause=="-" ~ NA,
+    is.na(cause_cln) & str_detect(cause, "[Bb]lank") ~ NA,
+    is.na(cause_cln) & str_detect(cause, "[Uu]nknown") ~ NA, # only 3 in this set
+    is.na(cause_cln) & str_detect(cause, "\\b(Cor|Crowner)") ~ "coroner",
+    is.na(cause_cln) & str_detect(cause, "obscured|faded|__") ~ NA,
+    is.na(cause_cln) ~ NA,
+    .default = cause_cln
+  )) |>
+  # quick fix for a few erroneous ages; make all stillbirths 0
+    mutate(age_burial_n = case_when(
+    cause_cln %in% c("stillborn", "sb") ~ 0,
+    age_burial_n>104 ~ NA,
+    .default = age_burial_n
+  )) |> 
+  # mutate(age_group10 = case_when(
+  #   age_burial_n==0 ~ "<1 year",
+  #   age_burial_n<=10 ~ "01-10",
+  #   age_burial_n<=20 ~ "11-20",
+  #   age_burial_n<=30 ~ "21-30",
+  #   age_burial_n<=40 ~ "31-40",
+  #   age_burial_n<=50 ~ "41-50",
+  #   age_burial_n<=60 ~ "51-60",
+  #   age_burial_n<=70 ~ "61-70",
+  #   age_burial_n<=80 ~ "71-80",
+  #   age_burial_n<=90 ~ "81-90",
+  #   age_burial_n>90 ~ "90+",
+  # )) |>
+  mutate(age_group = case_when(
+    age_burial_n==0 ~ "<1 year",
+    age_burial_n<5 ~ "01-04",
+    age_burial_n<15 ~ "05-14",
+    age_burial_n<25 ~ "15-24", 
+    age_burial_n< 35 ~ "25-34", 
+    age_burial_n< 45 ~ "35-44",
+    age_burial_n< 55 ~ "45-54",
+    age_burial_n< 65 ~ "55-64",
+    age_burial_n< 75 ~ "65-74",
+    age_burial_n< 85 ~ "75-84",
+    age_burial_n>84 ~ "85+"
+  )) |>
+  # make <1 year group go first
+  mutate(across(contains("age_group"), ~fct_relevel(., "<1 year"))) |>
+  # add gender
+  left_join(burials_1775_gender_csv, join_by(burial_id)) |>
+  # additional gender, using info other than forenames
+  mutate(gender = case_when(
+    !is.na(gender) ~ gender,
+    str_detect(str_trim(relship), regex("^(d|w)", ignore_case = TRUE)) ~ "female",
+    str_detect(str_trim(relship), regex("^s$|\\bmale|\\bson", ignore_case = TRUE)) ~ "male",
+    #need to check these
+    str_detect(title, regex("^(Madam|Miss|Mrs)", ignore_case = TRUE) ) ~ "female",
+    #\\b for "Mr" /ensure Mrs goes first
+    str_detect(title, regex("^\\[?(Capt|Doctor|Mr\\b|Dr\\b|Esq|Lo:|Mast|Reverend|Sr\\b)", ignore_case=TRUE) ) ~ "male",
+    str_detect(status, regex("\\b(female|woman|girl|lady|dau|daugh.r|daughter|spinster|widow)\\b", ignore_case = TRUE)) ~ "female",
+    str_detect(status, regex("\\b(male|man|boy|blackman|gentleman|lad|son)\\b", ignore_case = TRUE)) ~ "male",
+  )) |>
+  # majority of remaining unmatched have no forename; many are stillborn infants.
+  
+  # # convert feetotal to total in pence (d) 
+  # mutate(feetotal = case_when(
+  #   feetotal %in% c("-", "_.15.0") ~ NA,
+  #   feetotal=="0" ~ "0.0.0",
+  #   .default = feetotal
+  # )) |>
+  # separate(feetotal, into=c("l","s","d"), sep="\\.", extra = "drop", convert = T, remove = F) |>
+  # mutate(fee_d = (l*240)+(s*12)+d  ) |>
+  
+  # keep only what you think you might use
+  select(burial_id, age_burial_n, age_group, gender, cause=cause_cln) # date, year, month_num, month_name,  fee_d) 
+
+# filter out NA age and gender
+burials_gender_age <-
+  burials_1775 |>
+  filter(!is.na(age_group) & !is.na(gender))  
+
+burials_gender_age_groups <-
+ burials_gender_age |>
+  count(gender, age_group, name="deaths")
+```
+
+
+
+```{r ons-data}
+#stepney_total <- sum(burials_gender_age_groups$deaths) # this is only the total for those with both gender and age.
+
+#  summarise(dd = sum(dd)) # +1 when rounded 
+
+ons_annual_deaths_csv <-
+  read_csv(here::here("site_data/stepney_burials/ons_annual_deaths_gender_age_1963_2019.csv"))
+
+# ons_monthly_deaths_csv <-
+#   read_csv(here::here("site_data/stepney_burials/ons_deaths_monthly_2011_2015.csv"))
+
+# nb age "105" may include over-105s (originally "105+"); only looking at groups anyway.
+
+ons_annual_deaths <-
+  ons_annual_deaths_csv |>
+  filter(between(year, 2011, 2015)) |>
+  # mutate(age_group10 = case_when(
+  #   age==0 ~ "<1 year",
+  #   age<=10 ~ "01-10",
+  #   age<=20 ~ "11-20",
+  #   age<=30 ~ "21-30",
+  #   age<=40 ~ "31-40",
+  #   age<=50 ~ "41-50",
+  #   age<=60 ~ "51-60",
+  #   age<=70 ~ "61-70",
+  #   age<=80 ~ "71-80",
+  #   age<=90 ~ "81-90",
+  #   age>90 ~ "90+",
+  # )) |>
+  mutate(age_group = case_when(
+    age==0 ~ "<1 year",
+    age<5 ~ "01-04",
+    age<15 ~ "05-14",
+    age<25 ~ "15-24", 
+    age< 35 ~ "25-34", 
+    age< 45 ~ "35-44",
+    age< 55 ~ "45-54",
+    age< 65 ~ "55-64",
+    age< 75 ~ "65-74",
+    age< 85 ~ "75-84",
+    age>84 ~ "85+"
+  )) |>
+  # make <1 year group go first
+  mutate(across(contains("age_group"), ~fct_relevel(., "<1 year"))) 
+
+
+# counts for age groups/gender
+ons_annual_deaths_groups <-
+ons_annual_deaths  |>
+  group_by(gender, age_group) |>
+  summarise(deaths = sum(deaths), .groups = "drop_last") |>
+  ungroup() 
+
+```
+
+
+
+```{r}
+ons_deaths_2015_diverging <-
+ons_annual_deaths_groups |>
+  mutate(n_gen = sum(deaths), .by=gender) |>
+  mutate(n_age = sum(deaths), .by = age_group) |>
+  mutate(div_g = ifelse(gender=="male", deaths*-1, deaths))
+
+
+breaks_diverging <- pretty(ons_deaths_2015_diverging$div_g)
+
+labels_diverging <-
+scales::number(
+  abs(breaks_diverging),
+  accuracy = 0.01,
+  drop0trailing = TRUE,
+  big.mark = ",",
+  scale_cut = scales::cut_long_scale()
+)
+
+burials_diverging <-
+  burials_gender_age |>
+  add_count(gender, name="n_gen") |>
+  add_count(age_group, name="n_age") |>
+  count(gender, n_gen, n_age, age_group, sort = T)  |>
+  mutate(div_g = ifelse(gender=="male", n*-1, n))
+
+
+bind_ons_sb_gender_age_uncounted <-
+bind_rows(
+  burials_gender_age |> select(age=age_burial_n, age_group, gender) |> mutate(grp = "Stepney"),
+  ons_annual_deaths |>
+  uncount(deaths) |> select(age, gender, age_group) |> mutate(grp="ONS")
+)
+```
+
+```{r include=FALSE}
+## data
+## for preprocessing see preparation/processing stepney_better rmd. August 2024. 
+## added gender for 1775-1830 July 2025.
+```
+
+## Stepney notes
+
+### gender
+
+Gender was added to the original Stepney dataset using first names, titles (Mr, Mrs, etc) or other information in the data (eg references to "daughter"); it hasn't been carefully checked at this point and there may be errors. 
+
+About 6% of records didn't contain enough information to assign gender. More than half of the unknowns are unnamed stillborn infants; I don't know if it can be assumed that they'd be gender-balanced. Excluding unknowns, the female percentage is fractionally under 50%; in the modern data the female percentage is higher at 51.5%. 
+
+```{r}
+# have i counted stillborns as 0 ? yes
+# burials_1775 |>
+#   filter(!is.na(gender) & is.na(age_burial_n)) |>
+#   count(gender) |>
+#   mutate(p = n/sum(n))
+```
+
+
+```{r}
+# what diff does it make filtering/keeping NA ages? 
+# virtually nothing, but maybe interesting that if they're excluded f = fractionally over 50%, and if included f about the same fraction *under* 50%
+
+# burials_1775 |>
+#   filter(!is.na(gender) & !is.na(age_group)) |>
+#   count(gender) |>
+#   mutate(p = round(n/sum(n), 4))
+```
+
+```{r}
+# burials_1775 |>
+#   filter(!is.na(gender) ) |>
+#   count(gender) |>
+#   mutate(p = round(n/sum(n), 4))
+```
+
+```{r}
+# https://r-graph-gallery.com/piechart-ggplot2.html but added position= to geom_text.
+
+burials_1775 |>
+  count(gender) |>
+  mutate(gender = if_else(is.na(gender), "unknown", gender)) |>
+
+#  count(has_degree) |>
+  mutate(prop = round(n / sum(n)*100,1)) |>
+  mutate(prop_label = glue::glue("{gender} ({prop}%)")) |>
+  ggplot(aes(x="", y=prop, fill=gender)) +
+  geom_col(width = 1, color="white", show.legend = F) +
+  geom_text(aes(label = prop_label), position = position_stack(vjust=0.5), color = "white", size=4) +
+  coord_polar("y", start=0) +
+  scale_fill_tableau() +
+  theme_void()  +
+  ggtitle("Stepney burials and gender")  
+
+
+```
+
+### age
+
+
+```{r}
+## % of burials with age? 85%
+# burials_1775 |>
+#   count(!is.na(age_burial_n)) |>
+#   mutate(p = n/sum(n))
+```
+
+About 85% of the Stepney records have a usable age. However, inspection of ages indicates a substantial [heaping](https://www.census.gov/newsroom/blogs/random-samplings/2023/05/age-heaping-2020-census-dhc.html) problem among adults, ie that multiples of 10 are heavily overrepresented, perhaps increasingly so with age. (5s may also be slightly overrepresented, though nowhere near the same degree.) That does *not* happen in the ONS registrations data, though it can happen in modern datasets based on censuses or surveys. 
+
+In other words, many people's exact ages were unknown (at least, to the people recording the burials) and the ages recorded were frequently estimates. In any case I've aggregated the data into ten-year age groups for analysis which makes this less of a problem, but I decided to make the groups centre on 10 (ie they go from 5-4 rather than 1-0 or 0-9) so the "heapiest" ages are in the middle.
+
+```{r}
+burials_1775 |>
+  select(gender, age=age_burial_n) |>
+  filter(age>=15) |>
+  count(age, name="deaths") |>
+  ggplot(aes(age, deaths)) +
+  geom_col() +
+  labs(title = "Histogram of ages (15+) in the Stepney burials, showing pronounced heaping")
+```
+
+
+
+```{r}
+# ons_annual_deaths |>
+#   group_by(age) |>
+#   summarise(deaths = sum(deaths)) |>
+#   ungroup() |>
+#   filter(age>18) |>
+#   ggplot(aes(age, deaths)) +
+#   geom_col() +
+#   labs(title="Histogram of age at death in England & Wales 2011-15 (age 15+)")
+```
+
+
+
+
+## Stepney and ONS comparisons
+
+
+```{r}
+ons_average <-
+ons_annual_deaths |>
+  uncount(deaths) |>
+  summarise(mean_age_death = round(mean(age), 1), median_age_death=median(age))
+
+burials_average <-
+burials_1775 |>
+  filter(!is.na(age_burial_n)) |>
+  summarise(mean_age_burial = round(mean(age_burial_n),1), median_age_burial=median(age_burial_n))
+```
+
+The difference between the 21st-century and 1775-1830 data are profound. 
+
+To start with simple averages, the mean age of death in 2011-2015 was `r ons_average$mean_age_death` and in Stepney 1775-1830 it was less than half that, at `r burials_average$mean_age_burial`.
+
+However, this kind of average can be misleading. As the histogram indicates, it doesn't, for example, mean that there were few older people in late 18th-century London. 
+
+A cumulative density chart gives much more detail about the differences between the two datasets. It shows very clearly that the primary reason for the low Stepney average is shockingly high death rates among very young children: almost 40% of the people buried in Stepney died before their 6th birthday. In the modern population, the 40% mark is at about 78 years.
+
+
+```{r include=FALSE}
+# ons_average$mean_age_death
+# burials_average$mean_age_burial
+
+# burials_1775 |>
+#   filter(!is.na(age_burial_n)) |>
+#   count(age_burial_n<=30)
+```
+
+
+```{r}
+# the actual numbers.
+# burials_gender_age |>
+#   count(age_burial_n) |>
+#   mutate(c = cumsum(n), pc = c/sum(n)*100, rf = prop.table(n), p= n/sum(n))
+
+# ons_annual_deaths |>
+#   group_by(age) |>
+#   summarise(n = sum(deaths)) |>
+#   ungroup() |>
+#    mutate(c = cumsum(n), pc = c/sum(n)*100, rf = prop.table(n), p= n/sum(n))
+```
+
+
+```{r}
+bind_ons_sb_gender_age_uncounted |>
+  ggplot(aes(x=age, colour = grp, group=grp)) +
+  stat_ecdf(geom = "step") +
+  scale_colour_colorblind() +
+  scale_y_continuous(labels = percent_format()) +
+  labs(colour="data", y="cumulative percentage", title = "Cumulative density chart of age at death")
+```
+
+
+[Population pyramid charts](https://en.wikipedia.org/wiki/Population_pyramid) also help to highlight gender variations in the overall demographic patterns.
+
+This would be a pretty typical profile for a wealthy modern country. It's noticeable that the first year of life is still more dangerous than the rest of childhood, but there are very, very few child deaths, and numbers only really start to take off from the 40s. It also displays typical gender patterns, with women tending to live longer than men. There are a *lot* more women than men living beyond the age of 85.
+
+```{r}
+ons_deaths_2015_diverging |>
+  mutate(age_group = fct_rev(age_group)) |>
+  ggplot(aes(x=age_group, fill=gender, y=div_g)) +
+  geom_col() +
+  coord_flip() +
+  geom_hline(yintercept=0) +
+  scale_y_continuous(labels = labels_diverging, breaks = breaks_diverging) +
+  #scale_y_continuous(labels=abs, breaks =  c(-360000, -180000, 0, 180000, 360000)) +
+  scale_fill_tableau(breaks=c("male", "female")) + 
+  theme(legend.position = "bottom") +
+  labs(x=NULL, y="number of deaths", fill=NULL, title="Gender and age at death, ONS 2011-15")
+```
+
+The most obvious contrast in the Stepney data is the death toll in the earliest years. 
+But even after that, it's clear that people were more likely to die relatively young compared to the modern population. 
+
+It's striking that men died in very similar numbers in each group from their 40s their 60s, and something similar appears for women aged 35-54. In general, for adults, increases from one age group to the next look (proportionally) smaller than in the modern population.
+
+Finally, although there are clearly plenty of over 60s, there are considerably fewer *very* old people (85+). The most notable similarity is the larger numbers of women in the oldest groups.
+
+```{r}
+burials_diverging |>
+  mutate(age_group = fct_rev(age_group)) |>
+  ggplot(aes(x=age_group, fill=gender, y=div_g)) +
+  geom_col() +
+  coord_flip() +
+  geom_hline(yintercept=0) +
+  scale_y_continuous(labels=abs, breaks = seq(-3000, 3000, 500)) +
+  scale_fill_tableau(breaks=c("male", "female")) +
+  theme(legend.position = "bottom") +
+  labs(x=NULL, y="number of burials", fill=NULL, title="Gender and age at burial, Stepney 1775-1830")
+
+```
+
+
+
+```{r}
+burials_1775_age_gender_props <-
+burials_gender_age_groups |>
+  pivot_wider(names_from = gender, values_from = deaths) |>
+  mutate(p_female = female/(female + male)) |>
+  mutate(dif = abs(male-female), p_dif = dif/(male+female)) |>
+  mutate(data="Stepney")
+
+ons_deaths_age_gender_props <-
+ons_annual_deaths_groups |>
+  pivot_wider(names_from = gender, values_from = deaths) |>
+  mutate(p_female = female/(female+ male)) |>
+  mutate(dif = abs(male-female), p_dif = dif/(male+female)) |>
+  mutate(data="ONS")
+
+bind_ons_sb_gender_age_wide <-
+bind_rows(
+  burials_1775_age_gender_props,
+  ons_deaths_age_gender_props
+  ) 
+```
+
+```{r}
+ons_average_diff <-
+    ons_deaths_age_gender_props |>
+    summarise(female=sum(female), male=sum(male),  dif=sum(dif), p_dif = dif/(female+male)) |>
+    mutate(age_group="average", data="ONS")
+
+stepney_average_diff <-
+    burials_1775_age_gender_props |>
+  summarise(female=sum(female), male=sum(male), dif=sum(dif), p_dif = dif/(female+male)) |>
+  mutate(age_group="average", data="Stepney")
+
+bind_ons_sb_average_diff <-
+  bind_rows(
+    ons_average_diff, stepney_average_diff
+  )
+```
+
+
+I was interested in comparing the gender ratios in each dataset across age groups. This plots the *gap* between male and female percentages and I'm not quite satisfied with it. But it *does* show that the gender ratios are more evenly balanced in *most* Stepney age groups (even allowing for the slightly higher overall female % in the modern dataset); the two oldest groups are the only exceptions. 
+
+```{r}
+# i still don't know if this says what i want. 
+# why don't you compare the **gap** between m and f, rather than the % of f or m? and make it abs.
+bind_ons_sb_gender_age_wide |>
+  #filter(age_group %in% c("05-14", "15-24", "25-34", "35-44", "45-54", "55-64", "65-74")) |>
+  ## add the overall average. or use these as a line?
+  #bind_rows(bind_ons_sb_average_diff) |>
+  ggplot(aes(age_group, p_dif, colour = data)) +
+  geom_point(size=3, alpha=0.8) +
+  #geom_hline(yintercept=ons_average_diff$p_dif,alpha=0.3) + # works fine
+  #geom_hline(yintercept = stepney_average_diff$dif) + # this fuxxes everything up idk why i give up.
+  scale_colour_colorblind() +
+  scale_y_continuous(labels = percent_format()) +
+  labs(title = "Gap between male and female deaths in each age group", y="gap", x="age group")
+```
+
+
+
+```{r}
+# burials_1775 |>
+#   mutate(a = !is.na(age_burial_n), g=!is.na(gender), c=!is.na(cause)) |>
+#   count(a, g, c) |>
+#   mutate(p = n/sum(n)*100)
+```
+
+```{r}
+# burials_1775 |> count(!is.na(cause)) |>
+#   mutate(p = n/sum(n))
+```
+
+
+
+## Stepney causes of death
+
+24,301 burials (83.7%) have a recorded cause of death (22,357 (77%) have gender, age *and* cause). 
+
+Causes are quite varied and messy and for this post I've only done some quick preliminary cleaning and standardisation using OpenRefine (you can can see even in the top 15 I missed "cons'n" for "consumption"). Considerably more work would be needed for a serious piece of research, so this is just provisional exploration.
+
+```{r}
+burials_1775 |> 
+  filter(!is.na(cause) ) |>
+  count(cause, sort = T, name = "deaths")  |>
+  slice_max(deaths, n=15) |>
+  mutate(cause = fct_reorder(cause, deaths)) |>
+  ggplot(aes(x=cause, y=deaths)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_tableau() +
+  labs(x=NULL, y="number of burials", title = "Most common causes of death")
+
+```
+
+
+```{r}
+burials_age_groups <-
+burials_1775 |>
+  filter(!is.na(age_burial_n)) |>
+  # more balanced age groups
+  # 7 groups
+  mutate(age_group2 = case_when(
+    age_burial_n==0 ~ "<1 year",
+    age_burial_n<=2 ~ "01-02",
+    between(age_burial_n, 3, 20) ~ "03-20",
+    between(age_burial_n, 20, 40) ~ "20-40",
+    between(age_burial_n, 40, 55) ~ "40-55",
+    between(age_burial_n, 55, 68) ~ "55-68",
+    age_burial_n>65 ~ "65+"
+  )) |>
+  # 3 groups
+  mutate(age_group3 = case_when(
+    age_burial_n<=3 ~ "0-3",
+    between(age_burial_n, 3, 52) ~ "4-52",
+    #between(age_burial_n, 52, 65) ~ "53+",
+    age_burial_n>52 ~ "53+"
+  )) 
+
+```
+
+
+### gender
+
+The most frequent causes of death when broken down by gender are not *very* different from the overall chart. The only causes that don't appear on both sides are childbirth and - rather less predictably, perhaps - drowned.
+
+```{r}
+burials_1775 |> 
+  filter(!is.na(cause) & !is.na(gender) )|>
+  add_count(cause, name = "n_cause")  |>
+  count(cause, gender, n_cause) |>
+  group_by(gender) |>
+  slice_max(n, n=15) |>
+  ungroup() |>
+  mutate(cause = reorder_within(cause, n, gender)) |>
+#  mutate(cause = fct_reorder(cause, n_cause)) |>
+  ggplot(aes(x=cause, y=n)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_tableau() +
+  scale_x_reordered() +
+  facet_wrap(~gender, scales="free") +
+  labs(x=NULL, y="number of burials", title = "Most common causes of female death") 
+```
+
+But what I'm really interested in is which causes were most *distinctively* female or male. 
+
+```{r}
+burials_1775_gender_cause_logodds <-
+burials_1775 |> 
+  filter(!is.na(cause) & !is.na(gender)) |>
+  count(cause, gender) |>
+  tidylo::bind_log_odds(gender, cause, n) |>
+  mutate(t = sum(n), .by = cause) |>
+  filter(t>5)
+
+
+burials_1775_age_cause_logodds <-
+burials_age_groups |>
+  filter(!is.na(cause)) |>
+  count(cause, age_group3) |>
+  tidylo::bind_log_odds(age_group3, cause, n) |>
+  mutate(t = sum(n), .by=cause) |>
+  filter(t>5)
+
+
+burials_1775_adult_gender_cause_logodds <-
+burials_1775 |> 
+  filter(!is.na(cause) & !is.na(gender) & age_burial_n>18) |>
+  count(cause, gender) |>
+  tidylo::bind_log_odds(gender, cause, n) |>
+  mutate(t = sum(n), .by = cause) |>
+  filter(t>5)
+
+burials_1775_cba_gender_cause_logodds <-
+burials_1775 |> 
+  filter(!is.na(cause) & !is.na(gender) & between(age_burial_n, 15, 44)) |>
+  count(cause, gender) |>
+  tidylo::bind_log_odds(gender, cause, n) |>
+  mutate(t = sum(n), .by = cause) |>
+  filter(t>5)
+
+```
+
+For women, childbirth is the leading cause, and really stands out as the most gendered cause. It's ranked 12th among female deaths overall, accounting for 231 deaths, which is only about 2% of all female deaths. 
+Among women of child-bearing age, however, childbirth represented a mugh bigger killer: 10% of women aged between 16 and 45, peaking at 13% in the 25-34 age group.
+
+"Old age" is also strongly gendered female (which is consistent with women's greater longevity); there's more variation in old age deaths (old age/age/decay) and if they were properly standardised it could be closer to childbirth.
+
+```{r}
+# get slightly different numbers if you filter t before bind_log_odds.
+# burials_1775 |> 
+#   filter(!is.na(cause) & !is.na(gender)) |>
+#   count(cause, gender) |>
+#   mutate(t = sum(n), .by = cause) |>
+#   filter(t>5) |>
+#   tidylo::bind_log_odds(gender, cause, n) 
+```
+
+Meanwhile, the most male-gendered causes of death are more closely clustered (which suggests they may also be more varied, though that's hard to judge without cleaner data). 
+
+The position of drowning as the most "male" cause of death most likely reflects the importance of maritime and river-related occupations in the city. Accidents also feature prominently (and "coroner" is more likely to be associated with accidental deaths than with violence). "Gravel" may refer to kidney stones or gallstones, along with "liver complaint" perhaps pointing to male tendencies to dietary excess.
+
+```{r}
+nice_breaks <- pretty(burials_1775_gender_cause_logodds$log_odds_weighted)
+
+burials_1775_gender_cause_logodds |>
+    group_by(gender) |>
+    top_n(10, log_odds_weighted) |>
+    ungroup() |>
+  mutate(log_odds2 = case_when(
+    gender=="male" ~ -1*log_odds_weighted,
+    .default = log_odds_weighted
+  )) |>
+  mutate(cause = fct_reorder(cause, log_odds2)) |>
+  ggplot(aes(cause, log_odds2, colour = gender)) +
+  #geom_col() +
+  #ggplot(aes(word, log_odds2, color = gender)) +
+  geom_segment(aes(x = cause, xend = cause,
+                     y = 0, yend = log_odds2), 
+                 linewidth = 1.1, alpha = 0.6) +
+  geom_point(size = 2) +
+  geom_hline(yintercept=0) +
+  coord_flip() +
+  scale_colour_tableau(breaks=c("male", "female")) +
+  scale_y_continuous(breaks=nice_breaks, labels = abs(nice_breaks)) +
+  theme(legend.position="bottom") +
+  labs(y="log odds ratio", x="cause", title="Most gendered causes of death, all ages", caption = "min 5 burials") 
+```
+
+
+
+```{r}
+nice_cba_breaks <- pretty(burials_1775_cba_gender_cause_logodds$log_odds_weighted)
+
+burials_1775_cba_gender_cause_logodds |>
+    group_by(gender) |>
+    top_n(10, log_odds_weighted) |>
+    ungroup() |>
+  mutate(log_odds2 = case_when(
+    gender=="male" ~ -1*log_odds_weighted,
+    .default = log_odds_weighted
+  )) |>
+  mutate(cause = fct_reorder(cause, log_odds2)) |>
+  ggplot(aes(cause, log_odds2, colour = gender)) +
+  geom_segment(aes(x = cause, xend = cause,
+                     y = 0, yend = log_odds2), 
+                 linewidth = 1.1, alpha = 0.6) +
+  geom_point(size = 2) +
+  geom_hline(yintercept=0) +
+  coord_flip() +
+  scale_colour_tableau(breaks=c("male", "female")) +
+  scale_y_continuous(breaks=nice_cba_breaks, labels = abs(nice_cba_breaks)) +
+  theme(legend.position="bottom") +
+  labs(y="log odds ratio", x="cause", title="Most gendered causes of death, adults aged 15-44", caption = "minimum 5 deaths") 
+```
+
+### age
+
+Meanwhile, what are the most strongly age-influenced causes of death? I've used a different set of age groups here, to separate out the very young and old. The death toll of infectious diseases among young children - whooping cough, measles, smallpox - makes for sobering reading at a historical moment when vaccine denialism is in the political ascent.
+
+```{r}
+burials_1775_age_cause_logodds |>
+  group_by(age_group3) |>
+  slice_max(log_odds_weighted, n = 15) |>
+  ungroup() |>
+  mutate(cause = reorder_within(cause, log_odds_weighted, age_group3)) |>
+  ggplot(aes(log_odds_weighted, cause, fill = age_group3)) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  scale_fill_tableau() +
+  facet_wrap(~age_group3, scales = "free", nrow=1) +
+  labs(y = NULL, title = "Most distinctive causes of death by age groups", x="log odds ratio")
+```
+
+
+## Further reading
+
+- [CAMPOP blog posts on mortality](https://www.campop.geog.cam.ac.uk/blog/tag/mortality/)
+- [Westminster coroner's inquests 1760-1799](https://mindseye.sharonhoward.org/posts/westminster-coroners-inquests-1760-1799-part-1/)

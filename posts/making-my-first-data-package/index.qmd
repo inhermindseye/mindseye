@@ -1,0 +1,95 @@
+---
+title: "Making my first data package"
+author: "Sharon Howard"
+date: "2025-06-24"
+categories: [packages, methods]
+code-fold: show
+execute: 
+  warning: false
+  message: false
+---
+
+## R Packages
+
+Packages, including data packages, are a vital part of the R ecosystem and yet I've been using R for the best part of a decade without ever making one of my own. Until now.
+
+I've recently been reading about [using R data packages for reproducible research](https://doi.org/10.7287/peerj.preprints.3192v2), and I decided it was time to rectify my omission by making a small practice package of cleaned-up datasets for reuse on this blog. 
+
+There are plenty of resources (see list at the end of the post), but some are a lot more detailed than you need to get going. I found this 
+[step by step introduction](https://towardsdatascience.com/in-depth-guide-to-creating-and-publishing-an-r-data-package-using-devtools-245b0fd4c359/) particularly helpful. I also found it useful to look at the structure of existing data packages such as [historydata](https://github.com/ropensci/historydata) and [HistData](https://github.com/friendly/HistData)
+
+## Step by Step
+
+This is largely based on the guide linked above but it's not a full set of instructions! There are several steps to the process; they aren't difficult but they need to be done in the right order. So this is really just a checklist to guide me through in future.
+
+1. Think of a good name for the package (there are strict rules about naming)
+2. Check you have necessary packages installed (devtools, usethis, roxygen2)
+3. Create new project [as an R package in RStudio](https://docs.posit.co/ide/user/ide/guide/pkg-devel/writing-packages.html) (I recommend ticking the git repo box) or with `usethis::create_package()`. It will contain various mandatory files and folders (including R/, data/ and man/)
+4. Put datasets in the data/ folder; these must be .rda (R data) files, one per dataset
+  - I put raw data files in an additional `data-raw` folder with some .R scripts for processing. Extras like these shouldn't go in the data/ or R/ folders. To make the actual package data, need an extra line at the end of the processing script: `usethis::use_data(dataset_name, overwrite = TRUE)`. That will create the required .rda file in the data/ folder; to update it you'd just run the script again.
+  - Or you can just make .rda files in another project and copy them into data/ 
+5. Make an R script for each dataset in the R/ folder, written in a special format where each line begins with `# '` (I copy and pasted from existing data packages to get started).
+6. Create package metadata: [DESCRIPTION](https://r-pkgs.org/description.html) and [license](https://r-pkgs.org/license.html). 
+  - For a data package you might want a Creative Commons license, eg `usethis::use_ccby_license()`
+7. Load documentation with `devtools::document()` (this turns the step 5 R scripts into .Rd files in the man/ folder)
+8. Do checks in RStudio Build tab, or with `devtools::check()`
+9. Install the package locally, in RStudio Build tab under Install, or `devtools::install()` 
+  - repeat this step if you make any changes to the package
+10. Publish to Github, if you want to make it shareable.
+
+
+
+
+## The datasets
+
+The package (though it's only really intended for my use and lacks proper documentation) is on [Github](https://github.com/inhermindseye/mindseyedata). It may expand and get properly documented in the future.
+
+I started with just a couple of datasets that I've previously explored here or elsewhere, `coroners` ([London Lives coroners' inquests](https://mindseye.sharonhoward.org/blog.html#category=death)) and `cheshire_petitions` ([TPOP Cheshire petitions](https://the-power-of-petitioning.github.io/)).
+
+```{r}
+library(mindseyedata)
+library(dplyr)
+library(ggplot2)
+library(waffle)
+library(ggthemes)
+```
+
+```{r}
+coroners |>
+  count(verdict, gender) |>
+  filter(verdict !="undetermined") |>
+  ggplot(aes(fill=verdict, values=n)) +
+  geom_waffle(colour="white", n_rows = 10, make_proportional = TRUE) +
+  coord_equal() +
+  scale_fill_ptol() +
+  theme_minimal() +
+  theme_enhance_waffle() +
+  facet_wrap(~gender) +
+  ggtitle("Westminster coroners' inquests: verdicts by gender")
+```
+
+
+```{r}
+cheshire_petitions|> 
+  add_count(topic, name="n_topic") |>
+  filter(n_topic>25) |>
+  count(petition_type, topic) |>
+  ggplot(aes(fill=petition_type, values=n)) +
+  geom_waffle(colour="white", n_rows = 10, make_proportional = TRUE) +
+  coord_equal() +
+  scale_fill_pander() +
+  theme_minimal() +
+  theme_enhance_waffle() +
+  facet_wrap(~topic) +
+  ggtitle("Cheshire petitions types and topics")
+```
+
+
+## Resources 
+
+- [Rstudio get started guide](https://docs.posit.co/ide/user/ide/guide/pkg-devel/writing-packages.html)
+- Deepsha Menghani, [In-Depth Guide to Creating and Publishing an R Data Package Using Devtools](https://towardsdatascience.com/in-depth-guide-to-creating-and-publishing-an-r-data-package-using-devtools-245b0fd4c359/)
+- Hadley Wickham and Jennifer Bryan, [R Packages (2nd edn)](https://r-pkgs.org/) - a comprehensive guide (though not specifically about data packages)
+- [Writing R Extensions chapter on R Packages](https://rstudio.github.io/r-manuals/r-exts/Creating-R-packages.html)
+- [Structure of an Installed Package](https://rstudio.github.io/r-manuals/r-ints/Package-Structure.html)
+

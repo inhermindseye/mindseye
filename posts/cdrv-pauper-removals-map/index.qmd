@@ -1,0 +1,643 @@
+---
+title: "Migration and Exclusion in an 18th-century London Parish"
+description: "An interactive map of St Clement Danes pauper removal orders, 1752-1793"
+date: "2026-03-07"
+author: "Sharon Howard"
+categories: [maps, interactive, LL, poor]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+## Historical Background
+
+The data mapped on this page is based primarily on the [Register of Paupers Removed from the Parish of St Clement Danes](https://www.londonlives.org/about/rv/) in London Lives. From 1752 to 1793 the parish maintained a register of poor people formally *removed* from St Clement Danes to another parish where it was determined they had a [legal settlement](https://www.londonlives.org/about/settlement/), to avoid paying the costs of poor relief for them. 
+
+The 1662 Act of Settlement ensured that everyone had a home parish where they were eligible for poor relief in need, but at the same time placed restrictions on migration and mobility for the poor. Settlement was acquired in the first instance by place of birth or otherwise derived from parents' settlement, but it could be (and often was) changed subsequently, for example by serving an apprenticeship, marriage (for women), renting a house or land over a certain value, or paying parish taxes. 
+
+Nonetheless, it was possible for poor people to move to and live in a parish for some time without acquiring a legal settlement there, going unnoticed by authorities as long as they could support themselves. If they seemed likely to become a "burden" on the parish, however, that could quickly change.
+
+The vast majority of removals were to other London parishes, but the map shows that poor people migrated to London from across Britain and Ireland. Their statements in examinations are often brief outlines of origins. But some show how they had settled and made their lives in St Clement Danes for many years until factors beyond their control - ill health, ageing, abandonment or the death of a spouse, the birth of a child - exposed them to the bureaucratic machinery of the Old Poor Law.
+
+
+## The Process of Exclusion  
+
+The first step in the process of removal was an [examination](https://www.londonlives.org/about/ep/) taken by magistrates. About 95% of the removal orders can be linked to examinations in the parish records.
+
+Quite often, cases for which no examination can be found are those in which the individual was deemed to be a [vagrant](https://www.londonlives.org/about/vagrancy/), a criminal offence which could lead to punishment as well as enforced removal.  In all, about 14% of the removed were labelled as vagrants, for reasons that are often unclear from the documents alone. But parishes had a financial incentive to do so, since the costs would then be borne by the county rather than the parish. A small number of orders have also been linked to the [Middlesex Vagrant Lives dataset](https://doi.org/10.5281/zenodo.1217600). 
+
+Sometimes the parishes to which paupers were sent appealed against the order; petitions related to the orders have been identified in [London Lives Sessions Papers](https://www.londonlives.org/about/ps/) in about 40 cases, almost all from London/Middlesex parishes.
+
+Despite the possibility of punishment, some removed paupers returned to St Clement Danes and were removed *again*: at least 10% of orders can be linked to other orders. A small number of defiant individuals returned more than once; [Mary Jenkins](https://www.londonlives.org/results/name/?div0_type=CD_RVfile&given=mary&surname=jenkins) was removed to St Olave Southwark *five* times between 1758 and 1767, more than any other. Other notable returners included [Ann Brown](https://www.londonlives.org/results/name?div0_type=CD_RVfile&given=ann&surname=brown&year_gte=&year_lte=), who was removed to Oxford three times in the 1750s and described on one occasion as an ["incorrigible rogue"](https://www.londonlives.org/record/WCCDRV369000146). But perhaps she simply thought of London as her home.
+
+
+
+```{r stuff}
+library(scales)  
+library(janitor) 
+library(readxl)
+library(readtext)
+library(glue)
+
+library(tidytext)
+library(tidyverse)
+
+ll_url_base <- "https://www.londonlives.org/record/"
+```
+
+
+```{r get-data}
+
+## files in site_data
+
+# updated v slightly, but keep 0303 file for now in case of any problems.
+llep_cdrv_trimmed_texts_csv <-
+  read_csv(here::here("site_data/ll/llep_txt_cdrv_cleaned_20250317.csv"))
+
+# not using this?
+# llp_parishes_points_geo_csv <-
+#   read_csv(here::here("geo/llp_parishes_centroids_20260222.csv"))
+
+
+llpp_csv <-
+  read_csv(here::here("site_data/llpp/LL_petitions_data_v2-0.csv"))
+
+mv_csv <-
+  read_csv(here::here("site_data/ll/MiddlesexVagrants1777-1786v1.2.csv")) |>
+  clean_names()
+
+# mv linkage
+cdrv_mv_names_matched <-
+  read_csv(here::here("site_data/ll/cdrv_mv_names_matched_20260226.csv"))
+
+
+
+# improved geo data. drop any existing geo data in cdrv and replace with this.
+
+cdrv_geo_csv <-
+  read_csv(here::here("site_data/ll/cdrv_geocoded_points_and_notgeocoded_20260226.csv"))|>
+# add "County " prefix to Irish county names
+  mutate(to_county = case_when(
+    country=="Ireland" & !is.na(to_county) ~ paste("County", to_county),
+    .default = to_county
+  ))
+
+
+# ensure readr treats doc_date as char as there are dates that the parser won't like in there.
+
+cdrv_names_tsv <-
+  read_tsv(here::here("site_data/ll/llep_v3/removal_orders/cdrv_removal_orders_v2_names.tsv"), guess_max = 3100,
+           col_types = list(doc_date = col_character(), .default = col_guess()) )
+
+cdrv_orders_tsv <-
+  read_tsv(here::here("site_data/ll/llep_v3/removal_orders/cdrv_removal_orders_v2_orders.tsv"), guess_max = 2500, 
+           col_types = list(doc_date = col_character(), .default = col_guess()))
+
+
+
+llep_exams_csv <-
+  read_csv(here::here("site_data/ll/llep_v3/llep_exams_20260201.csv"), guess_max = 10000)
+
+# llep_names_csv <-
+#   read_csv(here::here("site_data/ll/llep_v3/llep_names_20260201.csv"), guess_max = 28000)
+
+# llep_irregular_csv <-
+#  read_csv(here::here("site_data/ll/llep_v3/llep_irregular_union_disunion_20260201.csv"), guess_max = 1500)
+```
+
+
+```{r processing-data}
+
+# get names to add as a list to the orders
+cdrv_names <-
+cdrv_names_tsv |>
+  separate(doc_date, into = c("d1", "d2", "d3"), sep = "-", remove = F) |>
+  mutate(date_precision = case_when(
+    is.na(doc_date) | doc_date=="" ~ NA,
+    d2=="00" ~ "y",
+    d3=="00" ~ "ym",
+    .default = "ymd"
+  )) |>
+  # \\b here should cover years like 1700 if needed; but check before using
+  mutate(doc_date = str_replace_all(doc_date, "\\b00", "01")) |>
+  # make new parsed date col so doc_date remains char.
+  mutate(date = parse_date_time(doc_date, "ymd")) |>
+  mutate(doc_year = year(date)) |>
+  relocate(date, date_precision, doc_year, .after = doc_date) |>
+  select(-d1, -d2, -d3)
+
+
+
+cdrv_orders <-
+cdrv_orders_tsv |>
+  separate(doc_date, into = c("d1", "d2", "d3"), sep = "-", remove = F) |>
+  mutate(date_precision = case_when(
+    is.na(doc_date) | doc_date=="" ~ NA, 
+    d2=="00" ~ "y",
+    d3=="00" ~ "ym",
+    .default = "ymd"
+  )) |>
+  # get rid of 00 before parsing date.
+  # \\b here should cover years like 1700 if needed; but check before using
+  mutate(doc_date = str_replace_all(doc_date, "\\b00", "01")) |>
+  # parse date
+  mutate(date = parse_date_time(doc_date, "ymd")) |>
+  mutate(doc_year = year(date))  |>
+  relocate(date, date_precision, doc_year, .after = doc_date) |>
+  # why have i not done this...?
+  arrange(date, order_id) |>
+  select(-d1, -d2, -d3, -to_place, -to_area) |>
+  # should i have included the mv img here? duh.
+  left_join(cdrv_mv_names_matched |> select(order_id, link_mv_id= mv_id, mv_img), by="order_id") |>
+  # add name(s) of removed.
+  left_join(
+    cdrv_names |>
+      mutate(glue_name = glue("{stdgiv} {surname}")) |>
+      group_by(order_id) |>
+      summarise(removed = glue_collapse(glue_name, sep = ", ", last = " and ")) |>
+      ungroup(), by="order_id"
+  ) 
+
+# unnest multi exam ids
+cdrv_orders_linked_exam_ids <-
+cdrv_orders_tsv |>
+  select(order_id, link_exam_id) |>
+  mutate(link_exam_id = if_else( str_detect(link_exam_id, "\\?"), NA, link_exam_id )) |>
+  filter(!is.na(link_exam_id)) |>
+  unnest_regex(exam_id, link_exam_id, pattern = " *\\| *", to_lower = F)
+
+
+# linked exams texts as html, with LL links, group multis per order
+
+cdrv_linked_llep_html <-
+cdrv_orders_linked_exam_ids |>
+  inner_join(
+    llep_exams_csv |>
+    select(exam_id, ll_img, exam_date, exam_date_precision, examinants, ex_on_behalf), by="exam_id"
+  ) |>
+  # make nice date for link text
+  mutate(m = as.character(month(exam_date, label=TRUE, abbr = TRUE))) |>
+  mutate(year = year(exam_date)) |>
+  # no NAs
+  mutate(nice_date = case_when(
+    exam_date_precision=="y" ~ as.character(year),
+    exam_date_precision=="ym" ~ paste(m, year ),
+    exam_date_precision=="ymd" ~ paste( day(exam_date) , m, year)
+  )) |>
+  mutate(link_text = glue("{examinants} ({nice_date})")) |>
+  mutate(link_url = glue("{ll_url_base}{ll_img}")) |>
+  mutate(link_html = glue("<h4><a href='{link_url}' target='_blank'>{link_text}</a></h4>")) |>
+  # add texts
+  left_join(
+    llep_cdrv_trimmed_texts_csv, by="exam_id"
+  ) |>
+  # try a list; not sure how well it'll work.
+  mutate(exam_html = glue("<li>{link_html} \n<p>{text_cln}</p></li>")) |>
+  # keep exam date and img for sorting. 
+  select(order_id, ll_img, exam_id, exam_date, exam_html) |>
+  group_by(order_id) |>
+  arrange(exam_date, ll_img, .by_group = T) |>
+  summarise(llep_html = glue_collapse(exam_html, sep = "\n")) |>
+  ungroup()
+
+# linked RVs, list format html, add years
+cdrv_linked_rv_html <-
+cdrv_orders |> 
+  filter(!is.na(link_rv_id)) |>
+  select(order_id, link_rv_id) |>
+  unnest_regex(link_rv, link_rv_id, pattern = " *\\| *", to_lower = F) |>
+  filter(order_id != link_rv) |> 
+  inner_join(cdrv_orders |> select(link_rv=order_id, img, link_removed=removed, link_year=doc_year), by="link_rv") |>
+  # might be multi on same page. drop link_rv at this point to avoid duplication, you only need the img. go with distinct img + name + year.
+  distinct(order_id, link_removed, link_year, img) |>
+  mutate(rv_link_url = glue("{ll_url_base}{img}")) |>
+  mutate(rv_link_html = glue("<li><a href='{rv_link_url}' target='_blank'>{link_removed} ({link_year})</a></li>")) |>
+  group_by(order_id) |>
+  arrange(link_year, img, .by_group = T) |>
+  summarise(linked_rvs = glue_collapse(rv_link_html, sep = "\n")) |>
+  ungroup()
+
+# linked MV (no multis to worry about here).
+cdrv_linked_mv_html <-
+cdrv_orders |>
+  filter(!is.na(link_mv_id)) |>
+  distinct(order_id, link_mv_id, mv_img) |>
+  inner_join(mv_csv |> select(vagrant_id_number, given_names, surname, session_start_year, person_type), by=c("link_mv_id"="vagrant_id_number")) |>
+  mutate(mv_name = glue("{given_names} {surname}")) |>
+  mutate(mv_link_url = glue("{ll_url_base}{mv_img}")) |>
+  mutate(mv_link_html = glue("<a href='{mv_link_url}' target='_blank'>{mv_name} ({session_start_year})</a>")) |>
+  select(order_id, mv_link_html) 
+
+# linked LLPP (no multis, all SM. all parish appeals.)
+# llpp data doesn't have names/title if it's a parish petition. but does have year so use that.
+cdrv_linked_llpp_html <-
+  cdrv_orders |>
+  filter(!is.na(link_petition_id)) |>
+  select(order_id, link_petition_id)|>
+  inner_join(llpp_csv |> select(ll_img, year), by=c("link_petition_id"="ll_img")) |>
+  mutate(llpp_link_url = glue("{ll_url_base}{link_petition_id}")) |>
+  mutate(llpp_link_html = glue("<a href='{llpp_link_url}' target='_blank'>Middlesex Sessions ({year})</a>")) |>
+  select(order_id, llpp_link_html) 
+
+
+## put it all together
+
+cdrv_orders_geo <-
+  cdrv_orders |>
+  # geo data
+  left_join(cdrv_geo_csv |>
+              select(order_id, to_place, to_county, city, country, lat, lng, src), by="order_id") |>
+  # leaflet doesn't like NAs! only drops about 30. 
+  filter(!is.na(lat)) |>
+  
+  # display date, varying precision
+  mutate(m = as.character(month(date, label=TRUE, abbr = FALSE))) |>
+  mutate(nice_date = case_when(
+    date_precision=="y" ~ as.character(doc_year),
+    date_precision=="ym" ~ paste(m, doc_year ),
+    date_precision=="ymd" ~ paste( day(date) , m, doc_year)
+  )) |>
+  relocate(nice_date, .after = doc_date) |>
+  
+  mutate(order_url = glue("{ll_url_base}{img}")) |>
+
+  # linked stuff
+  left_join(cdrv_linked_rv_html, by="order_id") |>
+  left_join(cdrv_linked_mv_html, by="order_id") |>
+  left_join(cdrv_linked_llpp_html, by="order_id") |>
+  left_join(cdrv_linked_llep_html, by="order_id") |>
+  
+  # for checkboxes
+  mutate(vagrant = if_else(is.na(vagrant), "no", "yes")) |>
+  mutate(has_exam = if_else(is.na(link_exam_id), "no", "yes")) |>
+  mutate(has_rv = if_else(is.na(link_rv_id), "no", "yes")) |>
+  mutate(has_llpp = if_else(is.na(link_petition_id), "no", "yes")) |>
+  mutate(has_mv = if_else(is.na(link_mv_id), "no", "yes"))
+```
+
+```{r}
+# 3134
+# how many people in the orders in the map?
+# cdrv_names |> semi_join(cdrv_orders_geo, by="order_id")
+```
+
+```{r}
+#prop vagrant?
+#cdrv_orders_geo |> count(vagrant) |> mutate(p = n/sum(n))
+# ditto exams
+#cdrv_orders_geo |> count(has_exam) |> mutate(p = n/sum(n))
+#cdrv_orders_geo |> count(has_llpp) |> mutate(p = n/sum(n)*100)
+#cdrv_orders_geo |> count(has_rv) |> mutate(p = n/sum(n)*100)
+
+# oh fiddlesticks the self-order_id is in linked orders; i need to drop those 
+# cdrv_orders_geo |>
+#   filter(!is.na(link_rv_id)) |>
+#   select(order_id, link_rv_id)
+```
+
+```{r}
+# cdrv_orders |>
+#   filter(!is.na(link_rv_id)) |>
+#   select(order_id, link_rv_id) |>
+#   unnest_regex(link_rv, link_rv_id, pattern = " *\\| *", to_lower = F) |>
+#   filter(order_id != link_rv) |>
+#   count(order_id, sort = T)
+```
+
+```{r}
+# multiple exams...
+# cdrv_orders_geo |>
+#   filter(str_detect(link_exam_id, " ")) |>
+#   relocate(removed, to_place, to_county)
+```
+
+
+
+```{r}
+ojs_define(ojs_cdrv_geo = cdrv_orders_geo)
+```
+
+```{ojs}
+ojsCdrvGeo = transpose(ojs_cdrv_geo)
+```
+
+
+```{ojs} 
+function createRVGeoData(data) {
+  const geoData = {
+    type: 'FeatureCollection',
+    crs: {type: 'name', properties: {name: 'urn:ogc:def:crs:EPSG::27700'}},
+    features: []
+  };
+  data.map(h => {
+    geoData.features.push({
+      type: 'Feature',
+      properties: {
+        id: h.order_id,
+        place: h.to_place,
+        county: h.to_county,
+        removed: h.removed,
+        vagrant: h.vagrant, // yes/no for display
+        date: h.nice_date,
+        year: h.doc_year,
+        order: h.txt,
+        order_url: h.order_url,
+        linked_llep: h.llep_html,
+        has_exam: h.has_exam, // "yes"/"no"
+        linked_rv: h.linked_rvs,
+        has_orders: h.has_rv,
+        linked_mv: h.mv_link_html,
+        linked_llpp: h.llpp_link_html,
+        has_llpp: h.has_llpp,
+        has_mv: h.has_mv
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [h.lng, h.lat]
+      }
+    });
+  });
+  return geoData;
+}
+```
+
+
+## The Map
+
+Try out filters; click on cluster numbers (or zoom in/out) to drill down into areas; click on single markers to view individual details below the map.
+
+
+```{ojs}
+
+viewof filtersRV = Inputs.form({
+// linked exams (most)
+  hasExam: Inputs.checkbox(["yes", "no"], {label: "Linked exam(s)", value: ["yes", "no"]}) ,
+// linked orders (few)
+  hasOrders: Inputs.checkbox(["yes", "no"], {label: "Linked order(s)", value: ["yes", "no"]}) ,
+// linked petition (few)
+  hasPetition: Inputs.checkbox(["yes", "no"], {label: "Linked petition", value: ["yes", "no"]}) ,
+// a vagrant?
+  isVagrant: Inputs.checkbox(["yes", "no"], {label: "Vagrant", value: ["yes", "no"]}) ,
+// linked MV (very few)
+   hasMV: Inputs.checkbox(["yes", "no"], {label: "Middx Vagrants", value: ["yes", "no"]})
+  
+}
+,
+// https://observablehq.com/@tophtucker/use-inputs-form-with-a-template
+// https://developer.mozilla.org/en-US/docs/Web/CSS/How_to/Layout_cookbook/Column_layouts
+  {
+    template: (inputs) => htl.html`<div style="display: flex; flex-wrap: wrap;" class="styled">
+    <style>
+  div.styled { border: 1px solid #d3d3d3; background-color: #f5f5f5; margin: 5px; padding: 5px; font-size: 80%; }
+  div.styled form {border: 1px solid white;}
+  div.styled form>label { width: 130px; padding:5px; }
+</style>
+  ${Object.values(inputs)}
+</div>`
+  }
+)
+  
+// filtersRV["isVagrant"] filtersRV["hasExam"] filtersRV["hasOrders"]  filtersRV["hasPetition"]  filtersRV["hasMV"]
+
+// original separate format
+// passed as a vagrant?
+//viewof isVagrant = Inputs.checkbox(["yes", "no"], {label: "Vagrant pass", value: ["yes", "no"]})
+// linked exams (most)
+//viewof hasExam = Inputs.checkbox(["yes", "no"], {label: "Linked exam(s)", value: ["yes", "no"]})
+// linked orders (few)
+//viewof hasOrders = Inputs.checkbox(["yes", "no"], {label: "Linked order(s)", value: ["yes", "no"]})
+// linked petition (few)
+//viewof hasPetition = Inputs.checkbox(["yes", "no"], {label: "Linked petition", value: ["yes", "no"]})
+// linked MV (very few)
+//viewof hasMV = Inputs.checkbox(["yes", "no"], {label: "Linked Middx Vagrants", value: ["yes", "no"]})
+```
+
+
+
+```{ojs}
+
+map = {
+  // Make a container in the Observable DOM to hold the map
+  let parent = DOM.element('div', { style: `width:${width}px; height:600px` });
+  // Make sure Observable renders the parent container so Leaflet can figure out its size
+  yield parent;
+  
+  let map = L.map(parent)
+      .setView([54.3, -3.5], 6); // uk+ire // higher numbers are more zoomed in
+  
+  let osmTileLayer = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 16,
+      minZoom: 5
+  })
+  .addTo(map);
+  
+  const key = 'Qm3IHfglBpG81gp4ZK4G';
+  let mtTileLayer = L.tileLayer(`https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=${key}`,{ //style URL
+    tileSize: 512,
+    zoomOffset: -1,
+    minZoom: 4,
+    attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
+    crossOrigin: true
+}).addTo(map);
+  
+  // reference marker for St Clement Danes. 
+  
+  var CDpoint = L.circleMarker([51.5128983486034, -0.114845266343679], {
+      radius: 6,
+      fillColor: "purple",
+			weight: 1, // width of the circle border.      
+			color: '#000',
+      fillOpacity: 0.4,      
+    }).addTo(map)
+    CDpoint.bindTooltip("St Clement Danes", {sticky: true});
+
+
+  const geojsonData = createRVGeoData(ojsCdrvGeo);
+  
+  const mcg = markerCluster({
+            spiderfyDistanceMultiplier: 1.8,
+            maxClusterRadius: 50
+            })
+            .addTo(map);
+	
+	// single markers with a simple popup for testing. is L.geoJson the same as L.geoJSON ? seems to be
+  let markers = L.geoJSON(null, {
+  
+  
+    onEachFeature: function (feature, layer) {
+    
+      const data = feature.properties;
+      const tip = `<div class="popup">${data.removed}: ${data.place} (${data.year})</div>`; // + `<br/>${data.place}, ${data.county} (${data.year})</div>`;
+      
+      layer.bindPopup(tip); // click.
+      //layer.bindTooltip(tip, {sticky: true}); // hover. 
+      
+      // handle NAs (undefined) need to start with an empty const.
+      let linkedlleps = '';
+      if(data.linked_llep) {linkedlleps = `<div><p><i>Examination(s):</i></p> <ul>${data.linked_llep} </ul></div>`; } // don't need else.
+      
+      // linked RVs. already formatted html single string but still need if. but could i just use data.linked_rv without makinng new thing? oh i need a <p> anyway
+      let linkedrvs = '';
+      if(data.linked_rv) {linkedrvs = `<p><ul><i>Linked orders:</i> ${data.linked_rv}</ul> </p>`; }
+      
+      // rinse repeat MVs
+      let linkedmvs = '';
+      if(data.linked_mv) {linkedmvs = `<p><i>Linked MV removal:</i> ${data.linked_mv} </p>`; }
+      
+      // and LLPP
+      let linkedllpps = '';
+      if(data.linked_llpp) {linkedllpps = `<p><i>Linked QS appeal:</i> ${data.linked_llpp} </p>`}
+      
+      // linked exam text and url (atm no more than one per order). might like date as well?
+      
+      const html = `<h3>${data.removed}</h3>` + 
+                    `<p><i>Order:</i> <a href='${data.order_url}' target='_blank'>${data.date}</a></p>` + 
+                    `<p><i>Removed to:</i> ${data.place}, ${data.county}</p>` + 
+                    `<p><i>Vagrant:</i> ${data.vagrant}</p>` + 
+                    linkedlleps +
+                    
+                    linkedrvs +
+                    linkedmvs +
+                    linkedllpps  ;
+      
+      //textContent = data.removed // textContent for plain text. innerHTML for formatted HTML... i think.
+      // atm this needs bindPopup to work nicely on clustered things.
+      
+      layer.on('click', () => {
+        document.getElementById('cdrv_info').innerHTML = html; 
+        })
+    },
+    
+    pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, {
+				radius: 6, 
+				fillColor: "#CC6000", // a bit darker than "#ff7800" 
+				color: "#000",
+				weight: 1, // width of the circle border.
+				opacity: 1,
+				fillOpacity: 1
+			});
+     }
+  }) ;  
+  
+// Once you have populated your Leaflet GeoJSON Layer Group (typically with geojsonLayer.addData(geoJsonObject), then instead of adding that group to your map, simply add it into your MarkerClusterGroup:
+  markers.addData(geojsonData).addTo(mcg);
+
+  // This is to make these variables accessible in other Observable cells.
+  // It is not necessary for regular HTML web pages.
+  
+  // AHHHHHHH you need to take map out of here and use mcg *instead*
+  mutable mapVariables = [mcg, markers];
+}
+
+```
+
+
+<div class="cdrv_description">
+
+<div id="cdrv_info"></div>
+
+</div>
+
+
+```{css}
+.cdrv_description { border: 1px solid #d3d3d3; background-color: #f5f5f5; padding: 10px; margin: 10px 5px;}
+.cdrv_description div#cdrv_info h3 {margin: 20px 0;}
+.cdrv_description div#cdrv_info div ul li {list-style-type: none;}
+.cdrv_description div#cdrv_info ul {padding-left: 0;}
+.cdrv_description div#cdrv_info ul li {margin-left: 20px;}
+.cdrv_description div#cdrv_info div ul li h4 {margin-top:0;}
+```
+
+
+## Caveats 
+
+- the data linkage is unlikely to be perfect (in terms of both erroneous links and missed links)
+- there may be some errors in geocoding due to ambiguities or spelling variations etc in the original; about 30 unlocatable destinations have been excluded from the map 
+- transcriptions are taken directly from London Lives and often contain errors
+- there are many more pauper examinations in the St Clement Danes records during the same period that do not have an associated removal order (so presumably the examined person could establish a settlement in the parish, or provide a certificate from their own parish), but those have not yet been mapped. That's a future project!
+
+```{ojs}
+
+mapFilters = {
+  // This handles the changes 
+  // In normal HTML environment, this would be inside the slider event handling function.
+
+//       
+/*
+  form:
+      filtersRV["isVagrant"].includes(l.feature.properties.vagrant)
+      && filtersRV["hasExam"].includes(l.feature.properties.has_exam)
+      && filtersRV["hasOrders"].includes(l.feature.properties.has_orders)
+      && filtersRV["hasPetition"].includes(l.feature.properties.has_llpp) 
+      && filtersRV["hasMV"].includes(l.feature.properties.has_mv)
+  
+  separate:
+      isVagrant.includes(l.feature.properties.vagrant)
+      && hasExam.includes(l.feature.properties.has_exam)
+      && hasOrders.includes(l.feature.properties.has_orders)
+      && hasPetition.includes(l.feature.properties.has_llpp) 
+      && hasMV.includes(l.feature.properties.has_mv)
+*/
+  mapVariables[1].eachLayer(l => {
+    if(
+      //l.feature.properties.year >= rangeYears[0]   && l.feature.properties.year <= rangeYears[1] 
+      filtersRV["isVagrant"].includes(l.feature.properties.vagrant)
+      && filtersRV["hasExam"].includes(l.feature.properties.has_exam)
+      && filtersRV["hasOrders"].includes(l.feature.properties.has_orders)
+      && filtersRV["hasPetition"].includes(l.feature.properties.has_llpp) 
+      && filtersRV["hasMV"].includes(l.feature.properties.has_mv)
+    )  
+    {
+      l.addTo(mapVariables[0]);
+    } else {
+      l.removeFrom(mapVariables[0]);
+    }
+  })
+
+  return 'howdy'; // do i need this return line at all? probably not...
+}
+```
+
+```{ojs}
+mutable mapVariables = null;
+```
+
+
+
+```{ojs}
+markerCluster = L, require('leaflet.markercluster@1.1.0').catch(() => L.markerClusterGroup)
+```
+
+
+```{ojs}
+markerClusterCSS = html`<link href='${resolve('leaflet.markercluster@1.1.0/dist/MarkerCluster.Default.css')}' rel='stylesheet' />`
+```
+
+
+
+## Resources and Credits
+
+the map:
+
+- [Leaflet](https://leafletjs.com/) 
+- [Leaflet.markercluster plugin](https://github.com/Leaflet/Leaflet.markercluster)
+- [Learning Leaflet](https://observablehq.com/@rahulbot/learning-leaflet) (Observable Notebook)
+- [Leaflet with Online GeoJSON and Slider](https://observablehq.com/d/de61852a430b89e9) (Observable Notebook with filtering method)
+- [Chicago Homicides Leaflet Map](https://observablehq.com/@randomfractals/chicago-homicides-heatmap) (Observable Notebook with markerclusters)
+
+the datasets:
+
+- [London Lives Pauper Examinations](https://doi.org/10.5281/zenodo.596159)  (includes the Removal Orders dataset)
+- [The London Lives Petitions](https://doi.org/10.5281/zenodo.593069)
+- [Vagrant Lives: 14,789 Vagrants Processed by Middlesex County, 1777-1786](https://doi.org/10.5281/zenodo.617395)
+
+further reading:
+
+- [London Lives: Poor Relief and Charity](https://www.londonlives.org/about/poor-law)
+- [Chelsea Settlement and Bastardy Examinations, 1733-1766](https://www.british-history.ac.uk/london-record-soc/vol33)
+- [Settlement and Removal: Poor Relief and Exclusion in 18th-century London](https://earlymodernnotes.wordpress.com/2017/05/20/settlement-and-removal-poor-relief-and-exclusion-in-18th-century-london/) (conference paper)
+- [Loose, idle and disorderly: vagrant removal in late eighteenth-century Middlesex](https://hdl.handle.net/10779/uos.23411330) (article about the Vagrant Lives data)
+

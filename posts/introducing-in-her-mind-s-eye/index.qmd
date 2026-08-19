@@ -1,0 +1,27 @@
+---
+title: "Introducing In Her Mind's Eye"
+author: Sharon Howard
+date: '2018-04-13'
+slug: introducing-in-her-mind-s-eye
+categories: [digital history, open data]
+ihmefilename: "20180410_introduction"
+pmd: true
+---
+
+## What's it all about?
+
+Over the last decade or so, I've been heavily involved in projects which have created large amounts of historical data; I've made quite a bit of the stuff myself. I've increasingly been thinking about better ways I can analyse, visualise and tell stories with all this data. R and Python, for example, have great tools for analysing and visualising data which can then easily be turned into webpages. But I can't integrate those into my blog [Early Modern Notes](https://earlymodernnotes.wordpress.com), so I decided to create a space that would enable me to do more than upload static images.
+
+I'm likely to focus quite a bit on data I already know well at first, though hopefully to see it afresh and find out new things along the way. But I also want to delve into some of the amazing data out there that I haven't yet had an opportunity to get to know better. 
+
+## For open history data
+
+Opening up history data for re-use beyond the constraints of website databases has become increasingly important since I began working in digital history. I've started to gather together a [list of data sources](/data.html), though it's frustrating how many projects that have published primary sources on websites still don't make their data/metadata more widely available. So I hope this site can highlight the benefits of openness and encourage more digital history and digitisation projects to do so. All the data and code underlying [posts](/posts/) will also be posted on Github and will normally be licensed under a [Creative Commons Attribution-ShareAlike (CC BY-SA) licence](http://creativecommons.org/licenses/by-sa/4.0/). (If other conditions apply, it'll be noted in posts.)
+
+## For digital history and (data) science
+
+I'll be borrowing tools and ideas from data science and data blogs; at the same time I hope that this project may help to bring history data to the attention of data scientists looking for new challenges. History data is rarely truly Big Data, but it can be at least Biggish, and moreover it's often complex, multi-layered and downright messy. It offers alternative perspectives for data analysts and scientists used to working with contemporary material, especially for those interested in grappling with gaps, inconsistencies and uncertainties, which are characteristic of so many historical sources. Finally, it may serve to open up conversations between scientists and historians and humanists in the light of recent and ongoing big data privacy breaches and controversies. 
+
+## By the way...
+
+As far as I'm concerned, data is singular. Don't [@](https://twitter.com/sharon_howard) me.

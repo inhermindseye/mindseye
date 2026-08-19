@@ -1,0 +1,209 @@
+---
+title: "Data Resources"
+author: "Sharon Howard"
+date-modified: "2025-07-23"
+pmd: true
+---
+
+This is a list of historical datasets, APIs and other data resources
+that I may use on this site. 
+
+I created some, or worked on the projects
+that produced them, and have already used them in research or plan to
+do so. The rest are quite assorted and random; stuff that I've come across that looks potentially interesting and usable.
+
+The majority of the datasets consist of English-language text data, and
+focus on British, north American or Australian sources and history.
+Further information should be found at the links (and via google
+searches). Many will be open data, but exact status should be verified before use.
+
+I'll add more as I find them. In part it's a reference for my own use -
+to give me ideas and draw together scattered bookmarks and links in a
+place I might actually be able find them when I want them. But other readers
+may also find it useful.
+
+Reflecting the diversity of historical sources and the priorities of
+projects that have digitised them, the datasets can be expected to range
+from relatively small 'boutique' data to large text corpora. They might
+have been transcribed by hand or using OCR. They'll undoubtedly vary in
+terms of complexity, structure, clean/tidyness and ease of use. 
+They vary *a lot* in terms of helpful documentation!
+
+
+### Old Bailey Online and related data
+
+-   [Old Bailey Online XML](https://www.dhi.ac.uk/data/oldbailey)
+-   [London Lives 1690-1800 XML](https://doi.org/10.15131/shef.data.4797829)
+-   [Digital Panopticon (1780-1925) Datasets](https://figshare.com/projects/Digital_Panopticon/16071)
+-   [Locating London's Past](https://www.dhi.ac.uk/data/locatinglondon)
+-   [Skin and Bone](https://www.dhi.ac.uk/data/skin-and-bone)
+-   [Digital Panopticon Tattoos Data](https://orda.shef.ac.uk/articles/dataset/Tattoos_in_the_Digital_Panopticon_Database_1793-1925/13398665/1)
+
+
+### My personal projects
+
+-   [Voices of Authority (Old Bailey) 1750-1900](https://github.com/sharonhoward/voa)
+-   [London Lives Pauper Examinations 1740-1800](https://zenodo.org/record/159687)
+-   [London Lives Petitions Project 1690-1800](https://zenodo.org/record/159121)
+-   [Westminster Coroners' Inquests 1760-99](https://doi.org/10.5281/zenodo.4402837)
+-   [Gender and Defamation in York 1660-1700](https://zenodo.org/record/16054)
+
+
+### APIs
+
+-   [The National Archives (UK)](http://www.nationalarchives.gov.uk/help/discovery-for-developers-about-the-application-programming-interface-api/)
+-   [Trove (National Library of Australia)](https://trove.nla.gov.au/about/create-something)
+-   [Science Museum (UK)](https://www.sciencemuseumgroup.org.uk/our-work/our-collection/using-our-collection-api)
+-   [Library of Congress APIs](https://www.loc.gov/apis/)
+-   [Europeana APIs](https://pro.europeana.eu/discover-the-data/apis)
+-   [Digital Public Library of America](https://pro.dp.la/developers)
+-   [Hathi Trust Digital Library](https://www.hathitrust.org/data)
+-   [The Keep (East Sussex Archives)](http://www.thekeep.info/api/)
+-   [V & A API](https://developers.vam.ac.uk/guide/v2/welcome.html)
+-   [Old Bailey Online](https://www.oldbaileyonline.org/about/api)
+-   [Manuscripts Online](https://www.dhi.ac.uk/manuscriptsonline/api)
+-   [Caselaw Access Project](https://case.law/docs/#accessing-data)
+
+
+
+### Literary/linguistic text corpora
+
+-   [EEBO-TCP - early modern books, via the EarlyPrint project](https://earlyprint.org/download/) (they also have ECCO- and Evans-TCP)
+-   [ECCO-TCP - 18th-century books](https://github.com/Anterotesis/historical-texts/tree/master/ecco-tcp)
+-   [Evans-TCP - 18th-19th c. American books](https://github.com/Anterotesis/historical-texts/tree/master/evans-tcp)
+-   [British National Corpus](http://www.natcorp.ox.ac.uk/)
+-   [Old Bailey Corpus](http://fedora.clarin-d.uni-saarland.de/oldbailey/)
+-   [Royal Society Corpus](http://fedora.clarin-d.uni-saarland.de/rsc/index.html)
+
+
+
+### Women and gender
+
+-   [Letters by Elizabeth Montagu, 1730s-1780s](https://web.archive.org/web/20210414011227/https://bluestocking.ling.helsinki.fi/) [Wayback Machine archive]
+-   [Women Writers Online](http://www.wwp.northeastern.edu/wwo/texts/)
+-   [Women Shipowners in the Nineteenth Century, 1824-1899](https://discover.ukdataservice.ac.uk/catalogue/?sn=6142&type=Data%20catalogue)
+-   [Women and Property, North Riding (Joan Heggie datasets)](https://research.tees.ac.uk/en/datasets/?search=heggie)
+
+
+
+### Social history
+
+-   [Vagrant Lives: 14,789 Vagrants Processed by Middlesex County, 1777-1786](https://doi.org/10.5281/zenodo.617395)
+-   [Historically Irish Surnames Dataset](https://zenodo.org/record/20985)
+-   [Family Life and Work Experience Before 1918, 1870-1973 (oral history)](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=2000)
+-   [Census and Poor Law Union Data, 1871-1891](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=7822)
+-   [The Magazine of Early American Datasets (MEAD)](https://repository.upenn.edu/mead/)
+-   [Antislavery Petitions Massachusetts Dataverse](https://dataverse.harvard.edu/dataverse/antislaverypetitionsma)
+-   [The Power of Petitioning Data](https://doi.org/10.5281/zenodo.7027692)
+-   [Public Petitions to the House of Commons, 1780-1918](https://reshare.ukdataservice.ac.uk/855556/)
+-   [Apprenticeship Disputes in the Lord Mayor’s Court of London 1573-1723](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=8490)
+-   [Sanctuary Seekers in England, 1380-1557](https://spectrum.library.concordia.ca/id/eprint/984599/)
+-   [Small Bills and Petty Finance](https://doi.org/10.5281/zenodo.6610413)
+-   [Tattoos in the Digital Panopticon 1793-1925](https://doi.org/10.15131/shef.data.13398665.v1)
+-   [Death by Numbers (bills of mortality)](https://deathbynumbers.org/downloads/)
+-   [London weekly bills of mortality 1644-1849](https://reshare.ukdataservice.ac.uk/854104/)
+-   [Causes of death 1578-1837](https://reshare.ukdataservice.ac.uk/854223/)
+-   [Sixteenth-century English accident inquests](https://reshare.ukdataservice.ac.uk/852155/)
+-   [Stepney burials with fees 1733-1843](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=8642)
+
+### Political/diplomatic/military
+
+-   [Directory of Parliamentarian Army Officers](https://github.com/ihr-webmaster/cromwell-army-officers-data)
+-   [The Diplomatic Correspondence of Thomas Bodley](https://github.com/livesandletters/bodley1)
+-   [Civil War Sequestration dataset](https://pure.royalholloway.ac.uk/en/publications/the-gentry-are-sequestred-all-a-study-of-english-civil-war-seques)
+-   [The General Assembly and Religious Politics in Scotland, 1638-1660 (wikibase)](https://generalassemblies.wikibase.cloud/wiki/Main_Page)
+
+### Economic/environmental/material culture
+
+-  [Feeding the City II : Demesne Agriculture in the London Region, 1375-1400](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=3318)
+-  [What's on the Menu?](https://www.nypl.org/research/support/whats-on-the-menu)
+-  [Trading Consequences](https://github.com/digtrade/digtrade)
+-  [African Commodity Trade Database, 1730-2010](https://easy.dans.knaw.nl/ui/datasets/id/easy-dataset:75672)
+-  [International Currencies 1890-1910](http://eh.net/database/international-currencies-1890-1910/)
+-  [Southeastern Australian rescued observational climate network, 1788-1859](https://zenodo.org/record/7598)
+-  [RICardo dataset (trade flows 1787-1938)](https://zenodo.org/record/1119592)
+-  [Animal traders in London 1840-1934](https://pure.royalholloway.ac.uk/en/datasets/dataset-animal-traders-in-london-1840-1934)
+
+
+### Books, printing, visual, performing arts
+
+- [British Book Trade Index database](https://ora.ox.ac.uk/objects/uuid:19b63441-9497-4b07-903b-ec5742c44806)
+- [Incunabula Short Title Catalogue data](https://bl.iro.bl.uk/concern/datasets/30c74386-fc34-41b8-a9e5-d27ba96b0625?locale=en)
+- [Early Bodleian Donations](https://rdr.ucl.ac.uk/articles/dataset/Early_Bodleian_Donations_Online/28287980/1)
+-   [Race Film Database](https://zenodo.org/record/160585)
+-   [London Stage Database (1660-1800)](https://londonstagedatabase.uoregon.edu/data.php)
+-   [Lord Chamberlain's Plays Indexes (wikibase)](https://lcpindex.wikibase.cloud/wiki/Main_Page)
+-   [Early Modern British Painters, c. 1500-1640](https://spectrum.library.concordia.ca/980096/)
+
+
+
+### Newspaper data
+
+-   [Trove Newspapers](https://trove.nla.gov.au/newspaper/)
+-   [Chronicling America](https://chroniclingamerica.loc.gov/)
+-   [Scissors and Paste](https://osf.io/nm2rq/)
+-   [The London Gazette](https://www.thegazette.co.uk/data)
+
+
+
+### Geospatial data
+
+-   [Vision of Britain data access](http://www.visionofbritain.org.uk/data/)
+-   [Mapping Jewish Communities of the Byzantine Empire](https://zenodo.org/record/1116960)
+-   [D-PLACE – the Database of Places, Language, Culture and Environment v1.0](https://zenodo.org/record/439199)
+
+
+### Libraries, archives, museums
+
+-   [Tate Collection metadata](https://github.com/tategallery/collection)
+-   [Yale Center for British Art Linked Open Data](https://britishart.yale.edu/collections/using-collections/technology/linked-open-data)
+-   [MOMA Collection Artists](https://zenodo.org/record/46902)
+-   [Metropolitan Museum of Art Open Access](https://github.com/metmuseum/openaccess)
+-   [State Records of NSW Indexes](https://github.com/wragge/srnsw-indexes) (Tim Sherratt)
+-   [British Library datasets](https://bl.iro.bl.uk/collections/64e3804a-788a-4c4b-962c-ae180d955455)
+-   [National Library of Scotland data](https://data.nls.uk/)
+-   [National Library of Wales datasets](https://www.library.wales/collections/activities/research/nlw-data/)
+
+
+
+
+### Useful R data packages for historians
+
+-   [Gender data](https://github.com/ropensci/genderdata)
+-   [History data](https://github.com/ropensci/historydata)
+-   [USA boundaries](https://github.com/ropensci/USAboundaries)
+-   [gutenbergr](https://cran.r-project.org/package=gutenbergr)
+
+
+
+### More sources
+
+-   [List of Museum/Cultural organisations APIs and datasets](http://museum-api.pbworks.com/w/page/21933420/Museum%C2%A0APIs)
+-   [List of NLP datasets](https://github.com/niderhoff/nlp-datasets)
+-   [Oxford Text Archive](https://llds.ling-phil.ox.ac.uk/)
+-   [Australian GLAM open datasets](https://github.com/wragge/ozglam-data)
+-   [Seshat: Global History Databank](http://seshatdatabank.info/)
+-   [18th century British History Datasets (Zenodo)](https://zenodo.org/communities/18thcenturybritishhistory/?page=1&size=20)
+-   [DHI data service](https://www.dhi.ac.uk/data/)
+-   [Google datasets search](https://toolbox.google.com/datasetsearch)
+
+
+
+A few resources for working with data
+--------------------------------
+
+
+-   [The Programming Historian](https://programminghistorian.org/)
+-   [Computational historical thinking (R)](http://dh-r.lincolnmullen.com/)
+-   [Statistics for the Humanities](http://statisticsforhumanities.net/book/)
+-   [Online Statistics Education course](http://onlinestatbook.com/2/index.html)
+-   [R for Data Science](https://r4ds.hadley.nz/) ([1st edn](http://r4ds.had.co.nz/))
+-   [Text mining with R](https://www.tidytextmining.com/)
+-   [Data Visualisation: a practical introduction](http://socviz.co/index.html)
+-   [Fundamentals of data visualization](https://clauswilke.com/dataviz/)
+-   [From Data To Viz](https://www.data-to-viz.com/)
+-   [Good enough practices in scientific computing](https://arxiv.org/abs/1609.00037)
+-   [The practice of reproducible research](https://www.practicereproducibleresearch.org/)
+
+
+

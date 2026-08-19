@@ -1,0 +1,26 @@
+---
+title: "About"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: bluesky
+      href: https://bsky.app/profile/sharonhoward.bsky.social
+      text: Bluesky
+    - icon: github
+      text: Github
+      href: https://github.com/sharonhoward
+    - text: Website
+      href: https://sharonhoward.org
+---
+
+
+By trade, I'm a historian of [early modern](https://sharonhoward.org/earlymodern.html) Britain and a digital historian, and I've been project manager/researcher on many [digital history projects](https://sharonhoward.org/projects.html). 
+
+I like playing with historical datasets, wrangling messy data and writing code, mostly R. This blog is a playground and a resource, where I want to bring together digital history and data science while working on better code. I'm working on getting better at Javascript for interactive visualisations. 
+
+Wherever possible, data will be publicly available. Unless otherwise stated, code/visualisations are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/) 
+
+The site is built using the [Quarto](https://quarto.org/) publishing system.
+
+[Sharon Howard](https://sharonhoward.org)

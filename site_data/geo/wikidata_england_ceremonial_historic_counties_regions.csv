@@ -1,0 +1,57 @@
+county_id,countyLabel,admin,adminLabel
+Q23064,Cheshire,Q47967,North West England
+Q23066,Cumbria,Q47967,North West England
+Q23077,Lancashire,Q47967,North West England
+Q23099,Greater Manchester,Q47967,North West England
+Q23100,Merseyside,Q47967,North West England
+Q3410,Hertfordshire,Q48006,East of England
+Q23109,Norfolk,Q48006,East of England
+Q23111,Suffolk,Q48006,East of England
+Q23112,Cambridgeshire,Q48006,East of England
+Q23143,Bedfordshire,Q48006,East of England
+Q23240,Essex,Q48006,East of England
+Q9679,Isle of Wight,Q48015,South East England
+Q23169,Oxfordshire,Q48015,South East England
+Q23204,Hampshire,Q48015,South East England
+Q23220,Berkshire,Q48015,South East England
+Q23229,Buckinghamshire,Q48015,South East England
+Q23276,Surrey,Q48015,South East England
+Q23287,West Sussex,Q48015,South East England
+Q23293,East Sussex,Q48015,South East England
+Q23298,Kent,Q48015,South East England
+Q23079,Northumberland,Q47983,North East England
+Q23080,Tyne and Wear,Q47983,North East England
+Q23082,County Durham,Q47983,North East England
+Q23086,North Yorkshire,Q47983,North East England
+Q23090,Lincolnshire,Q47994,East Midlands
+Q23092,Nottinghamshire,Q47994,East Midlands
+Q23098,Derbyshire,Q47994,East Midlands
+Q23106,Leicestershire,Q47994,East Midlands
+Q23107,Rutland,Q47994,East Midlands
+Q23115,Northamptonshire,Q47994,East Midlands
+Q23156,Devon,Q48026,South West England
+Q23157,Somerset,Q48026,South West England
+Q23159,Dorset,Q48026,South West England
+Q23165,Gloucestershire,Q48026,South West England
+Q23183,Wiltshire,Q48026,South West England
+Q929902,Avon,Q48026,South West England
+Q23103,Shropshire,Q48038,West Midlands
+Q23105,Staffordshire,Q48038,West Midlands
+Q23124,West Midlands,Q48038,West Midlands
+Q23129,Herefordshire,Q48038,West Midlands
+Q23135,Worcestershire,Q48038,West Midlands
+Q23140,Warwickshire,Q48038,West Midlands
+Q21693433,City of Bristol,Q48026,South West England
+Q48790202,Cornwall,Q48026,South West England
+Q23083,West Yorkshire,Q48063,Yorkshire and the Humber
+Q23086,North Yorkshire,Q48063,Yorkshire and the Humber
+Q23088,East Riding of Yorkshire,Q48063,Yorkshire and the Humber
+Q23095,South Yorkshire,Q48063,Yorkshire and the Humber
+Q23306,Greater London,Q23939248,London
+Q23311,City of London,Q23939248,London
+Q1636805,Humberside,Q48063,Yorkshire and the Humber
+Q23346,Sussex,Q48015,South East England
+Q67266168,Huntingdonshire,Q48006,East of England
+Q163,Yorkshire,Q48063,Yorkshire and the Humber
+Q23326,Westmorland,Q47967,North West England
+Q23360,Cumberland,Q47967,North West England

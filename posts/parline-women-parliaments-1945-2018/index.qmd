@@ -1,0 +1,119 @@
+---
+title: "Women in National Parliaments, 1945-2018"
+subtitle: "An interactive chart using Parline data"
+author: "Sharon Howard"
+date: "2025-03-20"
+categories: [interactive, womens history, politics]
+execute: 
+  warning: false
+  message: false
+  echo: false
+page-layout: full
+---
+
+I came across this [dataset](https://data.ipu.org/historical-women/) published by the [Inter-Parliamentary Union (IPU)](https://en.wikipedia.org/wiki/Inter-Parliamentary_Union) and thought it might make make a nice interactive chart for exploration and comparison. 
+
+There are filters for country, region and chamber type; you can also narrow date range by selecting in chart.
+
+(Uses [plotly](https://plotly.com/r/), [reactable](https://glin.github.io/reactable/index.html) and [crosstalk](https://rstudio.github.io/crosstalk/index.html).)
+
+```{r include=FALSE}
+library(janitor)
+library(scales)
+library(readxl)
+library(reactable)
+library(plotly)
+library(crosstalk)
+
+library(tidyverse)
+
+
+parl_women_xlsx <-
+  read_excel(
+    here::here("site_data/other/women_in_parliament-historical_database-1945_to_2018.xlsx")
+  ) |>
+  clean_names("snake") |>
+  mutate(chamber_type = str_to_lower(chamber_type))
+
+
+parl_women <-
+parl_women_xlsx |>
+  mutate(women = if_else(str_detect(total_women, "[0-9]"), total_women, NA)) |>
+  mutate(total = if_else(str_detect(chamber_total_seats, "[0-9]"), chamber_total_seats, NA)) |>
+  mutate(across(c(women, total), parse_number)) |>
+  mutate(pc_women = women/total) |> 
+  select(country, region, year, chamber_type, total, women, pc_women, election_renewal, notes) |>
+  filter(!is.na(pc_women)) |> # drops about 60 - numbers "not available" or "?" in most cases
+  filter(!str_detect(chamber_type, "[:punct:]|constituent")) 
+
+
+parl_women_reactable_data <-
+  parl_women |> 
+  mutate(pc_women= round(pc_women*100, 2)) |>
+  select(-notes, -election_renewal) |>
+  rename(chamber=chamber_type) |>
+  mutate(text = paste("country:", country, '<br>region:', region, "<br>year:", year, "<br>chamber type:", chamber) )  
+  #mutate(d1 = parse_date_time(year, "y"), d2 = as.Date(d1)) # no point since slider is broken anyway
+
+parl_women_shared <- SharedData$new(parl_women_reactable_data)
+
+ptol_light <- c("lower"= '#77AADD', "upper"= '#EE8866', "council"= '#EEDD88', "special"= '#FFAABB', "single"= '#99DDFF', "temporary assembly"= '#44BB99')
+
+ptol_bright <- c("council"= '#228833', "lower"= '#4477AA', "special"= '#EE6677', "upper"= '#CCBB44', "single"= '#66CCEE', "temporary assembly"= '#AA3377')
+```
+
+
+
+```{r}
+
+bscols(
+  widths = c(12,12,12),
+  
+
+  plot_ly(
+  mode="markers",type="scatter",
+  hoverinfo="text", 
+  showlegend = FALSE,  
+  data=parl_women_shared, 
+  x= ~year, y= ~pc_women, 
+  symbol = ~chamber ,
+  color = ~chamber ,
+  #color = I('black'), 
+  #opacity = "0.5",
+  colors = ptol_light, 
+  text = ~text
+  ) |>
+  config(modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", "pan2d", "lasso2d")) |>
+  layout(yaxis=list(title="% women"))
+  
+  ,
+  
+  list(
+    bscols(
+      widths = c(12),
+    #filter_slider(id="year", label = "year", sharedData = parl_women_shared, column=~d2, dragRange = TRUE, timeFormat = "%Y" ), # bug? this doesn't work with either posix or date format (though breaks in different ways) 
+    # seem to be major issues with dates https://github.com/rstudio/crosstalk/issues/65 - since 2018! so i don't think this is getting fixed any time soon.
+    #sep="" adds a space so that's no use.
+    filter_select(id = "country", label = "countries", sharedData = parl_women_shared, group = ~country),
+    filter_select(id="region", label="regions", sharedData = parl_women_shared, group = ~region),
+    filter_select(id="chambers", label="chamber type", sharedData = parl_women_shared, group = ~chamber)
+    )
+  )
+  ,
+  
+  reactable(parl_women_shared, 
+            width = "100%" , 
+            sortable = TRUE ,
+            groupBy = "country",
+            defaultExpanded = TRUE ,
+            columns = list(
+              text = colDef(show = FALSE),
+              pc_women = colDef(name="% women")
+            )
+          )
+
+)
+```
+
+
+

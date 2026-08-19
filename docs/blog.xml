@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>In Her Mind&#39;s Eye</title>
+<link>https://mindseye.sharonhoward.org/blog.html</link>
+<atom:link href="https://mindseye.sharonhoward.org/blog.xml" rel="self" type="application/rss+xml"/>
+<description>A historian&#39;s data blog</description>
+<generator>quarto-1.9.36</generator>
+<lastBuildDate>Tue, 18 Aug 2026 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>A Map of the Elizabethan Court of Requests</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/elizabethan-court-of-requests/</link>
+  <description><![CDATA[ TNA REQ 2 Pleadings by English and Welsh counties, 1558-1603 ]]></description>
+  <category>maps</category>
+  <category>interactive</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/posts/elizabethan-court-of-requests/</guid>
+  <pubDate>Tue, 18 Aug 2026 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Map of Events in Alice Thornton’s Books</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/atb-events-map.html</link>
+  <description><![CDATA[ Summary: an interactive map of Events in the autobiographies of Alice Thornton. ]]></description>
+  <category>maps</category>
+  <category>interactive</category>
+  <category>ATB</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/atb-events-map.html</guid>
+  <pubDate>Tue, 24 Mar 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>London Lives Pauper Examinations Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/obv-llep-explorer.html</link>
+  <description><![CDATA[ Summary: an interactive data explorer for 10,700 pauper examinations from two London parishes, 1739-1800. ]]></description>
+  <category>interactive</category>
+  <category>LL</category>
+  <category>poor</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/obv-llep-explorer.html</guid>
+  <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>London Lives Petitions Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/obv-llpp-explorer.html</link>
+  <description><![CDATA[ Summary: an interactive data explorer for 10,000 petitions to London and Middlesex magistrates, 1690-1799. ]]></description>
+  <category>interactive</category>
+  <category>LL</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/obv-llpp-explorer.html</guid>
+  <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Migration and Exclusion in an 18th-century London Parish</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/cdrv-pauper-removals-map/</link>
+  <description><![CDATA[ An interactive map of St Clement Danes pauper removal orders, 1752-1793 ]]></description>
+  <category>maps</category>
+  <category>interactive</category>
+  <category>LL</category>
+  <category>poor</category>
+  <guid>https://mindseye.sharonhoward.org/posts/cdrv-pauper-removals-map/</guid>
+  <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>TPOP Quarter Sessions Petitions Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/tpop-qs-explorer.html</link>
+  <description><![CDATA[ Summary: an interactive data explorer for 1700 petitions to magistrates, 1573-1800. ]]></description>
+  <category>interactive</category>
+  <category>TPOP</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/tpop-qs-explorer.html</guid>
+  <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>TPOP State Papers Petitions Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/tpop-sp-explorer.html</link>
+  <description><![CDATA[ Summary: an interactive data explorer for 390 petitions to the Crown, 1600-1699. ]]></description>
+  <category>interactive</category>
+  <category>TPOP</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/tpop-sp-explorer.html</guid>
+  <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>TPOP House of Lords Petitions Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/tpop-hol-explorer.html</link>
+  <description><![CDATA[ Summary: an interactive data explorer for 730 petitions to the House of Lords, 1597-1696. ]]></description>
+  <category>interactive</category>
+  <category>TPOP</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/tpop-hol-explorer.html</guid>
+  <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>HO Criminal Registers Data Explorer</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/hcr-data-explorer/</link>
+  <description><![CDATA[ An interactive table for exploring the <a href="https://www.londonlives.org/about/cr/">London Lives Home Office Criminal Registers 1792-1801</a>. ]]></description>
+  <category>interactive</category>
+  <category>crime</category>
+  <category>LL</category>
+  <guid>https://mindseye.sharonhoward.org/posts/hcr-data-explorer/</guid>
+  <pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Westminster Coroners Inquests, 1760-1799</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/westminster-coroners-dashboard.html</link>
+  <description><![CDATA[ A dashboard made in Observable Framework, exploring gender and verdicts across nine London parishes between 1760 and 1799. ]]></description>
+  <category>interactive</category>
+  <category>LL</category>
+  <category>death</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/westminster-coroners-dashboard.html</guid>
+  <pubDate>Fri, 14 Nov 2025 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Cheshire Quarter Sessions petitions, 1573-1798</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/dashboards/petitions-first-dashboard.html</link>
+  <description><![CDATA[ A dashboard made in Observable Framework, exploring 613 early modern petitions to Cheshire magistrates from the <a href="https://petitioning.history.ac.uk/">Power of Petitioning</a> project. ]]></description>
+  <category>interactive</category>
+  <category>TPOP</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/dashboards/petitions-first-dashboard.html</guid>
+  <pubDate>Thu, 23 Oct 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Barcode charts</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/barcode-charts/</link>
+  <description><![CDATA[ This is one of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R. ]]></description>
+  <category>methods</category>
+  <guid>https://mindseye.sharonhoward.org/posts/barcode-charts/</guid>
+  <pubDate>Wed, 08 Oct 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Death in 18th-century London</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/stepney-burials/</link>
+  <description><![CDATA[ <strong>Content note: this post discusses infant and child mortality.</strong> ]]></description>
+  <category>death</category>
+  <guid>https://mindseye.sharonhoward.org/posts/stepney-burials/</guid>
+  <pubDate>Fri, 19 Sep 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Pairing up with Observable Plot</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/pairs-observable-plot/</link>
+  <description><![CDATA[ I’ve started exploring <a href="https://quarto.org/docs/interactive/ojs/">Quarto’s built in support for Observable JS</a> to make interactive charts. Here I’m working through some options for visualising “paired” data (where there are two groups for comparison: eg male v female, two points in time, or some other category with just two values). ]]></description>
+  <category>interactive</category>
+  <category>methods</category>
+  <guid>https://mindseye.sharonhoward.org/posts/pairs-observable-plot/</guid>
+  <pubDate>Fri, 08 Aug 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Pairing off: slopegraphs</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/slopegraphs/</link>
+  <description><![CDATA[ This is one of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R.. ]]></description>
+  <category>methods</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/posts/slopegraphs/</guid>
+  <pubDate>Wed, 23 Jul 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Petitions in ggplot and Observable Plot</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/ggplot-to-observable-petitions/</link>
+  <description><![CDATA[ I’ve started exploring <a href="https://quarto.org/docs/interactive/ojs/">Quarto’s built in support for Observable JS</a> to make interactive charts. Here I’m working through converting <a href="https://the-power-of-petitioning.github.io/topics.html#overview-of-topics">a bar chart of petitioning topics I made earlier</a> in ggplot to use <a href="https://observablehq.com/plot/">Observable Plot</a>. ]]></description>
+  <category>interactive</category>
+  <category>methods</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/posts/ggplot-to-observable-petitions/</guid>
+  <pubDate>Wed, 02 Jul 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Making my first data package</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/making-my-first-data-package/</link>
+  <description><![CDATA[ Packages, including data packages, are a vital part of the R ecosystem and yet I’ve been using R for the best part of a decade without ever making one of my own. Until now. ]]></description>
+  <category>packages</category>
+  <category>methods</category>
+  <guid>https://mindseye.sharonhoward.org/posts/making-my-first-data-package/</guid>
+  <pubDate>Mon, 23 Jun 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>On the grid: waffle charts</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/waffle-petitions/</link>
+  <description><![CDATA[ This is one of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R. They won’t involve much historical analysis, but it should also be an opportunity to introduce interesting historical datasets that I might not otherwise get round to posting about. ]]></description>
+  <category>methods</category>
+  <category>petitioning</category>
+  <guid>https://mindseye.sharonhoward.org/posts/waffle-petitions/</guid>
+  <pubDate>Thu, 19 Jun 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Visualisation in miniature: sparklines</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/sparks-obo/</link>
+  <description><![CDATA[ This is the first of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R. They won’t involve much historical analysis, but it should also be an opportunity to introduce interesting historical datasets that I might not otherwise get round to posting about. ]]></description>
+  <category>methods</category>
+  <category>OBO</category>
+  <guid>https://mindseye.sharonhoward.org/posts/sparks-obo/</guid>
+  <pubDate>Sat, 31 May 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Petitions to the House of Commons, 1780-1918</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/power-of-petitioning-19c-2025-04/</link>
+  <description><![CDATA[ Trends in large-scale political petitioning in the long 19th century ]]></description>
+  <category>petitioning</category>
+  <category>politics</category>
+  <guid>https://mindseye.sharonhoward.org/posts/power-of-petitioning-19c-2025-04/</guid>
+  <pubDate>Sun, 27 Apr 2025 23:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

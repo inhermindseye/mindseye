@@ -1,0 +1,245 @@
+---
+title: "Going Interactive with Old Bailey Online Data"
+author: Sharon Howard
+date: '2020-10-01'
+slug: the-old-bailey-goes-interactive
+pmd: "yes"
+categories: 
+  - interactive
+  - methods
+  - OBO
+execute: 
+  message: false
+  warning: false
+---
+
+
+```{r}
+#| include: false
+# review august 2026
+```
+
+
+
+
+## D3.js: unfinished business
+
+My first efforts at interactive data visualisations go back several years to some incredibly frustrating attempts to get the hang of [D3.js](https://d3js.org/). These were, with hindsight, doomed because (a) I didn't really know any javascript, and D3 isn't easy javascript; (b) I was really only just getting the hang of manipulating data (especially anything with a more complex hierarchical structure, like JSON, which is what D3 mainly likes). D3 was just overwhelming in terms of both code and data.
+
+In the end, I gave up on working directly with D3 and instead managed to get some [better results](http://london.sharonhoward.org/llpp/addr_auth/) with more user-friendly, though also more restricted, D3-based libraries like [dimple](http://dimplejs.org/) and [d3plus](https://d3plus.org/).
+
+Since I've been learning to use R, I've mainly stuck to static visualisations so far. (It's not as though there aren't plenty of choices!) But this year I'd like to revisit D3 and other options for interactive dataviz. I still don't know much javascript, but I do know a lot more about data wrangling and, what's more, I can get R to do quite a lot of the work for me.
+
+The simplest option is to use packages that have already done much of the heavy lifting and provide built-in functions for both data conversion and graph creation. But these are likely to offer limited options in terms of both dataviz types and customisation of output. A more advanced but more powerful approach still does a lot of the fiddly stuff for you, but requires you to write your own D3 scripts. 
+
+First, load up some R libraries I'm likely to use, including the [Tidyverse](https://www.tidyverse.org/) for essential data wrangling.
+
+```{r}
+# the basics
+library(tidyverse)  # includes dplyr, tidyr, readr etc
+
+library(jsonlite) # functions for handling JSON data
+library(listviewer) # useful for looking at json data (and other nested lists)
+```
+
+
+## Data
+
+I have some Old Bailey Online offences data in D3-compatible JSON that I made long ago for those first stumbling attempts, so I'll re-use that. But I'll also use some tabular data that will let me look at functions for converting from R data objects to D3-compatible formats. 
+
+The JSON data covers 1700-1799 and consists of *offences* rather than trials (a trial can involve more than one offence). It's hierarchical, with categories and subcategories and has already been summarised, so it's ready to use.
+
+
+The viewer offers a number of ways of exploring json (and other list-type) data; click on the arrow next to "Text" if you'd like to try them out.
+
+```{r}
+offences_c18_json <- 
+  read_json(here::here("site_data/obo/offences_c18.json"))
+
+
+jsonedit(offences_c18_json, mode = "text")
+```
+
+Then I have two .csv files covering 1720-1819. First, offences data, with the same offence categories and subcategories as the json, but also containing year and decade.
+
+The second dataset is for *trials* rather than offences and contains year and decade, offence category only (the first offence listed in the trial if there was more than one) and defendant gender (f, m, fm for mixed).
+
+```{r}
+offences_1720_csv <-
+  read_csv(here::here("site_data/obo/offences_17201819.csv"))
+
+offsub1720 <-
+  offences_1720_csv |>
+  count(offcat, offsubcat, name="size")
+
+trials_1720_csv <-
+  read_csv(here::here("site_data/obo/trials_17201819.csv"))
+```
+
+
+
+
+
+
+
+## Sunburst
+
+When I was struggling with D3 first time around, I made this [zoomable sunburst](http://sharonhoward.org/ob/offzoomsunburst.html) which sort of worked, but the effort it took to get even that far put me off trying to get any further. That was a shame, because they can be both pretty and clever for hierarchical data.
+
+So I was pleased to find [sunburstR](https://cran.r-project.org/package=sunburstR). The same developer has also made a useful package for converting R data to D3 formats, [d3r](https://cran.r-project.org/package=d3r), so I'll try that out as well.
+
+First, the {d3r} function d3_nest() to format the data.
+
+```{r}
+library(d3r)
+library(sunburstR)
+
+offsub1720_nest <-
+  d3_nest(offsub1720, value_cols = "size")
+
+trials_decoffgen <-
+d3_nest(
+  trials_1720_csv |>
+  count(decade, offcat1, gender, name="size"), value_cols = "size")
+
+trials_gendecoff <-
+  d3_nest(
+    trials_1720_csv |>
+      count(gender, decade, offcat1, name="size"), value_cols = "size"
+  )
+```
+
+(Holy cow, that was just so *painless*.)
+
+And now for the sunburst itself (it has no labels: hover over sections for information to appear):
+
+```{r}
+sunburst(
+  offsub1720_nest,
+  legend = FALSE,
+  valueField = "size"
+)
+```
+
+Now I'll make one with three levels using the trials data. In fact, I'll make two slightly different versions, simply by changing the order of the data.
+
+In the first one, decade is the root level (inner ring) of the data, followed by offence category, and gender in the outermost ring. 
+
+
+```{r}
+sunburst(
+  trials_decoffgen,
+  legend = FALSE
+)
+```
+
+
+In the second sunburst, the inner ring is gender, second is decade and third is offence category. 
+
+```{r}
+sunburst(
+  trials_gendecoff,
+  legend = FALSE
+)
+```
+
+These are very nice, and I think the "breadcrumbs" approach is smart, but they're not as swish as my D3 originals. 
+
+
+## Circle Packing diagram
+
+The package [r2d3](https://rstudio.github.io/r2d3/index.html) takes a different approach from a self-contained one like {sunburstR} above. Instead, you write a D3 script which you include in your R script; {r2d3} will [convert data](https://rstudio.github.io/r2d3/articles/data_conversion.html) and automatically provide some of the key variables to simplify things, but you'll need to have some understanding of D3 to go beyond the examples provided in the {r2d3} documentation. 
+
+Let's try out one of the gallery examples: because I think circlepacking graphs are a fun way to show hierarchical data, that's the one I've [chosen here](https://rstudio.github.io/r2d3/articles/gallery/circlepacking/). 
+
+For this one, I'll use the offences json data. The area of each leaf circle in a circle-packing diagram is proportional to its value.
+
+```{r}
+library(r2d3)
+
+r2d3(data = offences_c18_json, d3_version = 4, script = here::here("site_data/obo/circlepacking.js"))
+```
+
+Hover over the circles to see the counts. I guess that counts as slightly interactive, but to go properly interactive with this package, it looks as though I may need to learn something about [Shiny apps](https://shiny.rstudio.com/). So that will have to wait for another post.
+
+ 
+
+
+## Networks
+
+Network graphs are among the most famous uses of interactive dataviz, and there is a cool R package for this, [networkD3](http://christophergandrud.github.io/networkD3/), with plenty of customisation options. I'll make a [force-directed network graph](https://en.wikipedia.org/wiki/Force-directed_graph_drawing) of offence subcategories that appear together in trials. (The package also includes other types of network graph, eg Sankey and radial diagrams. )
+
+
+(My method using widyr::pairwise_count() to create pairs for the edges list is not particularly elegant but it'll do for now.)
+
+```{r}
+library(widyr)
+library(networkD3)
+
+
+# widyr::pairwise to create pairs for edges list
+
+offences_pairs <-
+offences_1720_csv |>
+  mutate(offence = paste(offcat, offsubcat, sep="__")) |>
+  distinct(trial_id, offence) |>
+  add_count(offence, sort = T) |>
+  filter(n>9) |> select(-n) |>
+  pairwise_count(offence, trial_id, upper=FALSE, sort=TRUE) |>
+  filter(n>1)
+
+# use the pairs to make nodes and edges
+
+offences1720_nodes <-
+offences_pairs |>
+  select(-n) |>
+  pivot_longer(item1:item2, names_to="t", values_to="group_label") |>
+  arrange(group_label) |>
+  distinct(group_label) |>
+  separate(group_label, into=c("group", "label"), sep="__", remove = FALSE) |>
+  rowid_to_column("id") |>
+  mutate(id=id-1)
+
+
+offences1720_edges <-
+offences_pairs |>
+  inner_join(offences1720_nodes |> rename(s=id), by=c("item1"="group_label")) |>
+  inner_join(offences1720_nodes |> rename(t=id), by=c("item2"="group_label"), suffix=c("_a", "_b")) |>
+  mutate(weight = n/20) # for appearance
+
+```
+
+The network graph uses the the offence categories as groups (colours of the nodes) and the width of the edges to indicate the strength of the pairing. 
+
+
+```{r}
+forceNetwork(
+  Links = as.data.frame(offences1720_edges),
+  Nodes = as.data.frame(offences1720_nodes),
+  Source="s", Target="t",
+  height = 500, width=900, 
+  NodeID = "label", Group = "group", 
+  Value = "weight",
+  opacity = 0.8, fontSize = 14, 
+  legend = TRUE,
+  zoom = TRUE, opacityNoHover = TRUE, bounded = TRUE
+)
+```
+
+I feel like I'm finally getting somewhere!
+
+
+
+## A few more resources
+
+- [Rebecca Barter, Interactive visualization in R](http://www.rebeccabarter.com/blog/2017-04-20-interactive/)
+- [STHDA, Interactive network visualization using R](http://www.sthda.com/english/articles/33-social-network-analysis/137-interactive-network-visualization-using-r/) (STHDA has other relevant articles; try a search)
+- [Edgar Ruiz, Interactive plots in Shiny](https://rviews.rstudio.com/2018/09/20/shiny-r2d3/)
+
+Packages to try out:
+
+- [chorddiag](https://github.com/mattflor/chorddiag) D3 chord diagrams in R
+- [d3heatmap](https://blog.rstudio.com/2015/06/24/d3heatmap/) (also need [html widgets](https://www.htmlwidgets.org/))
+- [dygraphs for R](https://rstudio.github.io/dygraphs/)
+- [Leaflet for R](https://rstudio.github.io/leaflet/)
+

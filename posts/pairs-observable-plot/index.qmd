@@ -1,0 +1,433 @@
+---
+title: "Pairing up with Observable Plot"
+subtitle: "Different ways of visualising paired data"
+author: "Sharon Howard"
+date: "2025-08-09"
+categories: [interactive, methods]
+code-fold: true
+execute: 
+  warning: false
+  message: false
+---
+
+## Introduction
+
+I've started exploring [Quarto's built in support for Observable JS](https://quarto.org/docs/interactive/ojs/) to make interactive charts. Here I'm working through some options for visualising "paired" data (where there are two groups for comparison: eg male v female, two points in time, or some other category with just two values).
+
+
+## data
+
+- [Cheshire petitions 1573-1798](https://doi.org/10.5281/zenodo.7027692)
+- [York defamation causes 1661-1700](https://sharonhoward.org/defamation/causes.html)
+- [Registers of habitual criminals 1881-1925](https://figshare.com/articles/dataset/Metropolitan_Police_Register_of_Habitual_Criminals_1881-1925/5697994)
+- [Monarchs and Marriages](https://www.ianvisits.co.uk/articles/a-list-of-monarchs-by-marriage-6857/) ([via](https://nrennie.rbind.io/scrollytelling/posts/monarchs/))
+ 
+ 
+ 
+```{r}
+library(tidyverse)
+library(mindseyedata)
+
+petitions_slope <-
+cheshire_petitions |>
+  filter(year %in% c(1628, 1668) & topic !="other") |>
+  count(topic, year, name="petitions") |>
+  filter(n()==2, .by = topic)
+
+petitions_topic_gender <-
+cheshire_petitions |>
+  filter(petition_gender %in% c("f", "m") 
+         & !str_detect(petition_type, "collective") 
+         & !topic %in% c("other")) |>
+  mutate(gender = if_else(petition_gender=="m", "male", "female"))
+
+petitions_dumbel <- 
+cheshire_petitions |>
+  filter(topic != "other") |>
+  mutate(petition_type = str_remove(petition_type, " *on behalf")) |>
+  mutate(petition_type_s = if_else(petition_type=="single", "single", "multiple")) |>
+  count(topic, petition_type_s) |>
+  group_by(topic) |>
+  mutate(min = min(n), max=max(n)) |>
+  ungroup()
+
+york_causes_csv <-
+  read_csv(here::here("site_data/sh/york_causes_250809.csv") ) 
+
+york_causes <-
+york_causes_csv |>
+  select(uid, year, pltf_gender, def_gender) |>
+  pivot_longer(c(pltf_gender, def_gender), 
+               names_to = "person", values_to = "gender") |>
+  mutate(gender = if_else(gender=="m", "male", "female")) 
+
+
+
+monarchs_marriages <-
+read_tsv(here::here("site_data/other/monarchs-marriages.tsv")) |>
+  janitor::clean_names() |>
+  fill(monarch) |>
+  select(-age_diff) |>
+  mutate(m_gender = case_when(
+    str_detect(monarch, "Mary|Elizabeth|Ann|Victoria") ~ "f",
+    .default = "m"
+  )) |>
+  mutate(c_gender = if_else(m_gender=="f", "m", "f")) |>
+  group_by(monarch) |>
+  arrange(year_of_marriage, .by_group = TRUE) |>
+  mutate(marriage_id = row_number()) |>
+  ungroup() |>
+  mutate(marriage_id = glue::glue("{m_gender}_{c_gender}_{year_of_marriage}_{marriage_id}")) |>
+  mutate(monarch = glue::glue("{monarch} ({m_age})"), consort = glue::glue("{consort} ({c_age})")) |>
+  relocate(marriage_id) |>
+  mutate(f = case_when(
+    m_gender=="f" ~ m_age,
+    c_gender=="f" ~ c_age
+  )) |>
+  mutate(m = case_when(
+    m_gender=="m" ~ m_age,
+    c_gender=="m" ~ c_age
+  )) 
+
+set.seed(1357)
+rhc_sampled <-
+  bind_rows(
+    rhc |>
+      filter(gender=="male" & !is.na(height_inches)) |>
+      slice_sample(prop = 0.15) ,
+    rhc |>
+      filter(gender=="female" & !is.na(height_inches))
+  )
+```
+
+
+
+```{r}
+# get data ready for OJS
+ojs_define(ojs_petitions_slope = petitions_slope)
+ojs_define(ojs_petitions_dumbel = petitions_dumbel)
+ojs_define(ojs_petitions_gender = petitions_topic_gender)
+ojs_define(ojs_york = york_causes)
+ojs_define(ojs_rhc = rhc_sampled)
+ojs_define(ojs_monarchs_marriages_wide = monarchs_marriages)
+```
+
+
+
+```{ojs}
+ojsPetitionsSlope = transpose(ojs_petitions_slope)
+ojsPetitionsDumbel = transpose(ojs_petitions_dumbel)
+ojsPetitionsGender = transpose(ojs_petitions_gender)
+ojsYork = transpose(ojs_york)
+ojsRhc = transpose(ojs_rhc)
+ojsMarriagesMonarchsWide = transpose(ojs_monarchs_marriages_wide)
+```
+
+
+## Diverging stacked dots
+
+These show frequencies as dots (one per observation), so they tend to be most useful for showing relatively small amounts of data. 
+
+This shows the gender of people in York defamation causes per year. (It's unusually balanced for a set of early modern legal records!)
+
+- [Observable Plot gallery example](https://observablehq.com/@observablehq/plot-stacked-dots) 
+
+```{ojs}
+
+Plot.plot({
+  aspectRatio: 1,
+  subtitle: "York defamation causes and gender",
+  x: {label: "year",
+      tickFormat: d3.format('d')},
+  y: {
+    grid: true,
+    label: "← female · male →",
+    labelAnchor: "center",
+    tickFormat: Math.abs
+  },
+  color: {legend: true},
+  marks: [
+    Plot.dot(
+      ojsYork,
+      Plot.stackY2({
+        x: "year",
+        y: (d) => d.gender === "male" ? 1 : -1,
+        fill: "gender",
+        r:4,
+        //title: "full_name"
+      })
+    ),
+    Plot.ruleY([0])
+  ]
+})
+
+```
+
+
+
+## Diverging stacked bars
+
+These are often used for visualising [Likert scale](https://en.wikipedia.org/wiki/Likert_scale) responses to survey questions, as in the 
+[Observable Plot gallery example](https://observablehq.com/@observablehq/plot-diverging-stacked-bar), or for [population pyramids](https://en.wikipedia.org/wiki/Population_pyramid). They can show much larger amounts of data than the stacked dots.
+
+```{ojs}
+Plot.plot({
+  x: {label: "petitions",
+      labelAnchor: "center",
+      labelArrow: "none",
+      tickFormat: Math.abs},
+  y: { tickSize: 0 },
+  subtitle: "Cheshire petitions: compare topics by gender",
+  marginLeft: 150,
+  color: {
+    legend: true
+  },
+  marks: [
+    Plot.ruleX([0]),
+    Plot.barX(
+      ojsPetitionsGender,
+      Plot.groupY(
+        { x: (d) => d.length * sign(d[0].gender) },
+        {fill: "gender",
+          y: "topic" }
+      )
+    )
+  ]
+})
+```
+
+
+```{ojs}
+// simplified version of gallery example
+sign = (label) => label.match(/female/i) ? -1 : 1
+```
+
+
+
+## Overlapping histograms 
+
+Rather neat way to show a pair of histograms that overlap, like heights or weights for men and women. 
+
+However, if using a simple count, it does need the numbers of observations to be roughly similar. In the rhc data there are a lot more men than women, so I've simply taken a 15% sample of the men to get more even numbers. If I were doing this properly, I'd need to look into better normalisation methods.
+
+- [Observable Plot gallery example](https://observablehq.com/@observablehq/plot-overlapping-histogram)
+
+
+```{ojs}
+Plot.plot({
+  subtitle: "Heights of male and female convicts",
+  round: true,
+  color: {legend: true},
+  marks: [
+    Plot.rectY(ojsRhc, Plot.binX({y2: "count"}, {x: "height_inches", fill: "gender", mixBlendMode: "multiply"})),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+
+## Slopegraph
+
+I've recently posted on slopegraphs in ggplot; it's handy to have an Observable version too.
+
+- [Observable Plot gallery example](https://observablehq.com/@observablehq/plot-slope-chart)
+
+```{ojs}
+Plot.plot({
+  height: 400,
+  width: 400,
+  x: {axis: "top", type: "ordinal", tickFormat: "", inset: 90, label: null},
+  y: {axis: null, inset: 20},
+  marks: [
+    Plot.line(ojsPetitionsSlope, {x: "year", y: "petitions", z: "topic"}),
+    d3.groups(ojsPetitionsSlope, (d) => d.year === 1628)
+      .map(([left, petitions]) =>
+        Plot.text(petitions, occlusionY({
+          x: "year",
+          y: "petitions",
+          text: left
+            ? (d) => `${d.topic} ${d.petitions}`
+            : (d) => `${d.petitions} ${d.topic}`,
+          textAnchor: left ? "end" : "start",
+          dx: left ? -3 : 3,
+          radius: 5.5
+        }))
+      )
+  ],
+  subtitle: "Compare petition topics in 1628 and 1668"
+})
+```
+
+```{ojs}
+// I've just copied this from the example; no idea how it actually works at this point!
+// OcclusionY adds an initializer that shifts nodes vertically with a tiny force simulation.
+occlusionY = ({radius = 6.5, ...options} = {}) => Plot.initializer(options, (data, facets, { y: {value: Y}, text: {value: T} }, {y: sy}, dimensions, context) => {
+  for (const index of facets) {
+    const unique = new Set();
+    const nodes = Array.from(index, (i) => ({
+      fx: 0,
+      y: sy(Y[i]),
+      visible: unique.has(T[i]) // remove duplicate labels
+        ? false
+        : !!unique.add(T[i]),
+      i
+    }));
+    d3.forceSimulation(nodes.filter((d) => d.visible))
+      .force("y", d3.forceY(({y}) => y)) // gravitate towards the original y
+      .force("collide", d3.forceCollide().radius(radius)) // collide
+      .stop()
+      .tick(20);
+    for (const { y, node, i, visible } of nodes) Y[i] = !visible ? NaN : y;
+  }
+  return {data, facets, channels: {y: {value: Y}}};
+})
+```
+
+
+
+## Dumbbell chart 
+
+Another way to easily compare two sets of observations. It's quite similar to a slopegraph in some ways, a dotplot combined with a line to connect the pairs. It can be effective to reorder by size of the difference. 
+
+- [Observable Plot gallery example](https://observablehq.com/@observablehq/plot-dot-plot)
+
+
+```{ojs}
+Plot.plot({
+    subtitle: "Topics of petitions with single and multiple petitioners",
+    marginLeft: 150,
+    x: {grid: true, label:"petitions"},
+    color: {legend: true, 
+            range: ['#DDAA33', '#BB5566'], 
+			      domain: ["single", "multiple"]
+			      },
+    marks: [
+      Plot.ruleX([0]),
+      Plot.ruleY(ojsPetitionsDumbel, {
+        x1: "min", 
+        x2: "max", 
+        y: "topic",
+        stroke: "lightGray",
+        strokeWidth: 5,
+      } ),
+      Plot.dot(ojsPetitionsDumbel, {
+        x: "n", 
+        y: "topic", 
+        fill: "petition_type_s", 
+        r: 6
+        })
+    ]
+  })
+```
+
+
+## Difference arrows 
+
+[update: added 1/10/25]
+
+- [Observable Plot gallery](https://observablehq.com/@observablehq/plot-difference-arrows) 
+
+A fun plot; quite similar to a dumbbell, but with arrows to show direction of difference/change.
+
+[Ian Mansfield](https://www.ianvisits.co.uk/articles/a-list-of-monarchs-by-marriage-6857/) put together a table of the ages of monarchs and their consorts at marriage (starting in the 9th century, but I've just pulled out the monarchs since 1066).
+
+First, whether the monarch was the older or younger of the pair. You can hover over rows to see more details.
+
+```{ojs}
+Plot.plot({
+  marginTop: 0,
+  marginLeft: 100,
+  y: {grid: true, label: null},
+  
+  color: {
+    type: "categorical",
+    domain: [-1, 1],
+    range: ['#DDAA33', '#BB5566'],
+    unknown: "#aaa",
+    transform: Math.sign,
+    tickFormat: (c) => c < 0 ? "monarch younger" : "monarch older", 
+    legend: true
+  },
+  
+  marks: [
+    Plot.ruleX([0]),
+    Plot.link(
+      ojsMarriagesMonarchsWide,
+        {
+          x1: "m_age", // 
+          x2: "c_age",
+          stroke:  (d) => d.m_age - d.c_age, 
+          y: "marriage_id",
+          markerStart: "dot", 
+          markerEnd: "arrow",
+          channels: {year: 'year_of_marriage', "monarch": "monarch", "consort": "consort"}, 
+          sort: {y: 'year'}, 
+          strokeWidth: 2 ,
+ 
+        // tooltip
+  			tip: {
+    			format: {
+    				x: false, 
+      			y: false, 
+      			stroke: false,
+    				"year": (d) => `${d}`,
+    			},
+  				anchor: "left"
+  		  }        
+      }
+    )
+  ]
+})
+
+```
+
+Second, whether the wife was the younger or older.
+
+```{ojs}
+Plot.plot({
+  marginTop: 0,
+  marginLeft: 100,
+  y: {grid: true, label: null},
+  
+  color: {
+    type: "categorical",
+    domain: [-1, 1],
+    unknown: "#aaa",
+    transform: Math.sign,
+    tickFormat: (c) => c < 0 ? "wife older" : "wife younger", 
+    legend: true
+  },
+  
+  marks: [
+    Plot.ruleX([0]),
+    Plot.link(
+      ojsMarriagesMonarchsWide,
+        {
+          x1: "f",
+          x2: "m",
+          stroke:  (d) => d.m - d.f, // negative if f is older.
+          y: "marriage_id",
+          markerStart: "dot", 
+          markerEnd: "arrow", 
+          channels: {year: 'year_of_marriage', monarch: "monarch", consort: "consort"}, 
+          sort: {y: 'year'}, 
+          strokeWidth: 2,
+        // tooltip
+  			tip: {
+    			format: {
+    				x: false, 
+      			y: false, 
+      			stroke: false,
+    				"year": (d) => `${d}`,
+    			},
+  				anchor: "left"
+  		  }     
+      }
+    )
+  ]
+})
+
+```
+
+
+
