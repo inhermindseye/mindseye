@@ -24,7 +24,7 @@ I chose to confine the map to Elizabethan cases because they comprise the bulk o
 
 More problematic was the [normalisation](https://handsondataviz.org/normalize-choropleth.html) of raw case numbers, ie calculating rates relative to county populations in the same period. There are several problems with this, including the inherent uncertainties of early modern demographics, the difficulty of sourcing comparable data for England and Wales (see Notes below for the gruesome details), as well as the artificiality of using snapshots of population counts when the cases cover almost half a century. It's really a terrible idea! 
 
-So I'm not sure I trust the population data enough, for example, to make much of the apparent differences between north and south Wales. But it's even worse not to do it, because using the raw case numbers in a map can be highly misleading. For example, Buckinghamshire and Lincolnshire are referenced in similar numbers of cases (544 and 550). But the 1600 population estimates are c.175,200 for Lincolnshire and c.56,700 for Buckinghamshire. So in fact people in Buckinghamshire were *three* times as likely as Lincolnshire inhabitants to be involved in cases.
+So I'm not sure I trust the population data enough, for example, to make much of the apparent differences between north and south Wales. But it's even worse not to do it, because using the raw case numbers in a map can be highly misleading. For example, Buckinghamshire and Lincolnshire are referenced in similar numbers of cases (544 and 550). But the 1600 population estimates are c.175,200 for Lincolnshire and c.56,700 for Buckinghamshire. So in fact people in Buckinghamshire were roughly *three* times as likely as Lincolnshire inhabitants to be involved in Court of Requests cases.
 
 And that difference appears to reflect a more general pattern: the map clearly suggests that travel represented a significant barrier to accessing the central courts, even when court costs were relatively low.
 
@@ -351,7 +351,7 @@ mapHcp = {
 
 ## Explore cases
 
-This table is intended to give just a taste of the catalogued data; for full details follow the links. The [catalogue](https://discovery.nationalarchives.gov.uk/details/r/C13323) also has a keyword and date search facility, and Daniel has been posting search tips and hints on his [Bluesky account](https://bsky.app/profile/thegozfather.bsky.social).
+This table gives just a taster of the catalogued data (which includes more detail, such as plaintiffs and defendants); for full details follow the links. The [catalogue](https://discovery.nationalarchives.gov.uk/details/r/C13323) also has a keyword and date search facility, and Daniel has been posting search tips and hints on his [Bluesky account](https://bsky.app/profile/thegozfather.bsky.social).
 
 
 
@@ -448,11 +448,11 @@ Inputs.table(
 
 ## Notes
 
-I used TNA's Discovery API to fetch calendared cases with dates between 1558 and 1603, and then filtered out any items described as belonging to other reigns, or lacking structured descriptions. That results in 20680 Elizabethan cases. Note that the majority are dated by reign only; a few have more precise dates.
+I used TNA's Discovery API to fetch catalogued cases with dates between 1558 and 1603, and then filtered out any items described as belonging to other reigns, or lacking structured descriptions. That results in 20680 Elizabethan cases. Note that the majority are dated by reign only; a few have more precise dates.
 
 I used the `County` field in descriptions to map locations. The `Subject` field also contains more localised place names which I didn't use, and I don't know if all of them have been identified for `County`.
 
-Cases can refer to more than one county; each mention of a county is counted in the map. Most excluded cases had no specified location (about 1750), and there are small numbers of locations that are outside England and Wales, or unidentifiable/uncertain. (NB: Middlesex encompasses London and the Isle of Wight is part of Hampshire.)
+Cases can refer to more than one county; each mention of a county is counted in the map. Most excluded cases had no specified location (about 1750), and there are small numbers of locations that are outside England and Wales, or unidentifiable/uncertain. (NB: Middlesex encompasses London and the Isle of Wight is treated as part of Hampshire.)
 
 In order to calculate rates from the raw case numbers, I had to combine population estimates from a number of different sources.
 
@@ -466,7 +466,7 @@ In order to calculate rates from the raw case numbers, I had to combine populati
 ## Credits 
 
 - [The National Archives UK](https://www.nationalarchives.gov.uk/)
-- REQ 2 calendar: [Daniel Gosling](https://bsky.app/profile/thegozfather.bsky.social)
+- REQ 2 catalogue: [Daniel Gosling](https://bsky.app/profile/thegozfather.bsky.social)
 - County boundaries map data: [Historic County Borders Project](https://www.county-borders.co.uk)
 
 ## Resources
