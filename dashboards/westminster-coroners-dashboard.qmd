@@ -6,7 +6,7 @@ categories: [interactive, LL, death]
 ---
 
 <div class="d-grid gap-2">
-<button class="btn speciallink">[Westminster Coroners' Inquests dashboard](https://sharonhoward.github.io/mindseye_of/inquests.html)</button>
+<button class="btn speciallink">[Westminster Coroners' Inquests dashboard](https://inhermindseye.github.io/mindseye_of/inquests.html)</button>
 </div>
 
 A dashboard made in Observable Framework, exploring gender and verdicts across nine London parishes between 1760 and 1799.

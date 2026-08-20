@@ -6,7 +6,7 @@ categories: [interactive, TPOP, petitioning]
 ---
 
 <div class="d-grid gap-2">
-<button class="btn speciallink">[Cheshire Quarter Sessions Petitions dashboard](https://sharonhoward.github.io/mindseye_of/cheshire-petitions.html)</button>
+<button class="btn speciallink">[Cheshire Quarter Sessions Petitions dashboard](https://inhermindseye.github.io/mindseye_of/cheshire-petitions.html)</button>
 </div>
 
 A dashboard made in Observable Framework, exploring 613 early modern petitions to Cheshire magistrates from the [Power of Petitioning](https://petitioning.history.ac.uk/) project.  
