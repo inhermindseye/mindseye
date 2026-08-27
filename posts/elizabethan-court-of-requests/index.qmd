@@ -276,20 +276,21 @@ mapHcp = {
       .setView([52.9221, -1.4729], 7); // ggl derby. still could be a bit further W? // higher numbers are more zoomed in.
   
   // osm is a bit *busy*
- /* let osmTileLayer = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 20,
-      minZoom: 12
+ let osmTileLayer = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>; <a href="https://www.county-borders.co.uk">Historic County Borders Project</a>',
+      maxZoom: 9,
+      minZoom: 6
   })
-  .addTo(map); */
+  .addTo(map); 
   
   // i like this! from ggl ai search but looks fine. light_all / voyager (more colour)
-  let cartoTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png', { 
+  // hmm suddenly get "API KEY REQUIRED" messages... wonder if it's exceeded a limit... well, easily fixed
+  /*let cartoTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png', { 
     maxZoom: 9,
     minZoom: 6,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>; <a href="https://www.county-borders.co.uk">Historic County Borders Project</a>' 
     })
-    .addTo(map);
+    .addTo(map);*/
   
 
 
