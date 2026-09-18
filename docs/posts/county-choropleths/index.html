@@ -253,7 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Following my recent post mapping the <a href="../elizabethan-court-of-requests/">Elizabethan Court of Requests</a>, I thought it would be interesting to apply the same methods to a number of early modern datasets that have good county data. This time I’m using <a href="https://observablehq.github.io/plot/getting-started">Observable Plot</a>.</p>
-<p>The six datasets mapped here have been chosen because they didn’t need too much work, and they cover all or much of England and Wales (even though all were London-based). There are two quite closely related pairs (the two Elizabethan courts; the later 18th-century pauper/vagrant removals) but no overarching theme or connections.</p>
+<p>The six datasets mapped here have been chosen because they didn’t need too much work, and they cover all or much of England and Wales (even though all were London-based). So there’s no overarching theme or connections, though there are two related pairs (the two Elizabethan courts; the later 18th-century pauper/vagrant removals).</p>
 <div class="cell">
 <details class="code-fold hidden">
 <summary>Code</summary>
@@ -500,7 +500,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The apprenticeship disputes data represents a <em>very</em> small percentage of London apprenticeships (cases where apprentices petitioned for early termination of their indentures of apprenticeship), but it does cover a wide range of London trades. Even though a very large majority of the petitioning apprentices came from within the City of London and Middlesex, the map suggests considerable geographical mobility from the Home Counties to the north of London and the Midlands.</p>
+<p>The apprenticeship disputes data represents a <em>very</em> small percentage of London apprenticeships (cases where apprentices petitioned for early termination of their indentures of apprenticeship), but it does cover a wide range of London trades. Even though a very large majority of the petitioning apprentices came from within the City of London and Middlesex, the map suggests considerable geographical mobility from the northern Home Counties and the Midlands.</p>
 <p>The Prerogative Court of Canterbury (PCC) in London proved about 40% of all wills in England and Wales by the mid 19th century, but geographically was not evenly spread. Low value, localised estates were more likely to be handled in one of many local church courts. Moreover, the PCC usually only dealt with Welsh wills that covered more than one diocese, and wills from northern counties were normally proved at York. But the Middlesex/Surrey concentration is still quite striking.</p>
 <details class="code-fold hidden">
 <summary>Code</summary>
@@ -525,7 +525,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>It has to be said that the pauper removals map is not terribly successful, largely because it’s a smaller dataset and highly concentrated on London destinations, but I like the contrast with the vagrant removals. As I’ve noted in <a href="../cdrv-pauper-removals-map/">my previous post on the pauper removals data</a>, the county paid for vagrant removals, so parishes had a very strong incentive to get long distance removals into the latter channel. It’s also argued (see reference in Resources) that the contractors whose lists underly the vagrants dataset were less likely to handle short-distance removals or those to the south east.</p>
+<p>It has to be said that the pauper removals map is not terribly successful, largely because it’s a smaller dataset and highly concentrated on London destinations, but I like the contrast with the vagrant removals. As I’ve noted in <a href="../cdrv-pauper-removals-map/">my previous post on the pauper removals data</a>, the county paid for vagrant removals, so parishes had a very strong incentive to get long distance removals into the latter channel. It’s also argued (see reference in Resources) that very short distance removals and those to the south east/East Anglia would be underrepresented in the contractors’ lists underlying the vagrants dataset.</p>
 <details class="code-fold hidden">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="475" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 474;"><span id="cb7-475"><a href="#cb7-475" aria-hidden="true" tabindex="-1"></a><span class="fu">countyChoropleth</span>(ojsCdrvGeo<span class="op">,</span> <span class="st">"Pauper removals"</span>)</span>
