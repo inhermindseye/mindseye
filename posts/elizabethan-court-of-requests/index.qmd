@@ -18,7 +18,7 @@ The [Court of Requests](https://www.nationalarchives.gov.uk/help-with-your-resea
 
 > My Court of Requests pleadings (REQ 2/16-424) project is now complete. Over 28,000 items dating from c.1547-c.1625 (Edw VI to Jas I) now searchable online. 
 
-I could see the data included locations and thought this would make a good excuse to practise some mapping techniques using [Leaflet](https://leafletjs.com/). In particular, I wanted to try out making a [chloropleth](https://data.europa.eu/apps/data-visualisation-guide/choropleth-maps) of counties.
+I could see the data included locations and thought this would make a good excuse to practise some mapping techniques using [Leaflet](https://leafletjs.com/). In particular, I wanted to try out making a [choropleth](https://data.europa.eu/apps/data-visualisation-guide/choropleth-maps) of counties.
 
 I chose to confine the map to Elizabethan cases because they comprise the bulk of the catalogued cases; there aren't that many before 1558 and (as I understand it) the majority of post-1603 cases haven't been catalogued. So Elizabeth's reign provides a goodly chunk of data to play with. I've also restricted it to England and Wales as those represent the vast majority of identified locations. 22204 locations in 18878 cases could be mapped, using the [Historic County Borders Project](https://county-borders.co.uk/) data.
 
@@ -60,13 +60,13 @@ population_estimates_csv |>
   select(county, p)
 
 ## historic counties borders project (uk)
-## geojson converted from shapefile
-# doesn't have an id col. does it need one? should join the req2 data by county.
+# geojson converted from shapefile. updated; file includes Scot/NI, so filter/inner join essential here.
+# join the req2 data by county
 
 hcp_historic_counties_engwales_geojson <-
-  st_read(here::here("site_data/geo/hcp_counties.geojson"), quiet=TRUE) 
+  st_read(here::here("site_data/geo/hcp_wgs_counties.geojson"), quiet=TRUE) 
 
-## NB need an acknowledgment line in any public posts: 
+## NB need an acknowledgment in any public posts. in this case, add credit directly to leaflet.
 hcp_credit <- "This post made use of data provided by the [Historic County Borders Project](https://www.county-borders.co.uk)."
 
 

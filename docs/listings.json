@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/county-choropleths/index.html",
       "/posts/elizabethan-court-of-requests/index.html",
       "/dashboards/atb-events-map.html",
       "/dashboards/obv-llep-explorer.html",
@@ -53,6 +54,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/county-choropleths/index.html",
       "/posts/elizabethan-court-of-requests/index.html",
       "/dashboards/atb-events-map.html",
       "/dashboards/obv-llep-explorer.html",

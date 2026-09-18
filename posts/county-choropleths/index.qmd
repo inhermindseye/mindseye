@@ -1,0 +1,541 @@
+---
+title: "More Early Modern Choropleths"
+description: "County maps for six early modern England & Wales datasets"
+date: "2026-09-18"
+author: "Sharon Howard"
+categories: [maps, interactive]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+
+Following my recent post mapping the [Elizabethan Court of Requests](../elizabethan-court-of-requests/), I thought it would be interesting to apply the same methods to a number of early modern datasets that have good county data. This time I'm using [Observable Plot](https://observablehq.github.io/plot/getting-started). 
+
+The six datasets mapped here have been chosen because they didn't need too much work, and they cover all or much of England and Wales (even though all were London-based). There are two quite closely related pairs (the two Elizabethan courts; the later 18th-century pauper/vagrant removals) but no overarching theme or connections. 
+
+
+```{r r-data}
+
+library(scales)  
+library(janitor) 
+library(glue)
+
+library(tidytext)
+library(tidyverse)
+
+library(sf)
+
+
+## population
+
+population_estimates_csv <-
+  read_csv(here::here("site_data/other/population_estimates_counties_england_wales_20260818.csv"))
+
+# 1600/1700
+population_estimates_1600 <-
+population_estimates_csv |>
+  mutate(p = if_else(src=="owen", p1545_63, p1600)) |>
+  select(county, p)
+
+# add 1801
+population_census_1801_csv <-
+  read_csv(here::here("site_data/other/population_census1801_england_wales_20680913.csv"))
+
+population_estimates <-
+  population_estimates_csv |>
+  mutate(p1600 = if_else(is.na(p1600), p1545_63, p1600)) |>
+  mutate(p1700 = if_else(is.na(p1700), p1670, p1700)) |>
+  select(-p1545_63, -p1670) |>
+  inner_join(population_census_1801_csv |> select(county, p1801= total), by="county")
+
+## historic counties borders project data
+
+# geojson converted from shapefile. updated versions includes scotland and NI, choice of WGS84 and OSGB.
+# nb this osgb version won't work in Leaflet, but wgs doesn't work properly in Plot
+
+# `county` is a tweaked std version of hcp county names.
+# add population to the geo from the start rather than adding to the other datasets one at a time
+
+hcp_historic_counties_engwales_geojson <-
+  st_read(here::here("site_data/geo/hcp_osgb_counties.geojson"), quiet=TRUE) |>
+  inner_join(population_estimates |> select(-src), by="county")
+
+
+## NB need an acknowledgment line in any public posts, something like:
+hcp_credit <- "This post made use of data provided by the [Historic County Borders Project](https://www.county-borders.co.uk)."
+
+```
+
+
+```{r tna}
+## req2 
+
+
+# tricky bit is multi counties, so you can't do hcp join straight away.
+# new CSVs have county_cln which is about as cleaned up as you can get it without unnest. 
+# still need to fix "London-Middlesex", "London", "Isle of Wight".
+
+# updated eliz. (this is properly eliz only)
+# not deduped
+
+req2_eliz_csv <-
+  read_csv(here::here("site_data/tna/req2_eliz2_20260911.csv"), guess_max = 20680)
+
+req2_eliz <-
+req2_eliz_csv |>
+  select(id, start_year, county_cln) |>
+  mutate(county = str_replace(county_cln, "London-Middlesex|London", "Middlesex")) |> 
+  mutate(county = str_replace(county, "Isle of Wight \\(Hampshire\\)", "Hampshire")) |>
+  filter(!is.na(county_cln))
+
+# needs [,;] "and"
+req2_eliz_counts <-
+req2_eliz |>
+  unnest_regex(county, county, pattern = " *[,;] *| *\\b(and)\\b *", to_lower = F) |>
+  count(county) |>
+  semi_join(hcp_historic_counties_engwales_geojson, by="county")
+
+
+## stac5
+# cleaned up counties, selected cols only.
+# dedup by cause code 
+# there are some dates outside 1558-1603... nevermind
+
+stac5_csv <-
+  read_csv(here::here("site_data/tna/stac5_counties_20260911.csv"))
+
+
+stac5 <-
+stac5_csv |>
+  mutate(start_year = year(parse_date_time(start_date, "dmy"))) |>
+  select(id, cause_code, start_year, county_cln) |>
+  mutate(county = str_replace(county_cln, "Hampshire \\(Isle of Wight\\)", "Hampshire")) |>
+  mutate(county = str_replace_all(county, "London", "Middlesex")) 
+
+
+stac5_counts <-
+stac5 |>
+  unnest_regex(county, county, pattern = " *[,;] *| *\\b(and)\\b *", to_lower = F) |>
+  # dedup by cause code before doing counts 
+  distinct(cause_code, county) |>
+  filter(!is.na(county)) |>
+  count(county) |>
+  semi_join(hcp_historic_counties_engwales_geojson, join_by(county))
+```
+
+
+```{r ukda}
+# pcc wills: used ukda copy as it's much more structured than tna catalogue
+# https://datacatalogue.ukdataservice.ac.uk/studies/study/4816#details
+
+# sample = decades 1580, 1620, 1680, 1720
+wills_csv <-
+  read_csv(here::here("site_data/tna/pcc_wills_counties_sample_20260912.csv"))
+
+# fixes have already been done to county_cln
+# handful of "and" but just ignore those.
+wills <-
+wills_csv |>
+  semi_join(hcp_historic_counties_engwales_geojson, join_by(county))
+
+wills_counts <-
+wills |>
+  count(county)
+
+
+## ukda apprenticeship disputes
+
+## geo csv with everything county-able, not just locatable parishes.
+# filtered and fixes already done, doesn't need any further prep
+
+apprentices_counties_csv <-
+  read_csv(here::here("site_data/apprentices_disputes/apprentices_counties_geo_20260912.csv")) 
+
+apprentices_counts <-
+apprentices_counties_csv |>
+  count(county) 
+
+
+```
+
+
+
+```{r ll}
+## cdrv
+
+# improved geo data; if using main tsv, drop any place refs and replace with this.
+cdrv_geo_csv <-
+  read_csv(here::here("site_data/ll/cdrv_geocoded_points_and_notgeocoded_20260226.csv"))
+
+# nb only 44 counties 
+cdrv_geo_engwales <-
+cdrv_geo_csv |>
+  select(order_id, to_county, to_place, src_id) |>
+  mutate(county = replace_values(
+    to_county,
+    "Durham" ~ "County Durham",
+    "Caernarfonshire" ~ "Caernarvonshire",
+    "London" ~ "Middlesex"
+  )) |>
+  semi_join(hcp_historic_counties_engwales_geojson, by=c("county")) 
+
+
+
+cdrv_counts <-
+cdrv_geo_engwales |>
+  count(county)
+
+
+## middlesex vagrants
+
+mv_csv <-
+  read_csv(here::here("site_data/ll/MiddlesexVagrants1777-1786v1.2.csv")) |>
+  clean_names()
+
+mv_engwales <-
+mv_csv  |>
+  # use first number in vagrant id to make group id.
+  mutate(grp_id = parse_number(str_extract(vagrant_id_number, "^[0-9]+"))) |>
+  filter(settlement_country %in% c("England", "Wales")) |> # 10804
+  # dedup by group
+  distinct(grp_id, session_start_year, settlement_county, settlement_country) |> # 7915
+  mutate(county = replace_values(
+    settlement_county,
+    "Brecknockshire" ~ "Breconshire",
+    "Bristol" ~ "Gloucestershire",
+    "Durham" ~ "County Durham",
+    "Glamorganshire" ~ "Glamorgan",
+    "Westmoreland" ~ "Westmorland"
+  )) |>
+  semi_join(hcp_historic_counties_engwales_geojson, by=c("county"))
+
+mv_counts <-
+mv_engwales |>
+  count(county)
+```
+
+
+
+```{r hcp-data}
+
+# make `p` for use in the create geo function 
+
+# elizabethan only - use 1600
+hcp_stac5 <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(stac5_counts, join_by(county))  |>
+  mutate(p = p1600) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+hcp_req2_eliz <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(req2_eliz_counts, join_by(county))  |>
+  mutate(p = p1600) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+# an experiment: what does stac5 look like if you use 1801 pop?
+
+hcp_stac_1801 <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(stac5_counts, join_by(county))  |>
+  mutate(p = p1801) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+# what about 1700?
+
+hcp_stac_1700 <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(stac5_counts, join_by(county))  |>
+  mutate(p = p1700) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+
+# 1560s-1720s; try 1700.
+hcp_apprentices <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(apprentices_counts, join_by(county))  |>
+  mutate(p = p1700) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+
+# 1580-1720; if only doing one date, i think go with 1700 
+hcp_wills <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(wills_counts, join_by(county))  |>
+  mutate(p = p1700) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+
+
+# ll data use 1801 pop 
+
+hcp_cdrv <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(cdrv_counts, join_by(county))  |>
+  mutate(p = p1801) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 ) |>
+  mutate(cp = if_else(is.na(cp), 0, cp))
+
+hcp_mv <-
+hcp_historic_counties_engwales_geojson |>
+  inner_join(mv_counts, join_by(county))  |>
+  mutate(p = p1801) |>
+  mutate(cr=round(n/p, 4), cp=n/p*100 )
+```
+
+
+
+```{r ojs-define}
+ojs_define(ojs_hcp_apprentices = hcp_apprentices)
+ojs_define(ojs_hcp_wills = hcp_wills)
+
+ojs_define(ojs_hcp_cdrv = hcp_cdrv)
+ojs_define(ojs_hcp_mv = hcp_mv)
+
+ojs_define(ojs_hcp_stac5 = hcp_stac5)
+ojs_define(ojs_hcp_req2_eliz = hcp_req2_eliz)
+
+#ojs_define(ojs_hcp_stac_1801 = hcp_stac_1801)
+#ojs_define(ojs_hcp_stac_1700 = hcp_stac_1700)
+```
+
+
+
+```{ojs}
+ojsApprentices = transpose(ojs_hcp_apprentices)
+ojsWills = transpose(ojs_hcp_wills)
+
+ojsCdrv = transpose(ojs_hcp_cdrv)
+ojsMv = transpose(ojs_hcp_mv)
+
+ojsStac5 = transpose(ojs_hcp_stac5)
+ojsReq2Eliz = transpose(ojs_hcp_req2_eliz)
+
+//ojsStac1801 = transpose(ojs_hcp_stac_1801)
+//ojsStac1700 = transpose(ojs_hcp_stac_1700)
+```
+
+
+```{ojs}
+// function for multipolygon data (will prob work for non-multi polygons as well...)
+// JS reminder:
+// curly braces make an Object. geometry=Object.
+// square braces make an Array. coordinates = (nested) Array
+
+function createPolyData(data) {
+  const geoData = {
+    type: 'FeatureCollection',
+    crs: {type: 'name', properties: {name: 'urn:ogc:def:crs:OGC:1.3:CRS84'}},
+    features: []
+  };
+  data.map(h => {
+    geoData.features.push({
+      type: 'Feature',
+      properties: {
+        county: h.county,
+        n: h.n, 
+        p: h.p,
+        cp: h.cp
+      },
+      geometry: {
+        type: h.geometry.type,
+        coordinates: h.geometry.coordinates
+      }
+    });
+  });
+  return geoData;
+}
+
+```
+
+
+
+```{ojs}
+ojsApprenticesGeo = createPolyData(ojsApprentices)
+ojsWillsGeo = createPolyData(ojsWills)
+
+ojsCdrvGeo = createPolyData(ojsCdrv)
+ojsMvGeo = createPolyData(ojsMv)
+
+ojsStac5Geo = createPolyData(ojsStac5)
+ojsReq2ElizGeo = createPolyData(ojsReq2Eliz)
+
+//ojsStac1801Geo = createPolyData(ojsStac1801)
+//ojsStac1700Geo = createPolyData(ojsStac1700)
+```
+
+
+```{ojs}
+
+function countyChoropleth(geoData, plotTitle) {
+return Plot.plot({
+  subtitle: plotTitle,
+  // better sizing for 2 col layout
+  width: 400,
+  height: 500,
+  // frame makes map look off centre. add a bit of space on the right. inset poorly documented, how unusual.
+  insetRight: 10,
+  
+  color: {
+    legend: false,
+    scheme: "orrd", 
+  },
+  projection: {
+  // if no type or type null, doesn't draw anything.
+    //type: "mercator", // doesn't zoom in
+    // type: "identity", // upside down
+    type: "reflect-y", // no longer squished.
+    domain: geoData
+  },
+  marks: [
+    Plot.frame({strokeOpacity: 0.25}),
+    Plot.geo(geoData, { 
+      fill: (d) => d.properties.cp, 
+      stroke: "black" ,
+      //channels: {p: (d) => d.properties.p},
+      //tip: true // a single tip near the centre of the map
+    }),
+    // interactive with pointer. 
+    // can chain things together in "title" using `${...} etc` \n for linebreak, not <br>
+    Plot.tip(geoData.features, 
+      Plot.pointer(Plot.centroid({
+        title: (d) => `county: ${d.properties.county} \ncases: ${d.properties.n} \npop: ${d.properties.p}` ,
+        fontSize: 13 // default a bit small even after optimising size
+      }))
+      ) ,
+  ]
+})
+
+}
+
+// tips
+// see https://observablehq.com/@observablehq/plot-maps-tips - comment "the map example only works if `states` is an array of features. This is in contrast to, e.g., the boilerplate U.S. Plot Map in which `states` is a FeatureCollection." 
+
+// in fact for everything other than plot.geo it seems you need to use geojson.features, not the geojson object. 
+    // Plot.tip(ojsApprenticesGeo, Plot.pointer(Plot.centroid({title: (d) => d.properties.county}))), // won't work
+    // Plot.dot(ojsApprenticesGeo.features, Plot.centroid({fill: "red", stroke: "white"})), // works.
+
+// plus with this data you need plot.centroid, not geoCentroid
+  // Plot.centroid v Plot.geoCentroid: centroid = **planar** (projected) centroids // geoCentroid = **spherical** centroids
+```
+
+
+## The datasets
+
+- [Court of Star Chamber Proceedings, Elizabeth I (TNA STAC 5)](https://discovery.nationalarchives.gov.uk/details/r/C13674) (TNA)
+- [Court of Requests Pleadings, Elizabeth I (TNA REQ 2)](https://discovery.nationalarchives.gov.uk/details/r/C13323) (TNA)
+- [Apprenticeship Disputes in the Lord Mayor’s Court of London 1573-1723](http://doi.org/10.5255/UKDA-SN-8490-1) (UKDS)
+- [Prerogative Court of Canterbury Wills (TNA PROB 11)](http://doi.org/10.5255/UKDA-SN-4816-1) 1580s-1720s sample (UKDS)
+- [Register of Paupers Removed from the Parish of St Clement Danes, 1752-1793](https://github.com/sharonhoward/llep/tree/master/removal_orders) (London Lives)
+- [Vagrant Lives: 14,789 Vagrants Processed by Middlesex County, 1777-1786](https://zenodo.org/records/1217600) (London Lives)
+
+
+
+## The maps
+
+I thought in my previous post on the [Court of Requests](../elizabethan-court-of-requests/) that the concentration of cases in the south-east suggested that travel presented a significant barrier to pursuing cases in a London-based court. But the comparison with Star Chamber indicates that was an over-simplification. The contrast is intriguing, though there is the problem that the Welsh population estimates may be even less reliable than the English ones. But the availability of this kind of data might reinvigorate (if we really want to go there...) the old question of the litigiousness of the early modern Welsh gentry.
+
+[hover over the maps to see county names and counts]
+
+:::{layout-ncol="2"}
+
+```{ojs}
+countyChoropleth(ojsReq2ElizGeo, "Court of Requests")
+```
+
+```{ojs}
+countyChoropleth(ojsStac5Geo, "Star Chamber")
+```
+
+:::
+
+
+The apprenticeship disputes data represents a *very* small percentage of London apprenticeships (cases where apprentices petitioned for early termination of their indentures of apprenticeship), but it does cover a wide range of London trades. Even though a very large majority of the petitioning apprentices came from within the City of London and Middlesex, the map suggests considerable geographical mobility from the Home Counties to the north of London and the Midlands.
+
+The Prerogative Court of Canterbury (PCC) in London proved about 40% of all wills in England and Wales by the mid 19th century, but geographically was not evenly spread. Low value, localised estates were more likely to be handled in one of many local church courts. Moreover, the PCC usually only dealt with Welsh wills that covered more than one diocese, and wills from northern counties were normally proved at York. But the Middlesex/Surrey concentration is still quite striking.
+
+:::{layout-ncol="2"}
+
+```{ojs}
+countyChoropleth(ojsApprenticesGeo, "Apprentice disputes")
+```
+
+```{ojs}
+countyChoropleth(ojsWillsGeo, "Wills")
+```
+
+:::
+
+
+It has to be said that the pauper removals map is not terribly successful, largely because it's a smaller dataset and highly concentrated on London destinations, but I like the contrast with the vagrant removals. As I've noted in [my previous post on the pauper removals data](../cdrv-pauper-removals-map/), the county paid for vagrant removals, so parishes had a very strong incentive to get long distance removals into the latter channel. It's also argued (see reference in Resources) that the contractors whose lists underly the vagrants dataset were less likely to handle short-distance removals or those to the south east.
+
+:::{layout-ncol="2"}
+
+```{ojs}
+countyChoropleth(ojsCdrvGeo, "Pauper removals")
+```
+
+```{ojs}
+countyChoropleth(ojsMvGeo, "Vagrant removals")
+```
+
+:::
+
+
+
+## Notes
+
+The PCC Wills dataset is huge; to keep things manageable, this only uses wills from 1580-89, 1620-29, 1680-89 and 1720-29.
+
+All are datasets in which the vast majority of cases have identifiable county locations in structured fields. Most excluded cases had no place information to begin with; a very small number were unidentifiable or uncertain. Anything in "London"/"City of London" or "Westminster" is mapped as part of Middlesex; on the other hand, anything in "Southwark" goes into Surrey. The Isle of Wight is treated as part of Hampshire.
+
+
+As with the previous Court of Requests map, the data is shown as standardised rates using the best population estimates I can currently find, which is problematic; see [the post](../elizabethan-court-of-requests/) for more detail on the 1600-1700 estimates and everything that's wrong with them, but also why they're still better than using raw numbers. The 1801 estimates are somewhat more reliable as they're derived from the first Census of 1801.
+
+When doing the calculations:
+
+- if more than one county is mentioned, each gets counted
+- cause codes have been added to the Star Chamber data by TNA cataloguers, and these have been used to deduplicate the data by cause
+- the Requests data really needs the same treatment, but it doesn't have cause codes. But deduplication didn't make a very noticeable difference to the Star Chamber map and probably wouldn't for Requests either.
+- the original sources for the Middlesex Vagrants dataset grouped vagrants (usually families) who were travelling together, and the data creators separated them out into one row per vagrant; I've deduplicated these as well.
+
+
+Population estimates sources/dates:
+
+- Star Chamber/Court of Requests: England 1600 ([CAMPOP](https://www.campop.geog.cam.ac.uk/research/projects/transport/data/population1680.html)); Monmouthshire 1600 ([Vision of Britain, Rickman](https://web.archive.org/web/20260207094204/https://www.visionofbritain.org.uk/census/GB1841ABS_1/6)); rest of Wales 1545/63 ([Leonard Owen](http://hdl.handle.net/10107/1415159))
+- Apprentices/Wills: England 1700 (CAMPOP); Monmouthshire 1700 (VOB); rest of Wales 1670 (Owen)
+- Paupers/Vagrants: 1801 Census ([Hansard 1812](https://api.parliament.uk/historic-hansard/commons/1812/jan/18/population-of-the-several-counties-of))
+
+
+The HCBP map data is available in two formats: [WGS84](https://epsg.io/3857) and [OSGB36](https://epsg.io/27700). I've previously used the WGS84 version with Leaflet-based maps, but Observable Plot works better with OSGB (converted to geojson from the downloaded shapefiles). (Leaflet, meanwhile, doesn't understand OSGB at all without a plugin. Map data that "just works" remains the impossible dream, it seems.)
+
+
+## Data credits
+
+- [The National Archives UK](https://www.nationalarchives.gov.uk/)
+- [UK Data Service](https://ukdataservice.ac.uk/)
+- [London Lives](https://www.londonlives.org/)
+- Map data: [Historic County Borders Project](https://www.county-borders.co.uk) 
+
+
+## Resourcs
+
+Sources:
+
+- [Star Chamber Records (TNA research guide)](https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/court-star-chamber-records-1485-1642/)
+- [Court of Requests Records (TNA research guide)](https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/court-of-requests-records-1485-1642/)
+- [Apprenticeship Disputes in the Lord Mayor’s Court of London 1573-1723: Introduction](https://doc.ukdataservice.ac.uk/doc/8490/mrdoc/pdf/8490introduction.pdf) (pdf)
+- [Wills before 1858 (TNA research guide)](https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/wills-or-administrations-before-1858/)
+- [Register of Paupers Removed from the Parish of St Clement Danes](https://www.londonlives.org/about/rv/) 
+- Vagrant Lives: [data paper](https://openhumanitiesdata.metajnl.com/articles/10.5334/johd.1); [Loose, idle and disorderly article](https://discovery.ucl.ac.uk/id/eprint/10105684/)
+
+
+Maps and geo data:
+
+- [Plot: Choropleths](https://observablehq.com/@observablehq/plot-choropleth)
+- [Plot: Tips for maps](https://observablehq.com/@observablehq/plot-maps-tips)
+- [Build your first choropleth](https://observablehq.com/@observablehq/build-your-first-choropleth-map-with-observable-plot)
+- [Geographic data in R](https://r.geocompx.org/spatial-class)
+- [Spatial data science](https://r-spatial.org/book/)
+- [ONS guidance on choropleth maps](https://service-manual.ons.gov.uk/data-visualisation/chart-types/choropleth-maps)

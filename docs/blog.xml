@@ -10,7 +10,17 @@
 <atom:link href="https://mindseye.sharonhoward.org/blog.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Tue, 18 Aug 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 17 Sep 2026 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>More Early Modern Choropleths</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/county-choropleths/</link>
+  <description><![CDATA[ County maps for six early modern England & Wales datasets ]]></description>
+  <category>maps</category>
+  <category>interactive</category>
+  <guid>https://mindseye.sharonhoward.org/posts/county-choropleths/</guid>
+  <pubDate>Thu, 17 Sep 2026 23:00:00 GMT</pubDate>
+</item>
 <item>
   <title>A Map of the Elizabethan Court of Requests</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -211,16 +221,6 @@
   <category>OBO</category>
   <guid>https://mindseye.sharonhoward.org/posts/sparks-obo/</guid>
   <pubDate>Sat, 31 May 2025 23:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Petitions to the House of Commons, 1780-1918</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/posts/power-of-petitioning-19c-2025-04/</link>
-  <description><![CDATA[ Trends in large-scale political petitioning in the long 19th century ]]></description>
-  <category>petitioning</category>
-  <category>politics</category>
-  <guid>https://mindseye.sharonhoward.org/posts/power-of-petitioning-19c-2025-04/</guid>
-  <pubDate>Sun, 27 Apr 2025 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

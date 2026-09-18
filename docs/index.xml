@@ -10,7 +10,17 @@
 <atom:link href="https://mindseye.sharonhoward.org/index.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Tue, 18 Aug 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 17 Sep 2026 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>More Early Modern Choropleths</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/county-choropleths/</link>
+  <description><![CDATA[ County maps for six early modern England & Wales datasets ]]></description>
+  <category>maps</category>
+  <category>interactive</category>
+  <guid>https://mindseye.sharonhoward.org/posts/county-choropleths/</guid>
+  <pubDate>Thu, 17 Sep 2026 23:00:00 GMT</pubDate>
+</item>
 <item>
   <title>A Map of the Elizabethan Court of Requests</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -110,17 +120,6 @@
   <category>LL</category>
   <guid>https://mindseye.sharonhoward.org/posts/hcr-data-explorer/</guid>
   <pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Westminster Coroners Inquests, 1760-1799</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/dashboards/westminster-coroners-dashboard.html</link>
-  <description><![CDATA[ A dashboard made in Observable Framework, exploring gender and verdicts across nine London parishes between 1760 and 1799. ]]></description>
-  <category>interactive</category>
-  <category>LL</category>
-  <category>death</category>
-  <guid>https://mindseye.sharonhoward.org/dashboards/westminster-coroners-dashboard.html</guid>
-  <pubDate>Fri, 14 Nov 2025 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
