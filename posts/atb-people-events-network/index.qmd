@@ -1,0 +1,878 @@
+---
+title: "Alice Thornton's Network, 1651-1669"
+subtitle: "A network of people in Alice Thornton's autobiographical writings"
+date: "2026-11-03"
+author: "Sharon Howard"
+categories: [interactive, networks, ATB]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+
+A network of people mentioned in the narratives of [Events](https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/) tagged by the [Alice Thornton's Books](https://thornton.kdl.kcl.ac.uk/) project.
+
+
+```{r}
+library(janitor)
+library(glue)
+
+library(tidytext)
+library(tidyverse)
+
+library(tidygraph)
+library(widyr)
+
+
+# create an undirected tbl_graph using person id as node id ####
+# n = nodes list, e = edges list. need to be in the right sort of format! 
+atb_tbl_graph <- function(n, e){
+  tbl_graph(
+    nodes= n,
+    edges= e,
+    directed = FALSE,
+    node_key = "pers_id" # person in BN
+  )
+}
+
+
+
+## subsequent functions might not work with more complex network structures.
+
+# centrality scores: degree, betweenness, centrality, harmony, eigenvector. must have weight col.
+# network has to be a tbl_graph
+atb_centrality <- function(network){
+  network |>
+    # don't use the weights column by default
+    mutate(degree = centrality_degree(weights=weight),
+           betweenness = centrality_betweenness(weights=weight), # number of shortest paths going through a node
+           #closeness = centrality_closeness(weights=weight), # how many steps required to access every other node from a given node
+           harmonic = centrality_harmonic(weights=weight), # variant of closeness for disconnected networks
+           eigen = centrality_eigen(weights=weight) # how well connected to well-connected nodes
+    )  |>
+    # make rankings. wondering whether to use dense_rank which doesn't leave gaps.
+    mutate(across(c(degree, betweenness, harmonic, eigen),  ~min_rank(desc(.)), .names = "{.col}_rank")) 
+    # closeness lower=more central so needs to be ranked the other way round from the rest !
+    # mutate(across(c(closeness),  min_rank, .names = "{.col}_rank"))
+}
+
+
+# community detection
+# two methods for the moment, unweighted.
+
+atb_clusters <- function(network){
+  network |>
+    mutate(infomap = as.factor(group_infomap())) |>
+    mutate(e_btwnness = as.factor(group_edge_betweenness(directed=FALSE)))
+}
+
+
+
+## code for making these files in preparation/ atb notes 20261024 qmd
+
+# added more event metadata to this, which you prob won't need here but can be reshaped to event level with a bit of distinct()ing
+
+events_evs_unfiltered <-
+  read_csv(here::here("site_data/atb/atb_events_evs_20261102.csv"))
+
+names_table_unnest_all <-
+  read_csv(here::here("site_data/atb/atb_ppl_divs_evs_20261102.csv"))
+
+# people metadata
+# id, bio name, label incl dates, gender, (simplified) birth and death years
+atb_people_csv <-
+  read_csv(here::here("site_data/atb/atb_people_v202502.csv"))
+
+```
+
+
+
+```{r events-names-filters}
+## filter events 1651-69 and part of larger grp events only.
+# and might want to drop unnecessary cols, though they don't cause any problems.
+events_evs <-
+  events_evs_unfiltered |>
+  filter(between(start_year, 1651, 1669)) |>
+  filter(grp=="sub")
+
+## filter out NA refs to make final unnested version
+names_table_unnested <-
+names_table_unnest_all |>
+  filter(str_detect(ref, "ppl:")) 
+
+
+
+# keeping awt1 but that might need some explanation...
+# filter out people who are only mentioned once at this point.
+
+
+names_in_evs_unfiltered <-
+names_table_unnested |>
+  select(uid, pers_id, ref,  text, src, xmlid, ev_id) |>
+  # only keep names in evs. don't really need this as well as the inner join?
+  filter(!is.na(ev_id)) |>
+  # drop alice herself (only about 50)
+  #filter(pers_id !="awt1") |>
+	# inner join keeps only names that are in filtered evs
+  inner_join(
+    events_evs |>
+    select(xmlid, ev_id= ev, event_id, start_year), join_by(xmlid, ev_id)
+  ) |>
+  # drop people who are only mentioned once in evs. these will largely get removed later.
+  #filter(n()>1, .by=pers_id) |>  
+  # you need a combined ev+src if you're using it in pairwise, idiot!
+  # add event_id and then you can reconstruct the whole book/ev/event without any other info, if needed
+  mutate(ev_src_id = paste(src, ev_id, event_id, sep = ":"))
+
+```
+
+
+
+```{r prep-make-network}
+## ev ids and pairwise_count
+
+# distinct and filter before making edges/nodes. then you can get n_mentions
+names_in_evs <-
+  names_in_evs_unfiltered |>
+  distinct(pers_id, ev_src_id, event_id) |> 
+  # might as well drop evs with only one row (doesn't drop much). 
+  filter(n()>1, .by = ev_src_id) |>
+  # drop people who are only mentioned once after the distincting.
+  filter(n()>1, .by = pers_id) |> 
+  # add a count of mentions
+  add_count(pers_id, name="n_mentions")
+
+
+# try to remember this has each pair twice. 
+# which is convenient for joins. but doubles counts and things!
+
+names_from_to_all_keyword <-
+names_in_evs |>
+  inner_join(
+    events_evs |>
+     distinct(event_id, keyword), join_by(event_id)
+  ) |>
+  inner_join(
+    names_in_evs |> select(to=pers_id, ev_src_id), join_by(ev_src_id), relationship = "many-to-many"
+  ) |>
+  rename(from=pers_id) |>
+  filter(from != to)  
+
+
+names_from_to_top_keyword <-
+names_from_to_all_keyword |>
+  # these are v v marginal after filtering.
+  filter(!keyword %in% c("accident/danger", "family")) |>
+  count(from, to, keyword) |>
+  group_by(from, to) |>
+  arrange(desc(n), .by_group = T) |>
+  mutate(pair_n=n(), pair_rn=row_number()) |>
+  top_n(-1, pair_rn) |>
+  ungroup() |>
+  # reduce number of values. rename merged categories. will need a note.
+  mutate(type = replace_values(
+    keyword, 
+    c("pregnancy", "breastfeeding", "childbirth") ~ "maternity", # 44
+    c("dream/prophecy", "religion") ~ "religion/prophecy", # 30
+    c("burial", "death") ~ "death/burial" # 20 death so hmm but ok.
+  )) |>
+  select(from, to, type, keyword)
+
+
+
+atb_ev_edges <-
+names_in_evs |>  # 3598 "unfiltered" (1651-68)
+  pairwise_count(pers_id, ev_src_id, upper=F) |>  
+  #filter(n>2) |>  # i don't like this much
+  # need to keep copy of item1 and item2 so mutate to make from/to rather than rename. 
+  mutate(from=item1, to=item2) |>
+  rename(weight=n) |>
+  arrange(from, to)
+
+
+atb_ev_nodes <-
+atb_ev_edges |>
+  pivot_longer(item1:item2, names_to = "a", values_to = "pers_id") |>
+  distinct(pers_id) |>
+  arrange(pers_id) |>
+  inner_join(atb_people_csv, by = c("pers_id" = "id")) |>
+  inner_join(
+    names_in_evs |>
+      distinct(pers_id, n_mentions), join_by(pers_id)
+  )
+
+
+# filters: degree and link weight
+
+atb_ev_network <-
+  atb_tbl_graph(atb_ev_nodes, atb_ev_edges) |>
+  # filter(!node_is_isolated()) |> # don't need if you make nodes from edges?
+  atb_centrality() |>
+  atb_clusters()  |>
+  filter(degree >15) |>
+  activate(edges) |>
+  filter(weight>1) |>
+  activate(nodes) |>
+  filter(!node_is_isolated())
+
+
+
+# final nodes and edges with names instead of numerical ids, like miserables example, and additional bits for appearance
+# some names aren't unique, and i'm not sure if name_label is either, so fix that. but then need to avoid displaying the id.
+
+atb_ev_nodes_d3 <-
+atb_ev_network |>
+  as_tibble() |>
+  mutate(name_n = n(), .by=name) |>
+  mutate(id = if_else(name_n>1, paste(name, pers_id), name)) |>
+  # size bands for node radius. differentiates minor from major players at least to some extent
+  mutate(grp_mentions = case_when(
+    between(n_mentions, 1, 6) ~ 4,
+    between(n_mentions, 7, 19) ~ 5,
+    between(n_mentions, 20, 54) ~ 6,
+    between(n_mentions, 55, 100) ~ 8,
+    n_mentions>101 ~ 10
+  )) 
+
+
+atb_ev_edges_d3 <-
+atb_ev_network |>
+  activate(edges) |>
+  as_tibble() |>
+  select(from=item1, to=item2, weight) |>
+  inner_join(atb_ev_nodes_d3 |> distinct(source=id, from=pers_id), join_by(from)) |>
+  inner_join(atb_ev_nodes_d3 |> distinct(target=id, to=pers_id), join_by(to)) |>
+  relocate(source, target, from, to)  |>
+  # adjustment for width of edges
+  mutate(weight2 = ceiling(weight/10)) |>
+  inner_join(names_from_to_top_keyword, join_by(from, to))
+
+```
+
+  
+
+
+```{r}
+## for the lookup table
+# ppl https://thornton.kdl.kcl.ac.uk/entities/?hi=ppl%3Aha1&v=expanded
+# event https://thornton.kdl.kcl.ac.uk/entities/?hi=awt1_1631_illness&v=expanded
+atb_people <-
+atb_ev_nodes_d3 |>
+  select(pers_id, name, gender, birth_s, death_s, mentions= n_mentions, connections=degree, id) |>
+  mutate(url = glue("https://thornton.kdl.kcl.ac.uk/entities/?hi=ppl%3A{pers_id}&v=expanded")) |>
+  arrange(name)
+```
+
+
+
+
+```{r}
+ojs_define(ojs_ev_nodes = atb_ev_nodes_d3)
+ojs_define(ojs_ev_edges = atb_ev_edges_d3)
+ojs_define(ojs_people = atb_people)
+```
+
+
+```{ojs}
+ojsEvNodes = transpose(ojs_ev_nodes)
+ojsEvEdges = transpose(ojs_ev_edges)
+
+ojsPeople = transpose(ojs_people)
+```
+
+
+
+```{ojs}
+// adapted code from KDL agents network
+data = {
+  return {
+    nodes: ojsEvNodes,
+    links: ojsEvEdges
+  };
+}
+```
+
+## The network
+
+- drag circles ("nodes") or zoom the chart in and out to focus on specific areas
+- hover over nodes or lines ("links" or "edges") for additional information
+- hover over a node also highlights that person's connections
+- click on the node to make it stick so you can take a closer look (click again anywhere else to reset)
+
+See [notes](#notes-and-caveats) below for more detail about the network and the chart. The lookup table below provides a simple filter to find individuals of interest and click through to find out more about them in the [ATB edition](https://thornton.kdl.kcl.ac.uk/edition/?p0.lo=p.1&p0.vi=modern).
+
+
+```{ojs}
+//legend (standalone using Plot.legend)
+//see https://observablehq.com/d/a23f6e59f1380df0
+
+Plot.legend({
+  color: {
+    domain: colourDomain, 
+    range: colourRange
+  },
+  swatchSize: 14, 
+  style: {
+    fontSize: "14px" // standard size is a bit small
+  },
+  opacity: 0.75 // tweak to match links
+})
+```
+
+
+
+```{ojs}
+//| column: page
+
+chartHighlight()
+```
+
+
+## Lookup people
+
+
+```{ojs}
+// inputs search for subject
+viewof search_ppl = Inputs.search(
+    ojsPeople
+    , {label: "Filter names:", columns: ["name"], width: 300}
+    )
+    
+```
+
+```{ojs}
+//| column: body
+//| classes: reqtable
+
+Inputs.table(
+  search_ppl
+  , 
+  {
+  rows: 10,
+  //select: false, // doesn't work (Quarto issue, not Obs!); need css to hide select.
+  format: {
+    birth_s: (d) => `${d}`,
+    death_s: (d) => `${d}`,
+    name: (d, i, data) => htl.html`<a href=${data[i].url} target=_blank>${d}</a>`
+  } ,
+    columns: [
+    "name",
+    "gender",
+    "birth_s",
+    "death_s", 
+    "mentions",
+    "connections"
+  ],
+  header: {
+    birth_s: "born",
+    death_s: "died"
+  }
+}
+  )
+```
+
+## Notes and caveats
+
+This is an exploratory chart, and shouldn't be taken *too* seriously. It may suggest connections and groupings among individuals; but apparent links may be illusory, and stronger real links might be obscured by the limitations of the data. (It should be noted, for example, that Alice Thornton herself is a relatively minor presence in the chart because she rarely referred to herself in the third person and we chose not to tag first person references.)
+
+The chart only shows a subset of all possible connections in the ATB data, to make it more legible: 
+
+- it's restricted to events that began between 1651 (the year Alice Thornton married) and 1669 (the year after her husband died)
+- some minor or fragmentary events have also been removed
+- *individuals* must have at least 15 connections to be included 
+- *pairs* of individuals must have at least 2 connections for the link to be shown
+
+The date filter removes (or reduces the significance of) many people involved in the tumultuous events of the 1640s and I may do a separate network chart for that period. It's likely to look very different from this one.
+
+Connections between people are made on the basis of *co-occurrence* in tagged mentions of [events](https://thornton.kdl.kcl.ac.uk/entities/?) in the Books. There's no attempt to measure the nature or strength of those connections; people may be mentioned in passing in an event and not directly interact with others who were more central to the narrative. Even so, the juxtaposition usually suggests there's some kind of link between them.
+
+Some features of the graph are designed to help consider the strength of connections: the size of nodes reflects (to some extent) how many connections an individual has overall, and the width of the links reflects the number of times a pair of individuals co-occur. (Hover over nodes and links to see actual numbers.) 
+
+Subject keywords were assigned to events by the project. I counted pairs' shared keywords and used the top ranked keyword as a way to categorise the association between them. This seems to highlight a number of clusters in the network quite pleasingly, but hasn't been tested out at all; at the level of individual pairs it might not necessarily feel like the most accurate representation of a relationship. (Some pairs could be very heavily skewed towards a particular keyword, but others were more evenly distributed.)
+
+
+## Resources
+
+The chart has been made primarily using [D3.js](https://observablehq.com/@d3/gallery) and [ObservableJS](https://quarto.org/docs/interactive/ojs/). A number of Observable Notebooks were key resources for specific aspects:
+
+- [Lanchester family network](https://observablehq.com/d/bc2da3be41e9391f) (curvy lines and link categories)
+- [Network graph with d3.force grouping](https://observablehq.com/@ravengao/force-directed-graph-with-cola-grouping) (highlighting and tooltips)
+- [Plot: Legends](https://observablehq.com/@observablehq/plot-legends) (standalone legend)
+
+
+```{ojs}
+// functionify the chart (though it isn't really necessary in OJS) and then you can keep code out of the way
+
+function chartHighlight() {
+
+  // The force simulation mutates links and nodes, so create a copy
+  // so that re-evaluating this cell produces the same result.
+  
+  const links = data.links.map(d => Object.create(d));
+  const nodes = data.nodes.map(d => Object.create(d));
+
+
+// added for highlighting from bn highlight chart
+  
+  // create link reference
+  let linkedByIndex = {};
+  data.links.forEach(d => {
+    linkedByIndex[`${d.source},${d.target}`] = true;
+  });
+  
+  // nodes map
+  let nodesById = {};
+  data.nodes.forEach(d => {
+    nodesById[d.id] = {...d};
+  })
+
+  const isConnectedAsSource = (a, b) => linkedByIndex[`${a},${b}`];
+  const isConnectedAsTarget = (a, b) => linkedByIndex[`${b},${a}`];
+  const isConnected = (a, b) => isConnectedAsTarget(a, b) || isConnectedAsSource(a, b) || a === b;
+  const isEqual = (a, b) => a === b;
+
+
+// end of added bit
+
+
+
+  // Create the SVG container.
+	// tweak /2 in viewBox to adjust centering of graph vertical/horizontal
+
+  const svg = d3.create("svg")
+      .attr("viewBox", [-width / 2.5, -height / 2, width, height])
+      .style("font", "11px sans-serif");
+  
+  
+
+	// Create a simulation with several forces. 
+	// what does strength do? bigger number=more spread out. -400 seems a reasonable default
+  
+  const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id))
+      .force("charge", d3.forceManyBody().strength(-1200))
+      .force("x", d3.forceX())
+      .force("y", d3.forceY());
+
+
+
+
+// ifClicked added from bn highlight chart
+
+  let ifClicked = false;
+
+  
+// Create a container to enable mousewheel zoom 
+// nb g = baseGroup in bn highlight chart. 
+
+var g = svg.append("g")
+    .attr("class", "everything");
+  
+  // Per-type markers, as they don't inherit styles. 
+    
+  svg.append("defs")
+  	.selectAll("marker")
+    .data(types) // using the types array at this point, not nodes
+    .join("marker")
+      //.attr("id", d => `arrow-${d}`) // does this do anything? it does when you use types!
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -0.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+    	.append("path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+
+	// tweak width and opacity of lines in this bit
+	
+  const link = g.append("g")
+      .attr("fill", "none")
+      //.attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.6) 
+  	  .selectAll("path")
+  	  .data(links)
+   	  .join("path")
+      .attr("stroke-width", d => d.weight2) 
+      .attr("stroke", d => colour(d.type)) 
+      //.attr("marker-end", d => `url(${new URL(`#arrow-${d.type}`, location)})`) // doesn't seem to do anything
+      ;
+
+	// alt text for type. cba to do more tooltips!
+  link.append("title")
+    .text(d => `pair type: ${d.type}; ${d.weight} connections`);
+
+
+
+  const node = g.append("g")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+       //.attr("r", 5)
+    	.selectAll("g")
+    	.data(nodes)
+   	  .join("g")
+      .call(drag(simulation));
+
+
+	// no idea why some things have to be in the next bit and others in the bit above. opacity can go in either. none of d3 makes much sense to me.
+	
+  node.append("circle")
+      //.attr("stroke", "white") // not sure about this
+      //.attr("stroke-width", 1)
+      // not convinced by opacity here
+    	//.style("fill-opacity", 0.8)  // style instead of attr, why ffs.
+      .attr("fill", "#454D5D") // #454D5D matches tooltip background
+      //.attr("fill", d => color(d.infomap)) // works but need different scale
+    	.attr("r", d => d.grp_mentions) ; // size of node
+
+
+
+
+
+  // text labels
+  
+   const textElems = g.append('g')
+   	 	.selectAll('text')
+    	.data(nodes)
+    	.join('text')
+      .text(d => d.name) // adding stuff from nodes works here...
+      .attr('font-size', 13)
+      .attr("opacity", 1)
+      .call(drag(simulation));
+
+
+
+// ticked function added for highlight 
+// NB this incorporates grp_mentions.
+
+	function ticked() {
+		  link.attr("d", linkArc);
+    	node.attr("transform", d => `translate(${d.x},${d.y})`);
+    	textElems
+      	.attr("x", d => d.x + d.grp_mentions + 2)
+      	.attr("y", d => d.y);
+	}
+	
+	// highlight chart also adds .nodes(nodes) to the original.
+	// idk what that does, as it seems to work without it. possibly smoother?
+	
+	simulation
+		.nodes(nodes)
+		.on("tick", ticked)
+	
+	// it also adds this; again, no idea.
+	
+  simulation.force("link")
+      .links(links);
+		
+// end of ticked edits
+
+  
+  
+// adding mousey stuff for highlighting/tooltips 
+// TODO add more info to tooltips? 
+
+  const mouseOverFunction = (event, d) => {
+    tooltip.style("visibility", "visible")
+    .html(() => {
+        const content = `${d.label_name}<br/>${d.n_mentions} mentions<br/>${d.degree} connections`; 
+        return content;
+      });
+
+    if (ifClicked) return;
+
+    node
+      .transition(500)
+        .style('opacity', o => {
+          const isConnectedValue = isConnected(o.id, d.id);
+          if (isConnectedValue) {
+            return 1.0;
+          }
+          return 0.1;
+        });
+
+    link
+      .transition(500)
+        .style('stroke-opacity', o => {
+        console.log(o.source === d)
+      return (o.source === d || o.target === d ? 1 : 0.1)})
+        .transition(500)
+        .attr('marker-end', o => (o.source === d || o.target === d ? 'url(#arrowhead)' : 'url()'));
+        
+    textElems
+      .transition(500)
+        .style('opacity', o => {
+          const isConnectedValue = isConnected(o.id, d.id);
+          if (isConnectedValue) {
+            return 1.0;
+          }
+          return 0.1;
+        });
+        
+  };
+
+  const mouseOutFunction = (event, d) => {
+  
+    tooltip.style("visibility", "hidden");
+
+    if (ifClicked) return;
+
+    node
+      .transition(500)
+      .style('opacity', 1);
+
+    link
+      .transition(500)
+      .style("stroke-opacity", o => {
+        console.log(o.value)  
+      });
+
+	 	textElems
+      .transition(500)
+      .style('opacity', 1);
+
+  };
+  
+  
+  const mouseClickFunction = (event, d) => {
+  
+    // we don't want the click event bubble up to svg
+    event.stopPropagation();
+    
+    ifClicked = true;
+    
+    node
+      .transition(500)
+      .style('opacity', 1)
+
+    link
+      .transition(500);
+      
+    textElems
+      .transition(500)
+      .style('opacity', 1)
+ 
+ 
+    node
+      .transition(500)
+        .style('opacity', o => {
+          const isConnectedValue = isConnected(o.id, d.id);
+          if (isConnectedValue) {
+            return 1.0;
+          }
+          return 0.1
+        })
+
+
+    textElems
+      .transition(500)
+        .style('opacity', o => {
+          const isConnectedValue = isConnected(o.id, d.id);
+          if (isConnectedValue) {
+            return 1.0;
+          }
+          return 0.1
+        })
+
+
+    link
+      .transition(500)
+      .style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : 0.1))
+        .transition(500)
+        .attr('marker-end', o => (o.source === d || o.target === d ? 'url(#arrowhead)' : 'url()'));
+        
+  };
+  
+
+  node.on('mouseover', mouseOverFunction)
+      .on('mouseout', mouseOutFunction)
+      .on('click', mouseClickFunction)
+      .on('mousemove', (event) => tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"));
+  
+  svg.on('click', () => {
+    ifClicked = false;
+    node
+      .transition(500)
+      .style('opacity', 1);
+
+    link
+      .transition(500)
+      .style("stroke-opacity", 0.5)
+
+    textElems
+      .transition(500)
+      .style('opacity', 1);
+    
+  });
+// end of .mousey stuff
+ 
+
+  invalidation.then(() => simulation.stop());
+
+
+
+// mousewheel zoom functionality 
+  
+svg.call(d3.zoom()
+      .extent([[0, 0], [width, height]])
+      .scaleExtent([0, 8])
+      .on("zoom", zoomed));
+
+  function zoomed({transform}) {
+    g.attr("transform", transform);
+  }
+  
+  
+  return svg.node();
+}
+
+```
+
+
+```{css}
+/*css style replaces html-style chunk in original*/
+
+/* get rid of select boxes in table unless you want to do something with them. */
+.reqtable table input {display: none;} 
+
+    .node {
+        stroke: #f0f0f0;
+        stroke-width: 0px;
+    }
+
+    .link {
+        stroke: #999;
+        stroke-opacity: .4;
+        stroke-width: 0.5;
+    }
+
+    .group {
+        stroke: #fff;
+        stroke-width: 1.5px;
+        fill: #fff;
+        opacity: 0.05;
+    }
+    .svg-tooltip {
+     /* font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple   Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+      background: rgba(69,77,93,.9); /* = #454D5D */
+      border-radius: .1rem;
+      color: #fff;
+      display: block;
+      font-size: 12px;
+      max-width: 320px;
+      padding: .2rem .4rem;
+      position: absolute;
+      text-overflow: ellipsis;
+      white-space: pre;
+      z-index: 1000; /* was 300, not enough to keep tooltips in front! */
+      visibility: hidden;
+    }
+
+    svg {
+       /* background-color: #333; */
+    }
+```
+
+
+
+
+```{ojs}
+// add tooltip
+tooltip = d3.select("body").append("div")
+  .attr("class", "svg-tooltip")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .text("I'm a circle!");
+```
+
+
+
+
+```{ojs}
+// Specify the dimensions of the chart. don't need width.
+
+height = 1200;
+
+// i think this is not allowed in same code chunk as the domain/range!
+colour = d3.scaleOrdinal(colourDomain, colourRange);
+
+```
+
+
+```{ojs}
+// for the colour scale
+
+// domain is the list of types (from event keywords)
+
+colourDomain = types;
+
+// range is the d3 scheme; doesn't matter if there are more colours in the scheme than in the domain
+// https://d3js.org/d3-scale-chromatic/categorical
+
+colourRange = d3.schemeObservable10;
+```
+
+
+
+```{ojs}
+// list of event types. alphabetical sort
+types =
+	Array.from(new Set(data.links.map(d => d.type)))
+	.sort()
+```
+
+
+```{ojs}
+// function for the curved edges, don't ask me how it works lol.
+
+function linkArc(d) {
+  const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
+  return `
+    M${d.source.x},${d.source.y}
+    A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
+  `;
+}
+
+```
+
+
+
+
+```{ojs}
+// drag function
+
+function drag(simulation) {
+  
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+  
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+  
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+  
+  return d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+}
+```
+
+
+
+
+```{ojs}
+// need to require d3
+d3 = require("d3@7")
+```

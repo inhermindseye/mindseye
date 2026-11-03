@@ -10,7 +10,18 @@
 <atom:link href="https://mindseye.sharonhoward.org/index.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Thu, 17 Sep 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 03 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Alice Thornton’s Network, 1651-1669</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</link>
+  <description><![CDATA[ A network of people mentioned in the narratives of <a href="https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/">Events</a> tagged by the <a href="https://thornton.kdl.kcl.ac.uk/">Alice Thornton’s Books</a> project. ]]></description>
+  <category>interactive</category>
+  <category>networks</category>
+  <category>ATB</category>
+  <guid>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</guid>
+  <pubDate>Tue, 03 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>More Early Modern Choropleths</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -109,17 +120,6 @@
   <category>petitioning</category>
   <guid>https://mindseye.sharonhoward.org/dashboards/tpop-hol-explorer.html</guid>
   <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>HO Criminal Registers Data Explorer</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/posts/hcr-data-explorer/</link>
-  <description><![CDATA[ An interactive table for exploring the <a href="https://www.londonlives.org/about/cr/">London Lives Home Office Criminal Registers 1792-1801</a>. ]]></description>
-  <category>interactive</category>
-  <category>crime</category>
-  <category>LL</category>
-  <guid>https://mindseye.sharonhoward.org/posts/hcr-data-explorer/</guid>
-  <pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

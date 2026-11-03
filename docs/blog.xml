@@ -10,7 +10,18 @@
 <atom:link href="https://mindseye.sharonhoward.org/blog.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Thu, 17 Sep 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 03 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Alice Thornton’s Network, 1651-1669</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</link>
+  <description><![CDATA[ A network of people mentioned in the narratives of <a href="https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/">Events</a> tagged by the <a href="https://thornton.kdl.kcl.ac.uk/">Alice Thornton’s Books</a> project. ]]></description>
+  <category>interactive</category>
+  <category>networks</category>
+  <category>ATB</category>
+  <guid>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</guid>
+  <pubDate>Tue, 03 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>More Early Modern Choropleths</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -211,16 +222,6 @@
   <category>petitioning</category>
   <guid>https://mindseye.sharonhoward.org/posts/waffle-petitions/</guid>
   <pubDate>Thu, 19 Jun 2025 23:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Visualisation in miniature: sparklines</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/posts/sparks-obo/</link>
-  <description><![CDATA[ This is the first of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R. They won’t involve much historical analysis, but it should also be an opportunity to introduce interesting historical datasets that I might not otherwise get round to posting about. ]]></description>
-  <category>methods</category>
-  <category>OBO</category>
-  <guid>https://mindseye.sharonhoward.org/posts/sparks-obo/</guid>
-  <pubDate>Sat, 31 May 2025 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
