@@ -10,12 +10,23 @@
 <atom:link href="https://mindseye.sharonhoward.org/blog.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Tue, 03 Nov 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 04 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Alice Thornton’s Network, 1626-1651</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/atb-people-early-network/</link>
+  <description><![CDATA[ A network of people in Alice Thornton’s autobiographical writing about her youth ]]></description>
+  <category>interactive</category>
+  <category>networks</category>
+  <category>ATB</category>
+  <guid>https://mindseye.sharonhoward.org/posts/atb-people-early-network/</guid>
+  <pubDate>Wed, 04 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Alice Thornton’s Network, 1651-1669</title>
   <dc:creator>Sharon Howard</dc:creator>
   <link>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</link>
-  <description><![CDATA[ A network of people mentioned in the narratives of <a href="https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/">Events</a> tagged by the <a href="https://thornton.kdl.kcl.ac.uk/">Alice Thornton’s Books</a> project. ]]></description>
+  <description><![CDATA[ A network of people in Alice Thornton’s autobiographical writing about her married life ]]></description>
   <category>interactive</category>
   <category>networks</category>
   <category>ATB</category>
@@ -212,16 +223,6 @@
   <category>methods</category>
   <guid>https://mindseye.sharonhoward.org/posts/making-my-first-data-package/</guid>
   <pubDate>Mon, 23 Jun 2025 23:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>On the grid: waffle charts</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/posts/waffle-petitions/</link>
-  <description><![CDATA[ This is one of a series of posts where I focus on visualisations and techniques that I like. I’ll look at a particular kind of visualisation that may be less familiar than tables, bar charts or line graphs, and work through some ways of making it using R. They won’t involve much historical analysis, but it should also be an opportunity to introduce interesting historical datasets that I might not otherwise get round to posting about. ]]></description>
-  <category>methods</category>
-  <category>petitioning</category>
-  <guid>https://mindseye.sharonhoward.org/posts/waffle-petitions/</guid>
-  <pubDate>Thu, 19 Jun 2025 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

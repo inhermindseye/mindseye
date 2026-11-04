@@ -1,6 +1,6 @@
 ---
 title: "Alice Thornton's Network, 1651-1669"
-subtitle: "A network of people in Alice Thornton's autobiographical writings"
+description: "A network of people in Alice Thornton's autobiographical writing about her married life"
 date: "2026-11-03"
 author: "Sharon Howard"
 categories: [interactive, networks, ATB]
@@ -11,7 +11,7 @@ execute:
 ---
 
 
-A network of people mentioned in the narratives of [Events](https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/) tagged by the [Alice Thornton's Books](https://thornton.kdl.kcl.ac.uk/) project.
+A network of people mentioned in the narratives of [Events](https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/) tagged by the [Alice Thornton's Books](https://thornton.kdl.kcl.ac.uk/) project.  This is a companion to [the network of Thornton's youth 1626-1651](../atb-people-early-network/).
 
 
 ```{r}
@@ -159,17 +159,14 @@ names_in_evs |>
   rename(from=pers_id) |>
   filter(from != to)  
 
+# adjusted: i think better to do type before group and top_n. 
+# it makes a slight difference to numbers (possibly increases gap between top and bottom ranked), but not to ranking order
+# and now it doesn't keep original keywords. could be a problem if you wanted to link to the DSE?
 
 names_from_to_top_keyword <-
 names_from_to_all_keyword |>
   # these are v v marginal after filtering.
   filter(!keyword %in% c("accident/danger", "family")) |>
-  count(from, to, keyword) |>
-  group_by(from, to) |>
-  arrange(desc(n), .by_group = T) |>
-  mutate(pair_n=n(), pair_rn=row_number()) |>
-  top_n(-1, pair_rn) |>
-  ungroup() |>
   # reduce number of values. rename merged categories. will need a note.
   mutate(type = replace_values(
     keyword, 
@@ -177,7 +174,13 @@ names_from_to_all_keyword |>
     c("dream/prophecy", "religion") ~ "religion/prophecy", # 30
     c("burial", "death") ~ "death/burial" # 20 death so hmm but ok.
   )) |>
-  select(from, to, type, keyword)
+  count(from, to, type) |>
+  group_by(from, to) |>
+  arrange(desc(n), .by_group = T) |>
+  mutate(pair_n=n(), pair_rn=row_number()) |>
+  top_n(-1, pair_rn) |>
+  ungroup() |>
+  select(from, to, type)
 
 
 
@@ -249,8 +252,6 @@ atb_ev_network |>
   inner_join(names_from_to_top_keyword, join_by(from, to))
 
 ```
-
-  
 
 
 ```{r}
@@ -383,13 +384,12 @@ The chart only shows a subset of all possible connections in the ATB data, to ma
 - *individuals* must have at least 15 connections to be included 
 - *pairs* of individuals must have at least 2 connections for the link to be shown
 
-The date filter removes (or reduces the significance of) many people involved in the tumultuous events of the 1640s and I may do a separate network chart for that period. It's likely to look very different from this one.
+Connections between people are made on the basis of *co-occurrence* in tagged mentions of [events](https://thornton.kdl.kcl.ac.uk/entities/?) in the Books. (Each name is counted once per event mention, which can have the effect of boosting the presence (and connections) of those who appear in certain events that Thornton told multiple times in her Books.) There's no attempt to measure the nature of those connections; people may be mentioned in passing in an event and not directly interact with others who were more central to the narrative. Even so, the juxtaposition usually suggests there's some kind of link between them.
 
-Connections between people are made on the basis of *co-occurrence* in tagged mentions of [events](https://thornton.kdl.kcl.ac.uk/entities/?) in the Books. There's no attempt to measure the nature or strength of those connections; people may be mentioned in passing in an event and not directly interact with others who were more central to the narrative. Even so, the juxtaposition usually suggests there's some kind of link between them.
 
 Some features of the graph are designed to help consider the strength of connections: the size of nodes reflects (to some extent) how many connections an individual has overall, and the width of the links reflects the number of times a pair of individuals co-occur. (Hover over nodes and links to see actual numbers.) 
 
-Subject keywords were assigned to events by the project. I counted pairs' shared keywords and used the top ranked keyword as a way to categorise the association between them. This seems to highlight a number of clusters in the network quite pleasingly, but hasn't been tested out at all; at the level of individual pairs it might not necessarily feel like the most accurate representation of a relationship. (Some pairs could be very heavily skewed towards a particular keyword, but others were more evenly distributed.)
+Subject keywords were assigned to events by the project; I counted pairs' shared keywords and used the top ranked keyword as a way to categorise the association between them. This seems to highlight a number of clusters in the network quite pleasingly, but hasn't been tested out at all; at the level of individual pairs it might not necessarily feel like the most accurate representation of a relationship. (Some pairs could be very heavily skewed towards a particular keyword, but others were more evenly distributed.)
 
 
 ## Resources
@@ -400,6 +400,7 @@ The chart has been made primarily using [D3.js](https://observablehq.com/@d3/gal
 - [Network graph with d3.force grouping](https://observablehq.com/@ravengao/force-directed-graph-with-cola-grouping) (highlighting and tooltips)
 - [Plot: Legends](https://observablehq.com/@observablehq/plot-legends) (standalone legend)
 
+I also reused some of the code (and experience) of making network charts for a previous project, [Beyond Notability](https://beyond-notability.github.io/beyond-notability-observable-essays/networks.html).
 
 ```{ojs}
 // functionify the chart (though it isn't really necessary in OJS) and then you can keep code out of the way

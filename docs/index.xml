@@ -10,12 +10,23 @@
 <atom:link href="https://mindseye.sharonhoward.org/index.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Tue, 03 Nov 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 04 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Alice Thornton’s Network, 1626-1651</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/atb-people-early-network/</link>
+  <description><![CDATA[ A network of people in Alice Thornton’s autobiographical writing about her youth ]]></description>
+  <category>interactive</category>
+  <category>networks</category>
+  <category>ATB</category>
+  <guid>https://mindseye.sharonhoward.org/posts/atb-people-early-network/</guid>
+  <pubDate>Wed, 04 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Alice Thornton’s Network, 1651-1669</title>
   <dc:creator>Sharon Howard</dc:creator>
   <link>https://mindseye.sharonhoward.org/posts/atb-people-events-network/</link>
-  <description><![CDATA[ A network of people mentioned in the narratives of <a href="https://thornton.kdl.kcl.ac.uk/posts/blog/2022-11-28-tei-events-thornton-books/">Events</a> tagged by the <a href="https://thornton.kdl.kcl.ac.uk/">Alice Thornton’s Books</a> project. ]]></description>
+  <description><![CDATA[ A network of people in Alice Thornton’s autobiographical writing about her married life ]]></description>
   <category>interactive</category>
   <category>networks</category>
   <category>ATB</category>
@@ -108,17 +119,6 @@
   <category>TPOP</category>
   <category>petitioning</category>
   <guid>https://mindseye.sharonhoward.org/dashboards/tpop-sp-explorer.html</guid>
-  <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>TPOP House of Lords Petitions Explorer</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/dashboards/tpop-hol-explorer.html</link>
-  <description><![CDATA[ Summary: an interactive data explorer for 730 petitions to the House of Lords, 1597-1696. ]]></description>
-  <category>interactive</category>
-  <category>TPOP</category>
-  <category>petitioning</category>
-  <guid>https://mindseye.sharonhoward.org/dashboards/tpop-hol-explorer.html</guid>
   <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
 </item>
 </channel>

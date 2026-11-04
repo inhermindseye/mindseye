@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/atb-people-early-network/index.html",
       "/posts/atb-people-events-network/index.html",
       "/posts/county-choropleths/index.html",
       "/posts/elizabethan-court-of-requests/index.html",
@@ -55,6 +56,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/atb-people-early-network/index.html",
       "/posts/atb-people-events-network/index.html",
       "/posts/county-choropleths/index.html",
       "/posts/elizabethan-court-of-requests/index.html",
