@@ -88,7 +88,7 @@ atb_people_csv <-
 
 
 
-```{r events-names-filters}
+```{r}
 ## filter events 1651-69 and part of larger grp events only.
 # and might want to drop unnecessary cols, though they don't cause any problems.
 events_evs <-
@@ -129,7 +129,7 @@ names_table_unnested |>
 
 
 
-```{r prep-make-network}
+```{r}
 ## ev ids and pairwise_count
 
 # distinct and filter before making edges/nodes. then you can get n_mentions
