@@ -10,7 +10,17 @@
 <atom:link href="https://mindseye.sharonhoward.org/blog.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Wed, 04 Nov 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 15 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Women at the Olympics, 1896-2026</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/olympics-women-sports-representation/</link>
+  <description><![CDATA[ Changing female participation at the Olympic Games over time, by sport ]]></description>
+  <category>women</category>
+  <category>sport</category>
+  <guid>https://mindseye.sharonhoward.org/posts/olympics-women-sports-representation/</guid>
+  <pubDate>Sun, 15 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Alice Thornton’s Network, 1626-1651</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -213,16 +223,6 @@
   <category>petitioning</category>
   <guid>https://mindseye.sharonhoward.org/posts/ggplot-to-observable-petitions/</guid>
   <pubDate>Wed, 02 Jul 2025 23:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Making my first data package</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/posts/making-my-first-data-package/</link>
-  <description><![CDATA[ Packages, including data packages, are a vital part of the R ecosystem and yet I’ve been using R for the best part of a decade without ever making one of my own. Until now. ]]></description>
-  <category>packages</category>
-  <category>methods</category>
-  <guid>https://mindseye.sharonhoward.org/posts/making-my-first-data-package/</guid>
-  <pubDate>Mon, 23 Jun 2025 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

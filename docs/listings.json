@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/olympics-women-sports-representation/index.html",
       "/posts/atb-people-early-network/index.html",
       "/posts/atb-people-events-network/index.html",
       "/posts/county-choropleths/index.html",
@@ -56,6 +57,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/olympics-women-sports-representation/index.html",
       "/posts/atb-people-early-network/index.html",
       "/posts/atb-people-events-network/index.html",
       "/posts/county-choropleths/index.html",

@@ -1,0 +1,291 @@
+---
+title: "Women at the Olympics, 1896-2026"
+description: "Changing female participation at the Olympic Games over time, by sport"
+date: "2026-11-15"
+author: "Sharon Howard"
+categories: [women, sport]
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+
+I've been playing with the [OlympicAthletes](https://moderndive.github.io/olympicAthletes/index.html) data package. I liked this little Observable Notebook visualising [women's participation in the Olympics](https://observablehq.com/@shadfriguii/women-participation-olympics), but wanted to expand on it to explore development among different sports. These heatmaps are the result.
+
+Sports that were more recent additions to the Games tend to be more gender-balanced from the start, while there's considerable variation among more long-established sports. Figure skating, for example, was close to parity almost from its inception, and swimming and diving weren't too far behind, whereas cycling had no female participation at all until the 1980s (which surprised me a bit).  Even within related categories there can be differences: women have constituted the majority of competitors in dressage for half a century, but show jumping and eventing remain predominantly male.
+
+
+```{r}
+library(scales)
+library(glue)
+library(janitor)
+library(tidytext)
+library(tidyverse)
+
+## https://moderndive.github.io/olympicAthletes/
+library(olympicAthletes)
+
+## noc and country codes (probably not really needed here but part of the code)
+olympic_countries_csv <-
+  read_csv(here::here("site_data/other/olympics_countries_20261106.csv"))
+
+## olympedia's sports categories 
+olympedia_sports_csv <-
+  read_csv(here::here("site_data/other/olympedia_sports.csv"))
+
+## in the 2018-2026 data from olympedia there are some coaches
+olympedia_coaches_csv <-
+ read_csv(here::here("site_data/other/olympedia_coaches_years_2018_2026_20261115.csv"))
+```
+
+```{r}
+# drop 1906 from the start, and coaches
+# also i think drop sports that only appeared in one Games. 
+
+athletes <-
+olympic_athletes |>
+	filter(year != 1906) |>
+	anti_join(olympedia_coaches_csv, join_by(name, year)) |>
+  select(id, year, season, sex, age, height, weight, sport, event, medal, noc, team, name) |>
+  mutate(noc = replace_values(
+    noc,
+    "LIB" ~ "LBN",
+    "ROT" ~ "EOR",
+    "NRU" ~ "NRO",
+    "ROC" ~ "RUS"
+  ))  |>
+  left_join(olympic_countries_csv |> select(noc, country), join_by(noc)) |>
+  relocate(country, .after = noc) |>
+  # maybe drop 2026 winter games as there isn't a corresponding summer games 
+  #filter(year < 2026) |>
+  # ensure it's in chronological order, summer/winter grouped if need be
+  arrange(year, season) |>
+  # which data collection (1896-2016 or 2018-2026)
+  mutate(dc = if_else(year<2018, 1, 2))
+
+
+# nb a tiny handful of sports have appeared in both seasons (at different times, no overlap)
+
+athletes_sports_categories <-
+athletes |>
+  mutate(sport_orig = sport) |>
+  mutate(sport = case_when(
+    sport=="Canoeing" & str_detect(event, "Slalom") ~ "Canoe Slalom",
+    sport=="Canoeing" ~ "Canoe Sprint", # olympedia puts the 10k races in Sprint
+    sport=="Cycling" & str_detect(event, "BMX Freestyle") ~ "Cycling BMX Freestyle",
+    sport=="Cycling" & str_detect(event, "BMX") ~ "Cycling BMX Racing",
+    sport=="Cycling" & str_detect(event, "Mountain") ~ "Cycling Mountain Bike",
+    sport=="Cycling" & str_detect(event, "Road") ~ "Cycling Road",
+    sport=="Cycling" ~ "Cycling Track",
+    sport=="Equestrianism" & str_detect(event, "Dressage") ~ "Equestrian Dressage",
+    sport=="Equestrianism" & str_detect(event, "Driving|Four-In-Hand") ~ "Equestrian Driving",
+    sport=="Equestrianism" & str_detect(event, "Eventing|Three-Day Event") ~ "Equestrian Eventing",
+    sport=="Equestrianism" & str_detect(event, "Jumping") ~ "Equestrian Jumping",
+    sport=="Equestrianism" & str_detect(event, "Vaulting") ~ "Equestrian Vaulting",
+    sport=="Equestrianism" ~ "Equestrian Jumping",
+    sport=="Gymnastics" & str_detect(event, "Artistic") ~ "Artistic Gymnastics",
+    sport=="Gymnastics" & str_detect(event, "Rhythmic") ~ "Rhythmic Gymnastics",
+    sport=="Gymnastics" & str_detect(event, "Trampolining") ~ "Trampolining",
+    sport=="Gymnastics" ~ "Artistic Gymnastics",
+    .default = sport
+  )) |>
+  mutate(sp_lc = str_to_lower(sport)) |>
+  mutate(event_sex = case_when(
+    #str_detect(event, regex("\\bMen", ignore_case = T)) & str_detect(event, regex("\\bWomen", ignore_case = T)) ~ "??", # none of these.
+    str_detect(event, regex("\\bWomen", ignore_case = T)) ~ "Women",
+    str_detect(event, regex("\\bMen", ignore_case = T)) ~ "Men",
+    str_detect(event, regex("Mixed", ignore_case = T)) ~ "Mixed",
+    .default = "Mixed" # remainder are equestrian or alpine skiing which does have mixed events.
+  ))  |>
+  inner_join(olympedia_sports_csv |> select(sport_category, disc_lc), by=c("sp_lc"="disc_lc")) |>
+  relocate(sport_category, .after = sport)
+  #select(id, year, season, sport, sport_category, event, event_sex, sex, sport_orig, noc, country, dc)
+
+
+sports_categories_sex <-
+athletes_sports_categories |>
+	count(year, season, sport_category, sport, sex, name="n_sex") |> 
+  mutate(sex = if_else(sex=="M", "men", "women")) |>
+  pivot_wider(names_from = sex, values_from = n_sex, values_fill = 0) |>
+  mutate(total = men + women)  |>
+  filter(n_distinct(year)>1, .by = sport)
+
+```
+
+```{r}
+ojs_define(ojs_sports_sex = sports_categories_sex)
+```
+
+```{ojs}
+ojsSportsSex = transpose(ojs_sports_sex)
+```
+
+
+
+```{ojs}
+plotSportsWomen(
+	"Women at the Winter Games 1924-2026",
+  sort_winter,
+  sports_winter,
+  winter_start_end
+)
+```
+
+
+```{ojs}
+plotSportsWomen(
+  "Women at the Summer Games 1896-2024",
+	sort_summer,
+	sports_summer,
+	summer_start_end
+)
+```
+
+## Notes
+
+I've removed a fairly small number of sports that featured in only a single Games, all in the early years. (Three sports are split across Summer and Winter Games.) 
+
+The Games weren't held in 1916, 1940 or 1944 and those years are omitted from the heatmap. White squares indicate that a sport was not present.
+
+I've noticed a few errors in the data, but it seems to be largely accurate. It's an exceptionally rich dataset that I plan to do more with in the future.
+
+
+
+```{ojs}
+function plotSportsWomen(plotTitle, sort_data, data, data_start_end) {
+
+return Plot.plot({
+	title: plotTitle,
+  aspectRatio: 1,
+  marginLeft: 130,
+  marginTop: 40, // make more space for the year labels
+  width: width,
+  style: {
+    fontSize: "12px",
+    background: "#f7f7f7"
+    },
+  color: {
+  		legend: true,
+  		label: "% women",
+  		type: "linear",
+  		range: ["#FFF08C", "#980F30"], // olympic orange-red
+    	interpolate: "hsl", 
+  		//scheme: "YlOrRd",
+  		domain: [0, 100], // make winter match summer plot
+  		percent: true ,
+  		marginLeft: 10 // need this in ojs for some reason
+  	},
+  x: {
+  	axis: "top", 
+  	label: null,
+  	tickRotate: -45,
+  	tickFormat: (d) => `${d}` // ??
+  	},
+  y: {
+  	domain: sort_data,
+  	axis: null
+  },
+  marks: [
+    Plot.cell(data, {
+      x: (d) => d.date.getUTCFullYear() , // "year",
+      y: "sport",
+      //interval: "year", // d3.timeYear, //  
+      fill: "p_women",
+      //inset: 0.5 // ?
+      channels: {year: "year", women: "women", participants: "total"},//season: "season", 
+      tip: {
+      	lineHeight: 1.3,
+      	format : {
+      		y: true,
+      		x: false, // this is now "x1" instead of "date" idk wtf.
+      		year: (d) => `${d}`,
+      		participants: true,
+      		women: true,
+      		fill:  d3.format(",.1f"), // use this (not % formatting) with percent:true in scale
+      	}
+      }
+    }),
+    
+        Plot.text(data, {
+      x: "year",
+      y: "sport",
+      text: (d) => d.p_women.toFixed(2) *100, // does this look weird? 
+      stroke: "white",
+      fill: "white",
+      fontSize: 10,
+      strokeWidth: 0.5,
+      //textAnchor: "end",
+      //dx: -10 
+    }) ,  // text mark
+    
+    // floating sport labels    
+    Plot.text(data_start_end, {
+      x: "start", // now it only works with year... baffling
+      y: "sport",
+      text: "sport", 
+      textAnchor: "end",
+      fontSize: 13,
+      dx: -16
+    }) ,  // text mark
+  ]
+})
+
+}
+// column: page doesn't seem to do anything to the Plot. using width is better.  
+```
+
+
+
+```{ojs}
+sports_sex =
+ojsSportsSex
+		.map(d => ({...d, p_women: d.women/d.total, p_men: d.men/d.total, date: new Date(d.year, 0, 1) }) )
+
+
+
+sports_start_end =	
+d3.flatRollup(sports_sex, v => d3.extent(v, d => d.date), d => d.sport)
+	.map((n) => ({sport: n[0], start: n[1][0], ends:n[1][1]}))
+	
+// d3.sort to sort by multiple variables... 
+
+sort_sports =
+	d3.sort(sports_start_end, ({start}) => start, ({ends}) => ends, ({sport}) => sport)
+	.map(d => d.sport)
+	
+
+
+sports_summer = sports_sex.filter(d=>d.season=="Summer")
+
+sports_winter = sports_sex.filter(d=>d.season=="Winter")
+
+// summer only (for heatmap), using year instead of date. can add date afterwards if needed.
+
+summer_start_end =	
+d3.flatRollup(sports_summer, v => d3.extent(v, d => d.year), d => d.sport)
+	.map((n) => ({sport: n[0], start: n[1][0], ends:n[1][1]}))
+	//.map(d => ({...d, date: new Date(d.start, 0, 1) }) )
+
+sort_summer =
+	d3.sort(summer_start_end, ({start}) => start, ({ends}) => ends, ({sport}) => sport)
+	.map(d => d.sport)
+
+
+winter_start_end =	
+d3.flatRollup(sports_winter, v => d3.extent(v, d => d.year), d => d.sport)
+	.map((n) => ({sport: n[0], start: n[1][0], ends:n[1][1]}))
+	//.map(d => ({...d, date: new Date(d.start, 0, 1) }) )
+	
+sort_winter =
+	d3.sort(winter_start_end, ({start}) => start, ({ends}) => ends, ({sport}) => sport)
+	.map(d => d.sport)
+```
+
+
+```{ojs}
+// need to require d3
+d3 = require("d3@7")
+```
+
+

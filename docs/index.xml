@@ -10,7 +10,17 @@
 <atom:link href="https://mindseye.sharonhoward.org/index.xml" rel="self" type="application/rss+xml"/>
 <description>A historian&#39;s data blog</description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Wed, 04 Nov 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 15 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Women at the Olympics, 1896-2026</title>
+  <dc:creator>Sharon Howard</dc:creator>
+  <link>https://mindseye.sharonhoward.org/posts/olympics-women-sports-representation/</link>
+  <description><![CDATA[ Changing female participation at the Olympic Games over time, by sport ]]></description>
+  <category>women</category>
+  <category>sport</category>
+  <guid>https://mindseye.sharonhoward.org/posts/olympics-women-sports-representation/</guid>
+  <pubDate>Sun, 15 Nov 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Alice Thornton’s Network, 1626-1651</title>
   <dc:creator>Sharon Howard</dc:creator>
@@ -108,17 +118,6 @@
   <category>TPOP</category>
   <category>petitioning</category>
   <guid>https://mindseye.sharonhoward.org/dashboards/tpop-qs-explorer.html</guid>
-  <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>TPOP State Papers Petitions Explorer</title>
-  <dc:creator>Sharon Howard</dc:creator>
-  <link>https://mindseye.sharonhoward.org/dashboards/tpop-sp-explorer.html</link>
-  <description><![CDATA[ Summary: an interactive data explorer for 390 petitions to the Crown, 1600-1699. ]]></description>
-  <category>interactive</category>
-  <category>TPOP</category>
-  <category>petitioning</category>
-  <guid>https://mindseye.sharonhoward.org/dashboards/tpop-sp-explorer.html</guid>
   <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
 </item>
 </channel>
